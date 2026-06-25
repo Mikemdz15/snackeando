@@ -143,6 +143,10 @@
                         <i data-lucide="shield" class="w-4 h-4"></i>
                         <span>8. Seguridad & Efectivo</span>
                     </button>
+                    <button data-target="bp-finanzas" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
+                        <i data-lucide="line-chart" class="w-4 h-4"></i>
+                        <span>9. Estado de Resultados</span>
+                    </button>
                 </div>
             </div>
 
@@ -3457,6 +3461,301 @@
                 </div>
             </div>
 
+
+            <!-- ========================================== -->
+            <!-- STRATEGY TAB: 9. ESTADO DE RESULTADOS -->
+            <!-- ========================================== -->
+            <div id="bp-finanzas" class="tab-content animate-fade-in hidden space-y-6">
+                <div class="glass-card p-8 rounded-2xl space-y-8">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white border-b border-slate-800 pb-4 mb-4 flex items-center gap-3">
+                            <i data-lucide="line-chart" class="text-indigo-500 animate-pulse"></i> 9. Estado de Resultados del BP
+                        </h3>
+                        <p class="text-slate-300 text-sm">
+                            Proyecciones consolidadas de la operación nacional de Snackeando del periodo 2026 a 2029, basadas en el modelo de renta fija (Vending-as-a-Service) y la escalabilidad del equipo de ventas.
+                        </p>
+                    </div>
+
+                    <!-- ESTADO DE RESULTADOS CONSOLIDADO (TABLA EXCEL) -->
+                    <div class="bg-slate-950/80 p-6 md:p-8 rounded-2xl border border-slate-800 shadow-md space-y-6">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-3">
+                                <i data-lucide="table" class="w-5 h-5 text-indigo-400"></i>
+                                Estado de Resultados Consolidado (2026 - 2029)
+                            </h3>
+                            <span class="bg-indigo-500/10 text-indigo-400 text-xs px-3 py-1 rounded-full font-bold border border-indigo-500/20">Valores en MXN</span>
+                        </div>
+                        
+                        <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 font-medium">
+                            <table class="w-full text-left text-xs text-slate-300">
+                                <thead class="bg-slate-900/80 text-[10px] font-bold text-slate-400 uppercase border-b border-slate-800">
+                                    <tr>
+                                        <th class="px-4 py-3" style="width: 25%">Concepto Financiero</th>
+                                        <th class="px-4 py-3 text-center" style="width: 10%">Métrica U.</th>
+                                        <th class="px-4 py-3 text-right" style="width: 16%">2026</th>
+                                        <th class="px-4 py-3 text-right" style="width: 16%">2027</th>
+                                        <th class="px-4 py-3 text-right" style="width: 16%">2028</th>
+                                        <th class="px-4 py-3 text-right" style="width: 16%">2029</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-850">
+                                    <!-- Unidades Producción -->
+                                    <tr class="bg-slate-900/30 font-bold text-white">
+                                        <td class="px-4 py-2" colspan="2">Unidades Producción / Comercial</td>
+                                        <td class="px-4 py-2 text-right">77</td>
+                                        <td class="px-4 py-2 text-right">1,017</td>
+                                        <td class="px-4 py-2 text-right">2,217</td>
+                                        <td class="px-4 py-2 text-right">3,417</td>
+                                    </tr>
+                                    <!-- Ventas -->
+                                    <tr class="hover:bg-slate-800/10">
+                                        <td class="px-4 py-2.5 font-semibold text-white">Ventas Brutas (Renta)</td>
+                                        <td class="px-4 py-2.5 text-center text-slate-500">-</td>
+                                        <td class="px-4 py-2.5 text-right font-semibold text-emerald-400">$1,735,811</td>
+                                        <td class="px-4 py-2.5 text-right font-semibold text-emerald-400">$53,078,811</td>
+                                        <td class="px-4 py-2.5 text-right font-semibold text-emerald-400">$176,259,718</td>
+                                        <td class="px-4 py-2.5 text-right font-semibold text-emerald-400">$303,141,338</td>
+                                    </tr>
+                                    <!-- Costo de Ventas -->
+                                    <tr class="hover:bg-slate-800/10 text-slate-500">
+                                        <td class="px-4 py-2.5 font-semibold">Costo de Ventas (Inventario)</td>
+                                        <td class="px-4 py-2.5 text-center">-</td>
+                                        <td class="px-4 py-2.5 text-right">$0</td>
+                                        <td class="px-4 py-2.5 text-right">$0</td>
+                                        <td class="px-4 py-2.5 text-right">$0</td>
+                                        <td class="px-4 py-2.5 text-right">$0</td>
+                                    </tr>
+                                    <!-- Utilidad Bruta -->
+                                    <tr class="bg-indigo-500/5 font-bold text-white border-y border-indigo-500/10">
+                                        <td class="px-4 py-2.5">Utilidad Bruta</td>
+                                        <td class="px-4 py-2.5 text-center text-indigo-400">100%</td>
+                                        <td class="px-4 py-2.5 text-right text-indigo-300">$1,735,811</td>
+                                        <td class="px-4 py-2.5 text-right text-indigo-300">$53,078,811</td>
+                                        <td class="px-4 py-2.5 text-right text-indigo-300">$176,259,718</td>
+                                        <td class="px-4 py-2.5 text-right text-indigo-300">$303,141,338</td>
+                                    </tr>
+                                    <!-- MO y GIF -->
+                                    <tr class="hover:bg-slate-800/10">
+                                        <td class="px-4 py-2.5 text-slate-350">Mano de Obra y GIF (Flete/Rutas)</td>
+                                        <td class="px-4 py-2.5 text-center text-slate-500">-</td>
+                                        <td class="px-4 py-2.5 text-right font-semibold text-slate-200">$492,750</td>
+                                        <td class="px-4 py-2.5 text-right font-semibold text-slate-200">$5,366,250</td>
+                                        <td class="px-4 py-2.5 text-right font-semibold text-slate-200">$13,358,250</td>
+                                        <td class="px-4 py-2.5 text-right font-semibold text-slate-200">$21,053,250</td>
+                                    </tr>
+                                    <!-- Otros Gastos -->
+                                    <tr class="bg-slate-900/50 text-[10px] font-bold text-slate-400 border-t border-slate-850">
+                                        <td class="px-4 py-1.5" colspan="6">Otros Gastos Operativos (OpEx)</td>
+                                    </tr>
+                                    <!-- Telemetria -->
+                                    <tr class="hover:bg-slate-800/10 text-xs">
+                                        <td class="px-4 py-2 text-slate-400 pl-6">Telemetría y Sim Datos</td>
+                                        <td class="px-4 py-2 text-center text-slate-500">468</td>
+                                        <td class="px-4 py-2 text-right">$92,196</td>
+                                        <td class="px-4 py-2 text-right">$2,819,232</td>
+                                        <td class="px-4 py-2 text-right">$9,361,872</td>
+                                        <td class="px-4 py-2 text-right">$16,101,072</td>
+                                    </tr>
+                                    <!-- Mantenimiento -->
+                                    <tr class="hover:bg-slate-800/10 text-xs">
+                                        <td class="px-4 py-2 text-slate-400 pl-6">Mantenimientos</td>
+                                        <td class="px-4 py-2 text-center text-slate-500">500</td>
+                                        <td class="px-4 py-2 text-right">$97,500</td>
+                                        <td class="px-4 py-2 text-right">$3,012,000</td>
+                                        <td class="px-4 py-2 text-right">$10,002,000</td>
+                                        <td class="px-4 py-2 text-right">$17,202,000</td>
+                                    </tr>
+                                    <!-- Luz -->
+                                    <tr class="hover:bg-slate-800/10 text-xs text-slate-500">
+                                        <td class="px-4 py-2 pl-6">Luz (Energía Eléctrica)</td>
+                                        <td class="px-4 py-2 text-center">-</td>
+                                        <td class="px-4 py-2 text-right">$0</td>
+                                        <td class="px-4 py-2 text-right">$0</td>
+                                        <td class="px-4 py-2 text-right">$0</td>
+                                        <td class="px-4 py-2 text-right">$0</td>
+                                    </tr>
+                                    <!-- S&LB Transporte Carga -->
+                                    <tr class="hover:bg-slate-800/10 text-xs">
+                                        <td class="px-4 py-2 text-slate-400 pl-6">S&LB Transporte Carga</td>
+                                        <td class="px-4 py-2 text-center text-slate-500">-</td>
+                                        <td class="px-4 py-2 text-right">$72,000</td>
+                                        <td class="px-4 py-2 text-right">$1,260,000</td>
+                                        <td class="px-4 py-2 text-right">$4,056,000</td>
+                                        <td class="px-4 py-2 text-right">$6,936,000</td>
+                                    </tr>
+                                    <!-- Com por apertura -->
+                                    <tr class="hover:bg-slate-800/10 text-xs">
+                                        <td class="px-4 py-2 text-slate-400 pl-6">Comisión por Apertura</td>
+                                        <td class="px-4 py-2 text-center text-slate-500">1,000</td>
+                                        <td class="px-4 py-2 text-right">$77,000</td>
+                                        <td class="px-4 py-2 text-right">$940,000</td>
+                                        <td class="px-4 py-2 text-right">$1,200,000</td>
+                                        <td class="px-4 py-2 text-right">$1,200,000</td>
+                                    </tr>
+                                    <!-- Gasolina -->
+                                    <tr class="hover:bg-slate-800/10 text-xs">
+                                        <td class="px-4 py-2 text-slate-400 pl-6">Gasolina</td>
+                                        <td class="px-4 py-2 text-center text-slate-500">6,000</td>
+                                        <td class="px-4 py-2 text-right">$42,000</td>
+                                        <td class="px-4 py-2 text-right">$630,000</td>
+                                        <td class="px-4 py-2 text-right">$2,028,000</td>
+                                        <td class="px-4 py-2 text-right">$3,468,000</td>
+                                    </tr>
+                                    <!-- Celular -->
+                                    <tr class="hover:bg-slate-800/10 text-xs">
+                                        <td class="px-4 py-2 text-slate-400 pl-6">Celular</td>
+                                        <td class="px-4 py-2 text-center text-slate-500">3,000</td>
+                                        <td class="px-4 py-2 text-right">$6,000</td>
+                                        <td class="px-4 py-2 text-right">$45,000</td>
+                                        <td class="px-4 py-2 text-right">$60,000</td>
+                                        <td class="px-4 py-2 text-right">$60,000</td>
+                                    </tr>
+                                    <!-- Viaticos Vendedores -->
+                                    <tr class="hover:bg-slate-800/10 text-xs">
+                                        <td class="px-4 py-2 text-slate-400 pl-6">Viáticos Vendedores</td>
+                                        <td class="px-4 py-2 text-center text-slate-500">250</td>
+                                        <td class="px-4 py-2 text-right">$54,000</td>
+                                        <td class="px-4 py-2 text-right">$564,000</td>
+                                        <td class="px-4 py-2 text-right">$720,000</td>
+                                        <td class="px-4 py-2 text-right">$720,000</td>
+                                    </tr>
+                                    <!-- S&LB Maquina -->
+                                    <tr class="hover:bg-slate-800/10 text-xs">
+                                        <td class="px-4 py-2 text-slate-400 pl-6">S&LB Máquina (Depreciación/Arrend.)</td>
+                                        <td class="px-4 py-2 text-center text-slate-500">1,000</td>
+                                        <td class="px-4 py-2 text-right">$197,000</td>
+                                        <td class="px-4 py-2 text-right">$6,024,000</td>
+                                        <td class="px-4 py-2 text-right">$20,004,000</td>
+                                        <td class="px-4 py-2 text-right">$34,404,000</td>
+                                    </tr>
+                                    <!-- Total de Gastos -->
+                                    <tr class="bg-slate-900 font-bold text-white">
+                                        <td class="px-4 py-2.5" colspan="2">Total de Gastos Operativos</td>
+                                        <td class="px-4 py-2.5 text-right">$637,696</td>
+                                        <td class="px-4 py-2.5 text-right">$15,294,232</td>
+                                        <td class="px-4 py-2.5 text-right">$47,431,872</td>
+                                        <td class="px-4 py-2.5 text-right">$80,091,072</td>
+                                    </tr>
+                                    <!-- EBIT -->
+                                    <tr class="bg-blue-600/15 font-bold text-white border-y border-blue-500/25">
+                                        <td class="px-4 py-3">EBIT (Utilidad de Operación)</td>
+                                        <td class="px-4 py-3 text-center text-blue-400">-%</td>
+                                        <td class="px-4 py-3 text-right text-blue-300">$605,365 (35%)</td>
+                                        <td class="px-4 py-3 text-right text-blue-300">$32,418,329 (61%)</td>
+                                        <td class="px-4 py-3 text-right text-blue-300">$115,469,596 (66%)</td>
+                                        <td class="px-4 py-3 text-right text-blue-300">$201,997,016 (67%)</td>
+                                    </tr>
+                                    <!-- Utilidad por maquina -->
+                                    <tr class="bg-emerald-600/20 font-extrabold text-white">
+                                        <td class="px-4 py-3 text-emerald-400" colspan="2">Utilidad Mensual Promedio por Máquina</td>
+                                        <td class="px-4 py-3 text-right text-emerald-400">$4,431</td>
+                                        <td class="px-4 py-3 text-right text-emerald-400">$5,632</td>
+                                        <td class="px-4 py-3 text-right text-emerald-400">$5,836</td>
+                                        <td class="px-4 py-3 text-right text-emerald-400">$5,897</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- EXPLICACIÓN E IDEAS CLAVE -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="space-y-6">
+                            <!-- Crecimiento -->
+                            <div class="bg-slate-900/40 p-5 rounded-xl border border-slate-800 space-y-2">
+                                <h4 class="font-bold text-indigo-400 text-sm flex items-center gap-2">
+                                    <i data-lucide="trending-up" class="w-4 h-4 text-indigo-400"></i> Curva de Crecimiento y Escala
+                                </h4>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    El modelo de negocios contempla una fase inicial con **77 máquinas** en 2026. A partir de **julio de 2027**, se incorpora un equipo comercial de **10 Ejecutivos de Expansión (Vendedores)** en calle. Se estima que cada uno coloque un promedio constante de **10 máquinas al mes**, lo que estabiliza el crecimiento neto del parque corporativo a **100 máquinas mensuales** en una curva continua. Gracias a este ritmo comercial, la flotilla asciende a **1,017 unidades** en 2027, **2,217** en 2028 y finalmente **3,417 máquinas instaladas para 2029**.
+                                </p>
+                            </div>
+
+                            <!-- Costo de Ventas -->
+                            <div class="bg-slate-900/40 p-5 rounded-xl border border-slate-800 space-y-2">
+                                <h4 class="font-bold text-indigo-400 text-sm flex items-center gap-2">
+                                    <i data-lucide="coins" class="w-4 h-4 text-indigo-400"></i> Costo de Ventas y Capital de Trabajo Inicial
+                                </h4>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Snackeando no presenta costo de ventas directo reflejado en el estado de resultados consolidado. Esto se debe a que la empresa opera bajo un esquema de **arrendamiento de servicio (Vending-as-a-Service o VaaS)**, donde todo el inventario es un activo rotativo y los egresos se reportan como gasto operativo de abasto (dentro de MO y GIF). Sin embargo, se prevé una **inversión inicial de $5,500 MXN por máquina** destinada exclusivamente a cargar los espirales de forma completa al 100% (*full stock*) para arrancar el ciclo de ventas y autofinanciar los refiles con el flujo diario.
+                                </p>
+                            </div>
+
+                            <!-- MO y GIF -->
+                            <div class="bg-slate-900/40 p-5 rounded-xl border border-slate-800 space-y-2">
+                                <h4 class="font-bold text-indigo-400 text-sm flex items-center gap-2">
+                                    <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i> Mano de Obra (MO) y Gastos Indirectos (GIF)
+                                </h4>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Los salarios y comisiones de los operadores de ruta, los mecánicos de soporte, la depreciación logística y los seguros de carga están consolidados en la cuenta de **MO y GIF**. Este costo es un factor directo de la escala y cobertura geográfica, optimizándose en un **8% y 7%** de los ingresos en los años 2028 y 2029 a medida que la ruta se concentra y reduce los traslados inútiles.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Metricas Gastos -->
+                            <div class="bg-slate-900/40 p-5 rounded-xl border border-slate-800 space-y-3">
+                                <h4 class="font-bold text-indigo-400 text-sm flex items-center gap-2">
+                                    <i data-lucide="settings" class="w-4 h-4 text-indigo-400"></i> Comentarios y Métricas del Gasto Operativo (OpEx)
+                                </h4>
+                                <ul class="text-xs text-slate-300 space-y-3 pl-4 list-disc">
+                                    <li><strong>Mantenimientos ($500 MXN):</strong> Provisión preventiva mensual asignada por máquina instalada para soporte y refacciones menores.</li>
+                                    <li><strong>Luz ($0 MXN):</strong> Sin impacto financiero. El cliente corporativo o residencial absorbe el suministro eléctrico por contrato.</li>
+                                    <li><strong>Comisión por Apertura ($1,000 MXN):</strong> Pago único otorgado a los ejecutivos de ventas al concretar la instalación de cada punto.</li>
+                                    <li><strong>Celular ($3,000 MXN):</strong> Plan telefónico y datos móviles asignados a los 10 vendedores para su app de prospección.</li>
+                                    <li><strong>Viáticos ($250 MXN):</strong> Apoyo diario de viáticos por vendedor para su movilización de cambaceo (6 días a la semana).</li>
+                                    <li><strong>S&LB Máquina ($1,000 MXN):</strong> Depreciación contable mensual del activo o pago por arrendamiento financiero del equipo.</li>
+                                </ul>
+                            </div>
+
+                            <!-- ROI y TIR -->
+                            <div class="bg-indigo-950/40 p-5 rounded-xl border border-indigo-900/50 space-y-4">
+                                <h4 class="font-bold text-indigo-300 text-sm flex items-center gap-2">
+                                    <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-300"></i> Análisis Financiero, ROI & TIR por Máquina
+                                </h4>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    La **Utilidad Mensual Promedio por Máquina** (EBIT por unidad) asciende de **$4,431 MXN** en 2026 hasta estabilizarse en **$5,897 MXN** en 2029 (un promedio anual consolidado de **$70,764 MXN**). Esta rentabilidad por punto se analiza bajo dos escenarios comerciales:
+                                </p>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <!-- Escenario A -->
+                                    <div class="bg-slate-950/80 p-3.5 rounded-lg border border-slate-800">
+                                        <h5 class="text-[10px] text-amber-400 font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
+                                            <i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i> Escenario A: Costo Actual
+                                        </h5>
+                                        <ul class="text-[10px] text-slate-300 space-y-1">
+                                            <li>• Adquisición: <strong>$120,000 MXN</strong> (sin IVA)</li>
+                                            <li>• Inversión Inicial (c/stock): <strong>$125,500 MXN</strong></li>
+                                            <li>• Utilidad Anual Prom.: <strong>~$69,460 MXN</strong></li>
+                                            <li class="border-t border-slate-900 pt-1 mt-1.5 font-semibold text-emerald-400 text-[11px]">ROI Anual: 55.3%</li>
+                                            <li class="font-semibold text-blue-400 text-[11px]">TIR (5 años): 50.5%</li>
+                                            <li class="font-semibold text-slate-450">Payback: 21.7 meses</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <!-- Escenario B -->
+                                    <div class="bg-slate-950/80 p-3.5 rounded-lg border border-emerald-500/20">
+                                        <h5 class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
+                                            <i data-lucide="tag" class="w-3.5 h-3.5"></i> Escenario B: Negociación
+                                        </h5>
+                                        <ul class="text-[10px] text-slate-300 space-y-1">
+                                            <li>• Adquisición por Vol.: <strong>$90,000 MXN</strong> (sin IVA)</li>
+                                            <li>• Inversión Inicial (c/stock): <strong>$95,500 MXN</strong></li>
+                                            <li>• Utilidad Anual Prom.: <strong>~$69,460 MXN</strong></li>
+                                            <li class="border-t border-slate-900 pt-1 mt-1.5 font-semibold text-emerald-400 text-[11px]">ROI Anual: 72.7%</li>
+                                            <li class="font-semibold text-blue-400 text-[11px]">TIR (5 años): 68.2%</li>
+                                            <li class="font-semibold text-slate-450">Payback: 16.5 meses</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-slate-400 leading-relaxed mt-1">
+                                    *El escenario B representa un **incremento del 17.4% en el ROI anual**, acelerando la recuperación de capital en **5.2 meses**. Negociación por volumen actualmente en curso con fabricantes.*
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 <!-- PRODUCT ANALYSIS TAB (NUEVA SECCIÓN) -->
             <!-- ========================================== -->
             <div id="prod-analisis" class="tab-content animate-fade-in hidden space-y-6">
