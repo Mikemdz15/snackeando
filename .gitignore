@@ -17,3 +17,5 @@ scratch/
 .vercel/
 .git/
 node_modules/
+
+.vercel
