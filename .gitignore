@@ -1,0 +1,19 @@
+# Respaldos de index.html
+index.html.bak*
+
+# Hojas de cálculo de Excel
+*.xlsx
+~$*.xlsx
+
+# Documentos e informes
+*.docx
+*.pdf
+Documentos/
+Minutas/
+
+# Carpetas temporales y de desarrollo
+scratch/
+.gemini/
+.vercel/
+.git/
+node_modules/
