@@ -3083,6 +3083,77 @@
                         </div>
 
                     </div>
+
+                    <!-- Galería de Equipos (Carrusel de Fotos Reales) -->
+                    <div class="mt-8 bg-slate-900/30 p-6 rounded-2xl border border-slate-800/80 space-y-6">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-slate-800/60 gap-2">
+                            <div>
+                                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                    <i data-lucide="image" class="text-blue-400"></i> Galería de Equipos (Fotografías Reales)
+                                </h3>
+                                <p class="text-slate-450 text-[11px] mt-0.5">Inspección visual del branding de vinil Snackeando y la configuración del equipamiento interno.</p>
+                            </div>
+                            <span class="bg-blue-500/15 text-blue-400 font-semibold px-2.5 py-1 rounded-lg border border-blue-500/20 text-[10px] uppercase tracking-wider">
+                                5 imágenes
+                            </span>
+                        </div>
+                        
+                        <!-- Viewport -->
+                        <div class="relative w-full h-[500px] md:h-[580px] rounded-xl bg-slate-950 overflow-hidden flex items-center justify-center border border-slate-850">
+                            <!-- Slide 1 -->
+                            <div class="ams-slide w-full h-full flex items-center justify-center transition-all duration-300 absolute inset-0 opacity-100 scale-100">
+                                <img src="ams_front.png" class="object-contain max-w-full max-h-full" alt="Vista Frontal de la Máquina Vending">
+                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 text-center">
+                                    <p class="text-xs font-bold text-white">Vista Frontal - Vinil Corporativo Snackeando</p>
+                                </div>
+                            </div>
+                            <!-- Slide 2 -->
+                            <div class="ams-slide w-full h-full flex items-center justify-center transition-all duration-300 absolute inset-0 opacity-0 scale-95 pointer-events-none">
+                                <img src="ams_perspective.png" class="object-contain max-w-full max-h-full" alt="Vista en Perspectiva de la Máquina Vending">
+                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 text-center">
+                                    <p class="text-xs font-bold text-white">Vista Perspectiva - Diseño Lateral de Marca</p>
+                                </div>
+                            </div>
+                            <!-- Slide 3 -->
+                            <div class="ams-slide w-full h-full flex items-center justify-center transition-all duration-300 absolute inset-0 opacity-0 scale-95 pointer-events-none">
+                                <img src="ams_internal_open.png" class="object-contain max-w-full max-h-full" alt="Bandejas y Espirales Internas Vacías">
+                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 text-center">
+                                    <p class="text-xs font-bold text-white">Interior - Configuración Física de Charolas y Resortes (7 Charolas Custom)</p>
+                                </div>
+                            </div>
+                            <!-- Slide 4 -->
+                            <div class="ams-slide w-full h-full flex items-center justify-center transition-all duration-300 absolute inset-0 opacity-0 scale-95 pointer-events-none">
+                                <img src="ams_side_logo.png" class="object-contain max-w-full max-h-full" alt="Lateral derecho de la Máquina Vending">
+                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 text-center">
+                                    <p class="text-xs font-bold text-white">Lateral Derecho - Marca Corporativa y Mensaje Publicitario</p>
+                                </div>
+                            </div>
+                            <!-- Slide 5 -->
+                            <div class="ams-slide w-full h-full flex items-center justify-center transition-all duration-300 absolute inset-0 opacity-0 scale-95 pointer-events-none">
+                                <img src="ams_shelves.png" class="object-contain max-w-full max-h-full" alt="Vista Detallada de Espirales e Interior">
+                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 text-center">
+                                    <p class="text-xs font-bold text-white">Detalle de Espirales y Bandejas de Carga (Resortes Helicoidales de Acero)</p>
+                                </div>
+                            </div>
+
+                            <!-- Controls -->
+                            <button onclick="changeAmsSlide(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-slate-900/75 hover:bg-slate-800 text-white p-2.5 rounded-full border border-slate-800 transition-all focus:outline-none z-10" aria-label="Anterior">
+                                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                            </button>
+                            <button onclick="changeAmsSlide(1)" class="absolute right-4 top-1/2 -translate-y-1/2 bg-slate-900/75 hover:bg-slate-800 text-white p-2.5 rounded-full border border-slate-800 transition-all focus:outline-none z-10" aria-label="Siguiente">
+                                <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+
+                        <!-- Thumbnails / Dots -->
+                        <div class="flex justify-center items-center gap-2">
+                            <button onclick="setAmsSlide(0)" class="ams-dot w-2.5 h-2.5 rounded-full bg-blue-500 transition-all" aria-label="Ver imagen 1"></button>
+                            <button onclick="setAmsSlide(1)" class="ams-dot w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-650 transition-all" aria-label="Ver imagen 2"></button>
+                            <button onclick="setAmsSlide(2)" class="ams-dot w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-650 transition-all" aria-label="Ver imagen 3"></button>
+                            <button onclick="setAmsSlide(3)" class="ams-dot w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-650 transition-all" aria-label="Ver imagen 4"></button>
+                            <button onclick="setAmsSlide(4)" class="ams-dot w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-650 transition-all" aria-label="Ver imagen 5"></button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -3961,6 +4032,49 @@
         let salesChart = null;
         let paymentsChart = null;
 
+        // AMS Vending Machine Carousel Logic
+        let currentAmsSlide = 0;
+        window.changeAmsSlide = function(direction) {
+            const slides = document.querySelectorAll('.ams-slide');
+            const dots = document.querySelectorAll('.ams-dot');
+            if (slides.length === 0) return;
+            
+            // Hide current slide
+            slides[currentAmsSlide].classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            slides[currentAmsSlide].classList.remove('opacity-100', 'scale-100');
+            dots[currentAmsSlide].classList.remove('bg-blue-500');
+            dots[currentAmsSlide].classList.add('bg-slate-700');
+            
+            // Update index
+            currentAmsSlide = (currentAmsSlide + direction + slides.length) % slides.length;
+            
+            // Show new slide
+            slides[currentAmsSlide].classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+            slides[currentAmsSlide].classList.add('opacity-100', 'scale-100');
+            dots[currentAmsSlide].classList.remove('bg-slate-700');
+            dots[currentAmsSlide].classList.add('bg-blue-500');
+        };
+
+        window.setAmsSlide = function(slideIndex) {
+            const slides = document.querySelectorAll('.ams-slide');
+            const dots = document.querySelectorAll('.ams-dot');
+            if (slides.length === 0) return;
+            
+            // Hide current slide
+            slides[currentAmsSlide].classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            slides[currentAmsSlide].classList.remove('opacity-100', 'scale-100');
+            dots[currentAmsSlide].classList.remove('bg-blue-500');
+            dots[currentAmsSlide].classList.add('bg-slate-700');
+            
+            // Update index
+            currentAmsSlide = slideIndex;
+            
+            // Show new slide
+            slides[currentAmsSlide].classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+            slides[currentAmsSlide].classList.add('opacity-100', 'scale-100');
+            dots[currentAmsSlide].classList.remove('bg-slate-700');
+            dots[currentAmsSlide].classList.add('bg-blue-500');
+        };
 
         // INITIALIZER
         document.addEventListener('DOMContentLoaded', () => {
