@@ -102,12 +102,75 @@
         <!-- Navigation Menu -->
         <nav class="flex-1 p-4 space-y-6 overflow-y-auto" id="main-nav">
             
-            <!-- SECTION 1: ERP OPERATIVO -->
-            <div>
-                <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2 flex items-center gap-2">
-                    <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Sistema Operativo ERP
-                </h3>
-                <div class="space-y-1">
+            <!-- SECTION 1: PLAN ESTRATÉGICO -->
+            <div class="space-y-2">
+                <button onclick="toggleSidebarSection('sec-bp', 'chevron-bp')" class="w-full flex items-center justify-between px-3 py-2 text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-widest transition-colors duration-200 focus:outline-none">
+                    <span class="flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Plan Estratégico (BP)
+                    </span>
+                    <i id="chevron-bp" data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform duration-200"></i>
+                </button>
+                <div id="sec-bp" class="space-y-1 hidden pl-2 border-l border-slate-800/40 ml-4">
+                    <button data-target="bp-resumen" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
+                        <i data-lucide="target" class="w-4 h-4"></i>
+                        <span>1. Resumen Ejecutivo</span>
+                    </button>
+                    <button data-target="bp-legal" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
+                        <i data-lucide="scale" class="w-4 h-4"></i>
+                        <span>2. Estructura Legal</span>
+                    </button>
+                    <button data-target="bp-equipamiento" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
+                        <i data-lucide="package" class="w-4 h-4"></i>
+                        <span>3. Equipamiento AMS</span>
+                    </button>
+                    <button data-target="bp-riesgos" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
+                        <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                        <span>4. Matriz de Garantías</span>
+                    </button>
+                    <button data-target="bp-productos" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
+                        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                        <span>5. Mix & Planogramas</span>
+                    </button>
+                    <button data-target="bp-tecnologia" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
+                        <i data-lucide="radio" class="w-4 h-4"></i>
+                        <span>6. Telemetría e IoT</span>
+                    </button>
+                    <button data-target="bp-operaciones" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
+                        <i data-lucide="truck" class="w-4 h-4"></i>
+                        <span>7. Logística Toluca</span>
+                    </button>
+                    <button data-target="bp-seguridad" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
+                        <i data-lucide="shield" class="w-4 h-4"></i>
+                        <span>8. Seguridad & Efectivo</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SECTION 2: ANÁLISIS DE PRODUCTOS -->
+            <div class="space-y-2">
+                <button onclick="toggleSidebarSection('sec-analisis', 'chevron-analisis')" class="w-full flex items-center justify-between px-3 py-2 text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-widest transition-colors duration-200 focus:outline-none">
+                    <span class="flex items-center gap-2">
+                        <i data-lucide="search" class="w-3.5 h-3.5"></i> Análisis de Productos
+                    </span>
+                    <i id="chevron-analisis" data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform duration-200"></i>
+                </button>
+                <div id="sec-analisis" class="space-y-1 hidden pl-2 border-l border-slate-800/40 ml-4">
+                    <button data-target="prod-analisis" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
+                        <i data-lucide="cookie" class="w-4 h-4"></i>
+                        <span>Análisis de Productos</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SECTION 3: SISTEMA OPERATIVO ERP -->
+            <div class="space-y-2">
+                <button onclick="toggleSidebarSection('sec-erp', 'chevron-erp')" class="w-full flex items-center justify-between px-3 py-2 text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-widest transition-colors duration-200 focus:outline-none">
+                    <span class="flex items-center gap-2">
+                        <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Sistema Operativo ERP
+                    </span>
+                    <i id="chevron-erp" data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform duration-200"></i>
+                </button>
+                <div id="sec-erp" class="space-y-1 hidden pl-2 border-l border-slate-800/40 ml-4">
                     <button data-target="erp-dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 bg-blue-600/90 text-white font-semibold shadow-lg shadow-blue-600/10">
                         <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                         <span>Mando Central</span>
@@ -143,59 +206,6 @@
                     <button data-target="erp-maint" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
                         <i data-lucide="wrench" class="w-4 h-4"></i>
                         <span>Mapeo de SLA Técnico</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- SECTION 2: PLAN ESTRATÉGICO -->
-            <div>
-                <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2 flex items-center gap-2">
-                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Plan Estratégico (BP)
-                </h3>
-                <div class="space-y-1">
-                    <button data-target="bp-resumen" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
-                        <i data-lucide="target" class="w-4 h-4"></i>
-                        <span>1. Resumen Ejecutivo</span>
-                    </button>
-                    <button data-target="bp-legal" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
-                        <i data-lucide="scale" class="w-4 h-4"></i>
-                        <span>2. Estructura Legal</span>
-                    </button>
-                    <button data-target="bp-tecnologia" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
-                        <i data-lucide="radio" class="w-4 h-4"></i>
-                        <span>3. Telemetría e IoT</span>
-                    </button>
-                    <button data-target="bp-operaciones" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
-                        <i data-lucide="truck" class="w-4 h-4"></i>
-                        <span>4. Logística Toluca</span>
-                    </button>
-                    <button data-target="bp-riesgos" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
-                        <i data-lucide="shield-alert" class="w-4 h-4"></i>
-                        <span>5. Matriz de Garantías</span>
-                    </button>
-                    <button data-target="bp-productos" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
-                        <i data-lucide="layout-grid" class="w-4 h-4"></i>
-                        <span>6. Mix & Planogramas</span>
-                    </button>
-                    <button data-target="bp-equipamiento" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
-                        <i data-lucide="package" class="w-4 h-4"></i>
-                        <span>7. Equipamiento AMS</span>
-                    </button>
-                    <button data-target="bp-seguridad" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
-                        <i data-lucide="shield" class="w-4 h-4"></i>
-                        <span>8. Seguridad & Efectivo</span>
-                    </button>
-                </div>
-            </div>
-                    <!-- SECTION 3: ANÁLISIS DE PRODUCTOS -->
-            <div class="mt-4">
-                <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2 flex items-center gap-2">
-                    <i data-lucide="search" class="w-3.5 h-3.5"></i> Análisis de Productos
-                </h3>
-                <div class="space-y-1">
-                    <button data-target="prod-analisis" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-left transition-all duration-200 text-slate-400 hover:bg-slate-800/40 hover:text-white font-medium">
-                        <i data-lucide="cookie" class="w-4 h-4"></i>
-                        <span>Análisis de Productos</span>
                     </button>
                 </div>
             </div>
@@ -3660,6 +3670,26 @@
             if (window.updateTelemetrySimulator) window.updateTelemetrySimulator();
         });
 
+        // Collapsible sidebar sections
+        window.toggleSidebarSection = function(sectionId, chevronId) {
+            const section = document.getElementById(sectionId);
+            const chevron = document.getElementById(chevronId);
+            if (section) {
+                const isHidden = section.classList.contains('hidden');
+                if (isHidden) {
+                    section.classList.remove('hidden');
+                    if (chevron) {
+                        chevron.style.transform = 'rotate(90deg)';
+                    }
+                } else {
+                    section.classList.add('hidden');
+                    if (chevron) {
+                        chevron.style.transform = 'rotate(0deg)';
+                    }
+                }
+            }
+        };
+
         // 1. TABS SYSTEM NAVIGATION
         function initTabs() {
             const buttons = document.querySelectorAll('.nav-btn');
@@ -3668,8 +3698,42 @@
             const activeClasses = ['bg-blue-600/90', 'text-white', 'font-semibold', 'shadow-lg', 'shadow-blue-600/10'];
             const inactiveClasses = ['text-slate-400', 'hover:bg-slate-800/40', 'hover:text-white', 'font-medium'];
 
+            // Expand the section containing the active button on initial load
+            const activeBtn = document.querySelector('.nav-btn.bg-blue-600\\/90, .nav-btn.bg-blue-600');
+            if (activeBtn) {
+                const parentSection = activeBtn.parentElement;
+                if (parentSection && parentSection.classList.contains('hidden')) {
+                    parentSection.classList.remove('hidden');
+                    const sectionId = parentSection.id;
+                    let chevronId = '';
+                    if (sectionId === 'sec-bp') chevronId = 'chevron-bp';
+                    else if (sectionId === 'sec-analisis') chevronId = 'chevron-analisis';
+                    else if (sectionId === 'sec-erp') chevronId = 'chevron-erp';
+                    
+                    const chevron = document.getElementById(chevronId);
+                    if (chevron) {
+                        chevron.style.transform = 'rotate(90deg)';
+                    }
+                }
+            }
+
             buttons.forEach(button => {
                 button.addEventListener('click', () => {
+                    // Auto-expand parent section if collapsed
+                    const parentSection = button.parentElement;
+                    if (parentSection && parentSection.classList.contains('hidden')) {
+                        parentSection.classList.remove('hidden');
+                        const sectionId = parentSection.id;
+                        let chevronId = '';
+                        if (sectionId === 'sec-bp') chevronId = 'chevron-bp';
+                        else if (sectionId === 'sec-analisis') chevronId = 'chevron-analisis';
+                        else if (sectionId === 'sec-erp') chevronId = 'chevron-erp';
+                        
+                        const chevron = document.getElementById(chevronId);
+                        if (chevron) {
+                            chevron.style.transform = 'rotate(90deg)';
+                        }
+                    }
                     const targetId = button.getAttribute('data-target');
 
                     // Set title in top bar
