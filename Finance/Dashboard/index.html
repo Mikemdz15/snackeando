@@ -391,6 +391,31 @@
             padding-top: 15px;
         }
 
+        /* LOGIN OVERLAY */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #060913;
+            background-image: radial-gradient(circle at 50% 50%, rgba(197, 168, 128, 0.08) 0%, rgba(6, 9, 19, 0) 70%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        .login-card {
+            background: rgba(22, 28, 45, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+        }
+
         /* PASOS A SEGUIR / TASK LIST */
         .tasks-section {
             margin-top: 30px;
@@ -863,6 +888,26 @@
 </head>
 <body>
 
+    <!-- LOGIN OVERLAY -->
+    <div class="login-overlay" id="loginOverlay" style="display: flex;">
+        <div class="login-card">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span class="intro-tag" style="font-size: 0.7rem; letter-spacing: 1.5px; color: #c5a880;">Control de Acceso</span>
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #fff; margin-top: 8px;">Dashboard Snackeando</h2>
+            </div>
+            <p style="color: #9ca3af; font-size: 0.85rem; text-align: center; margin-bottom: 25px; line-height: 1.6;">
+                Ingresa el código de acceso autorizado para visualizar el reporte de ventas consolidado.
+            </p>
+            <div style="margin-bottom: 20px;">
+                <input type="password" id="login-password-input" class="add-task-form input" placeholder="Código de acceso..." style="width: 100%; box-sizing: border-box; text-align: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; color: #fff;" onkeydown="if(event.key === 'Enter') attemptLogin()">
+                <p id="login-error-msg" style="color: #ef4444; font-size: 0.8rem; text-align: center; margin-top: 8px; display: none;">Código de acceso incorrecto.</p>
+            </div>
+            <button class="btn-primary" onclick="attemptLogin()" style="width: 100%; justify-content: center; padding: 12px 0; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="key" style="width: 16px; height: 16px;"></i> Ingresar al Dashboard
+            </button>
+        </div>
+    </div>
+
     <!-- TOP HEADER -->
     <header>
         <div class="logo-area">
@@ -880,10 +925,18 @@
             <a href="#tabla-top">Productos</a>
             <a href="#analisis">Análisis</a>
         </div>
-        <button class="btn-link-sheet" onclick="openSheetModal()">
-            <i data-lucide="link" class="w-3.5 h-3.5"></i>
-            Vincular Google Sheet
-        </button>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <span class="db-status-badge" id="user-role-badge" style="background: rgba(197, 168, 128, 0.1); border-color: rgba(197, 168, 128, 0.2); font-weight: 600; color: #c5a880; font-size: 0.75rem;">
+                Rol: Lector
+            </span>
+            <button class="btn-link-sheet" id="btn-link-sheet-id" onclick="openSheetModal()">
+                <i data-lucide="link" class="w-3.5 h-3.5"></i>
+                Vincular Google Sheet
+            </button>
+            <button class="btn-action" onclick="logout()" title="Cerrar Sesión" style="padding: 8px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; background: none; color: #9ca3af; cursor: pointer;">
+                <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> Salir
+            </button>
+        </div>
     </header>
 
     <!-- HERO SECTION -->
@@ -1190,6 +1243,9 @@
 
         // Initialize elements
         document.addEventListener('DOMContentLoaded', () => {
+            // Check session login first
+            checkSessionLogin();
+
             if (window.lucide) {
                 window.lucide.createIcons();
             }
@@ -2324,9 +2380,11 @@
                                 <button class="btn-action" onclick="startEditTaskDesc('${task.id}')" title="Editar Pendiente">
                                     <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
                                 </button>
+                                ${currentUserRole === 'Administrador' ? `
                                 <button class="btn-action btn-delete" onclick="deleteTask('${task.id}')" title="Eliminar">
                                     <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
                                 </button>
+                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -2341,6 +2399,82 @@
             if (window.lucide) {
                 window.lucide.createIcons();
             }
+        }
+
+        // ==========================================
+        // CONTROL DE ACCESO (USER ROLES LOGIC)
+        // ==========================================
+        let currentUserRole = null;
+
+        function checkSessionLogin() {
+            const savedRole = localStorage.getItem('user_role');
+            if (savedRole) {
+                currentUserRole = savedRole;
+                document.getElementById('loginOverlay').style.display = 'none';
+                applyRolePermissions();
+            } else {
+                document.getElementById('loginOverlay').style.display = 'flex';
+            }
+        }
+
+        function attemptLogin() {
+            const input = document.getElementById('login-password-input');
+            const errorMsg = document.getElementById('login-error-msg');
+            const code = input.value.trim();
+
+            if (code === "admin.snackeando" || code === "admin123") {
+                currentUserRole = "Administrador";
+                localStorage.setItem('user_role', currentUserRole);
+                document.getElementById('loginOverlay').style.display = 'none';
+                errorMsg.style.display = 'none';
+                applyRolePermissions();
+            } else if (code === "socio.snackeando" || code === "socio123" || code === "lector123") {
+                currentUserRole = "Lector";
+                localStorage.setItem('user_role', currentUserRole);
+                document.getElementById('loginOverlay').style.display = 'none';
+                errorMsg.style.display = 'none';
+                applyRolePermissions();
+            } else {
+                errorMsg.style.display = 'block';
+            }
+            input.value = '';
+        }
+
+        function applyRolePermissions() {
+            // Update role badge in header
+            const roleBadge = document.getElementById('user-role-badge');
+            if (roleBadge) {
+                roleBadge.innerText = `Rol: ${currentUserRole}`;
+                if (currentUserRole === 'Administrador') {
+                    roleBadge.style.background = 'rgba(16, 185, 129, 0.1)';
+                    roleBadge.style.borderColor = 'rgba(16, 185, 129, 0.2)';
+                    roleBadge.style.color = '#10b981';
+                } else {
+                    roleBadge.style.background = 'rgba(197, 168, 128, 0.1)';
+                    roleBadge.style.borderColor = 'rgba(197, 168, 128, 0.2)';
+                    roleBadge.style.color = '#c5a880';
+                }
+            }
+
+            // Show/Hide Google Sheets Link Button
+            const linkButton = document.getElementById('btn-link-sheet-id');
+            if (linkButton) {
+                if (currentUserRole === 'Administrador') {
+                    linkButton.style.display = 'flex';
+                } else {
+                    linkButton.style.display = 'none';
+                }
+            }
+
+            // Re-render tasks to update action buttons (e.g. show/hide delete icon)
+            renderTasks();
+        }
+
+        function logout() {
+            localStorage.removeItem('user_role');
+            currentUserRole = null;
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('login-password-input').focus();
         }
     </script>
 </body>
