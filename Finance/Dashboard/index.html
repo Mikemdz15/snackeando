@@ -2429,6 +2429,7 @@
                         .update({
                             task_desc: task.task_desc,
                             progress_comment: task.progress_comment,
+                            progress_comment_by: task.progress_comment_by,
                             is_completed: task.is_completed
                         })
                         .eq('id', task.id);
@@ -2552,6 +2553,7 @@
             const task = tasks.find(t => t.id === id);
             if (task) {
                 task.progress_comment = newComment;
+                task.progress_comment_by = newComment ? (currentUserName || 'Lector') : '';
                 await saveTaskState(task);
             }
             renderTasks();
@@ -2579,9 +2581,13 @@
                 const itemDiv = document.createElement('div');
                 itemDiv.className = `task-item ${task.is_completed ? 'completed' : ''}`;
                 
-                const commentContent = task.progress_comment
-                    ? `<span class="comment-text" id="comment-text-${task.id}" onclick="startEditComment('${task.id}')">${task.progress_comment}</span>`
-                    : `<span class="comment-text empty" id="comment-text-${task.id}" onclick="startEditComment('${task.id}')">Haga clic aquí para agregar un comentario de avance...</span>`;
+                let commentContent = '';
+                if (task.progress_comment) {
+                    const authorTag = task.progress_comment_by ? ` <span style="font-size: 0.75rem; color: #6b7280; font-style: italic; font-weight: normal; margin-left: 5px;">(por ${task.progress_comment_by})</span>` : '';
+                    commentContent = `<span class="comment-text" id="comment-text-${task.id}" onclick="startEditComment('${task.id}')">${task.progress_comment}</span>${authorTag}`;
+                } else {
+                    commentContent = `<span class="comment-text empty" id="comment-text-${task.id}" onclick="startEditComment('${task.id}')">Haga clic aquí para agregar un comentario de avance...</span>`;
+                }
 
                 itemDiv.innerHTML = `
                     <div class="task-row-main">

@@ -10,6 +10,7 @@ create table if not exists public.snackeando_tasks (
     created_at timestamp with time zone default timezone('utc'::text, now()) not null,
     task_desc text not null,
     progress_comment text default '',
+    progress_comment_by text,
     is_completed boolean default false not null
 );
 
