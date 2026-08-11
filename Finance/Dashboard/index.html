@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snackeando - Dashboard de Ventas de Arranque</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* CSS DESIGN SYSTEM - ELEGANT EXECUTIVE RIVION THEME */
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: rgba(22, 28, 45, 0.45);
+            --bg-card-hover: rgba(28, 36, 58, 0.6);
+            --border-color: rgba(255, 255, 255, 0.05);
+            --accent-bronze: #c5a880;
+            --accent-bronze-dark: #8a6d58;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-highlight: #ffffff;
+            --shadow-card: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* HEADER & NAVIGATION */
+        header {
+            height: 80px;
+            border-b: 1px solid var(--border-color);
+            background-color: rgba(11, 15, 25, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0 4%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--accent-bronze-dark), var(--accent-bronze));
+            padding: 8px;
+            border-radius: 8px;
+            color: #0b0f19;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-highlight);
+        }
+
+        .logo-tagline {
+            font-size: 0.7rem;
+            color: var(--accent-bronze);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: -2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--accent-bronze);
+        }
+
+        .btn-link-sheet {
+            background-color: transparent;
+            border: 1px solid var(--accent-bronze);
+            color: var(--accent-bronze);
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-link-sheet:hover {
+            background-color: var(--accent-bronze);
+            color: #0b0f19;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            padding: 80px 4% 50px 4%;
+            background-image: linear-gradient(rgba(11, 15, 25, 0.85), rgba(11, 15, 25, 1)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-tag {
+            color: var(--accent-bronze);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            line-height: 1.15;
+            color: var(--text-highlight);
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .hero-desc {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        /* METRICS / KPI GRID */
+        .metrics-container {
+            padding: 0 4%;
+            margin-top: -40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(197, 168, 128, 0.3);
+            background-color: var(--bg-card-hover);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .metric-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+        }
+
+        .metric-icon {
+            color: var(--accent-bronze);
+        }
+
+        .metric-value {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: var(--text-highlight);
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .metric-value span {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--accent-bronze);
+        }
+
+        .metric-footer {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* MAIN CONTENT AREA */
+        .dashboard-content {
+            padding: 50px 4%;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* FILTER TABS & CONTROL BAR */
+        .control-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-heading {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--text-highlight);
+            font-weight: 600;
+        }
+
+        .section-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .period-tabs {
+            background-color: rgba(22, 28, 45, 0.6);
+            border: 1px solid var(--border-color);
+            padding: 4px;
+            border-radius: 8px;
+            display: flex;
+            gap: 2px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 18px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-highlight);
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-bronze);
+            color: #0b0f19;
+            box-shadow: 0 4px 12px rgba(197, 168, 128, 0.2);
+        }
+
+        /* CHARTS CONTAINER */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 420px;
+        }
+
+        .chart-title-area {
+            margin-bottom: 20px;
+        }
+
+        .chart-box-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            color: var(--text-highlight);
+            margin-bottom: 4px;
+        }
+
+        .chart-box-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .chart-canvas-container {
+            position: relative;
+            flex-grow: 1;
+            width: 100%;
+            height: 300px;
+        }
+
+        .side-charts-column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .side-chart-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TABLES & RANKINGS */
+        .table-footnote {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            line-height: 1.6;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 15px;
+        }
+
+        .rankings-row {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .rankings-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .table-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow-card);
+            overflow-x: auto;
+        }
+
+        .table-box-header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-box-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            color: var(--text-highlight);
+        }
+
+        .badge-type {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .badge-top {
+            background-color: rgba(52, 211, 153, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .badge-bottom {
+            background-color: rgba(248, 113, 113, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        th {
+            padding: 12px;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+            color: var(--text-highlight);
+        }
+
+        .td-rank {
+            font-weight: 700;
+            color: var(--accent-bronze);
+            width: 40px;
+        }
+
+        .td-name {
+            font-weight: 500;
+        }
+
+        .td-number {
+            font-family: monospace;
+            font-size: 0.9rem;
+            text-align: right;
+        }
+
+        /* TEXT ANALYSIS SECTION */
+        .analysis-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 50px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .analysis-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .analysis-card {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .analysis-tag {
+            color: var(--accent-bronze);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .analysis-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--text-highlight);
+            font-weight: 500;
+        }
+
+        .analysis-text {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        /* GOOGLE SHEETS LINK MODAL / DRAWER */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(11, 15, 25, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-card {
+            background-color: #0f1524;
+            border: 1px solid var(--accent-bronze);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 550px;
+            padding: 35px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--text-highlight);
+        }
+
+        .modal-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .modal-input {
+            width: 100%;
+            background-color: #080b11;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px 16px;
+            color: var(--text-highlight);
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .modal-input:focus {
+            border-color: var(--accent-bronze);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            color: var(--text-highlight);
+            border-color: var(--text-muted);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-bronze);
+            color: #0b0f19;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(197, 168, 128, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(197, 168, 128, 0.35);
+        }
+
+        /* GLOBAL FOOTER */
+        footer.dashboard-footer {
+            border-top: 1px solid var(--border-color);
+            background-color: #090c14;
+            padding: 40px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 50px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--text-highlight);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP HEADER -->
+    <header>
+        <div class="logo-area">
+            <div class="logo-icon">
+                <i data-lucide="trending-up" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h1 class="logo-text">SNACKEANDO</h1>
+                <div class="logo-tagline">Intelligence Dashboard</div>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="active">Resumen</a>
+            <a href="#ventas-diarias">Tendencias</a>
+            <a href="#tabla-top">Productos</a>
+            <a href="#analisis">Análisis</a>
+        </div>
+        <button class="btn-link-sheet" onclick="openSheetModal()">
+            <i data-lucide="link" class="w-3.5 h-3.5"></i>
+            Vincular Google Sheet
+        </button>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-tag">Arranque de Operaciones</span>
+            <h2 class="hero-title">Análisis de Desempeño Financiero y Ventas Consolidadas</h2>
+            <p class="hero-desc">
+                Presentación ejecutiva del comportamiento comercial de la red de activos Snackeando. 
+                Rendimiento consolidado del período inicial de operaciones del 30 de Julio al 10 de Agosto de 2026, 
+                mapeando ingresos por punto de venta, métodos de cobro, rotación de catálogo e índices de utilidad neta.
+            </p>
+        </div>
+    </section>
+
+    <!-- METRIC CARDS GRID -->
+    <section class="metrics-container">
+        <div class="metrics-grid">
+            <!-- Card 1: Sales -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-title">Ventas Brutas</span>
+                    <i data-lucide="dollar-sign" class="w-4 h-4 metric-icon"></i>
+                </div>
+                <div>
+                    <div class="metric-value" id="kpi-sales">$15,890</div>
+                    <div class="metric-footer">
+                        <i data-lucide="arrow-up" class="w-3 h-3 text-emerald-400"></i>
+                        <span class="text-emerald-400 font-bold">100%</span> arranque de operaciones
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Profit -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-title">Margen Utilidad (12%)</span>
+                    <i data-lucide="percent" class="w-4 h-4 metric-icon"></i>
+                </div>
+                <div>
+                    <div class="metric-value" id="kpi-profit">$1,907</div>
+                    <div class="metric-footer">
+                        <span id="kpi-cost">Costo de venta: $13,983</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Volume -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-title">Volumen de Venta</span>
+                    <i data-lucide="package" class="w-4 h-4 metric-icon"></i>
+                </div>
+                <div>
+                    <div class="metric-value" id="kpi-units">1,440</div>
+                    <div class="metric-footer">
+                        <span>Unidades totales vendidas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Average Unit Price -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-title">Precio Promedio Unitario</span>
+                    <i data-lucide="tag" class="w-4 h-4 metric-icon"></i>
+                </div>
+                <div>
+                    <div class="metric-value" id="kpi-ticket">$11.03</div>
+                    <div class="metric-footer">
+                        <span>Ingreso promedio por unidad</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DASHBOARD CONTENT -->
+    <main class="dashboard-content">
+        
+        <!-- Control Bar -->
+        <div class="control-bar" id="ventas-diarias">
+            <div class="section-heading">
+                <h3 class="section-title">Comportamiento del Negocio</h3>
+                <span class="section-subtitle">Filtra por temporalidad de ventas para analizar tendencias</span>
+            </div>
+            <div class="period-tabs">
+                <button class="tab-btn active" id="btn-diario" onclick="changePeriod('diario')">Diario</button>
+                <button class="tab-btn" id="btn-semanal" onclick="changePeriod('semanal')">Semanal</button>
+                <button class="tab-btn" id="btn-mensual" onclick="changePeriod('mensual')">Mensual</button>
+            </div>
+        </div>
+
+        <!-- CHARTS SECTION -->
+        <div class="charts-row">
+            <!-- Left Chart: Main Sales Trend -->
+            <div class="chart-box">
+                <div class="chart-title-area">
+                    <h4 class="chart-box-title" id="main-chart-title">Ventas Diarias Consolidadas</h4>
+                    <span class="chart-box-subtitle" id="main-chart-subtitle">Facturación acumulada día por día en pesos</span>
+                </div>
+                <div class="chart-canvas-container">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Right Column Charts -->
+            <div class="side-charts-column">
+                <!-- Top Side Chart: Payment Split -->
+                <div class="side-chart-box">
+                    <div class="chart-title-area" style="margin-bottom: 12px;">
+                        <h4 class="chart-box-title" style="font-size: 1.1rem;">Métodos de Cobro</h4>
+                        <span class="chart-box-subtitle" style="font-size: 0.65rem;">Porcentaje de Ventas en Efectivo vs Tarjeta</span>
+                    </div>
+                    <div class="chart-canvas-container" style="height: 180px;">
+                        <canvas id="paymentSplitChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Bottom Side Chart: Machine Share -->
+                <div class="side-chart-box">
+                    <div class="chart-title-area" style="margin-bottom: 12px;">
+                        <h4 class="chart-box-title" style="font-size: 1.1rem;">Ventas por Máquina</h4>
+                        <span class="chart-box-subtitle" style="font-size: 0.65rem;">Comparativa de Ingresos Generados</span>
+                    </div>
+                    <div class="chart-canvas-container" style="height: 180px;">
+                        <canvas id="machineShareChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRODUCT RANKINGS SECTION -->
+        <div class="rankings-row" id="tabla-top">
+            <!-- Left Table: Top 10 -->
+            <div class="table-box">
+                <div class="table-box-header">
+                    <h4 class="table-box-title">Top 10 Productos con Mayor Rotación</h4>
+                    <span class="badge-type badge-top">Mayor Ingreso</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rango</th>
+                            <th>SKU</th>
+                            <th>Descripción del Producto</th>
+                            <th style="text-align: right;">Unidades</th>
+                            <th style="text-align: right;">Prom. Diario Uds. Venta</th>
+                            <th style="text-align: right;">Ingresos Totales</th>
+                            <th style="text-align: right;">% Venta</th>
+                        </tr>
+                    </thead>
+                    <tbody id="top-products-body">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+                <p class="table-footnote" id="table-footnote-top10">
+                    Cargando referencias del periodo...
+                </p>
+            </div>
+
+            <!-- Right Table: Bottom 5 -->
+            <div class="table-box">
+                <div class="table-box-header">
+                    <h4 class="table-box-title">Bottom 5 Productos con Menor Rotación</h4>
+                    <span class="badge-type badge-bottom">Menor Rotación</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rango</th>
+                            <th>Descripción</th>
+                            <th style="text-align: right;">Unidades</th>
+                            <th style="text-align: right;">Prom. Diario Uds. Venta</th>
+                            <th style="text-align: right;">Ingresos</th>
+                            <th style="text-align: right;">% Venta</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bottom-products-body">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- BUSINESS NARRATIVE / ANALYSIS -->
+        <div class="analysis-section" id="analisis">
+            <div class="analysis-card">
+                <span class="analysis-tag">Perspectiva Estratégica</span>
+                <h3 class="analysis-heading">Análisis del Comportamiento Financiero</h3>
+                <p class="analysis-text" id="analysis-text-financial">
+                    Cargando análisis dinámico del comportamiento financiero...
+                </p>
+            </div>
+
+            <div class="analysis-card">
+                <span class="analysis-tag">Recomendaciones de Inventario</span>
+                <h3 class="analysis-heading">Logística de Caja y Rotación de SKU</h3>
+                <p class="analysis-text" id="analysis-text-inventory">
+                    Cargando recomendaciones de inventario y logística...
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- GOOGLE SHEET CONNECTOR MODAL -->
+    <div class="modal-overlay" id="sheetModal">
+        <div class="modal-card">
+            <h3 class="modal-title">Vincular Base de Datos en Vivo</h3>
+            <p class="modal-desc">
+                Cantaloupe SEED permite exportar reportes directamente a un Google Sheet público. 
+                Pega a continuación el enlace URL de la hoja de cálculo exportada en formato CSV para vincular e importar los datos de ventas en tiempo real:
+            </p>
+            <input type="text" id="sheet-url-input" class="modal-input" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closeSheetModal()">Cancelar</button>
+                <button class="btn-primary" onclick="saveSheetUrl()">Vincular y Recargar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GLOBAL FOOTER -->
+    <footer class="dashboard-footer">
+        <span class="footer-logo">SNACKEANDO</span>
+        <span>Elaborado por Miguel Méndez CEO para uso exclusivo de SNACKEANDO</span>
+    </footer>
+
+    <!-- JS SCRIPTS & LOGIC -->
+    <!-- Load static data first -->
+    <script src="sales_data.js"></script>
+    <script>
+        // Global variables for Chart instances
+        let mainChartInst = null;
+        let paymentSplitChartInst = null;
+        let machineShareChartInst = null;
+
+        // Fallback static data if sales_data.js is missing or failed
+        if (typeof SNACKEANDO_RAW_DATA === 'undefined') {
+            console.warn("Using fallback sales data.");
+            window.SNACKEANDO_RAW_DATA = {
+                dateRange: { start: "2026-07-30", end: "2026-08-10" },
+                summary: { totalSales: 15890.0, totalUnits: 1440, cashSales: 10315.0, cardSales: 5575.0, profitMargin: 0.12, estimatedProfit: 1906.8 },
+                machines: {
+                    "IB0009": { id: "IB0009", totalSales: 6316.0, cashSales: 3606.0, cardSales: 2710.0, totalUnits: 585 },
+                    "IB0010": { id: "IB0010", totalSales: 9574.0, cashSales: 6709.0, cardSales: 2865.0, totalUnits: 855 }
+                },
+                dailySales: [],
+                topProducts: [],
+                bottomProducts: []
+            };
+        }
+
+        const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/12A-X7sKhJcEBP_sZ7Ij9D6AV1j-YWVd2z4Cix-PgVT4/edit?usp=sharing";
+
+        // Date helper (Monday to Sunday week label)
+        function getWeekRangeLabel(dateStr) {
+            const d = new Date(dateStr + 'T00:00:00');
+            const day = d.getDay(); // 0 is Sunday, 1 is Monday, ..., 6 is Saturday
+            const diffToMonday = day === 0 ? -6 : 1 - day;
+            
+            const monday = new Date(d);
+            monday.setDate(d.getDate() + diffToMonday);
+            
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            
+            const monDay = String(monday.getDate()).padStart(2, '0');
+            const monMonth = String(monday.getMonth() + 1).padStart(2, '0');
+            const sunDay = String(sunday.getDate()).padStart(2, '0');
+            const sunMonth = String(sunday.getMonth() + 1).padStart(2, '0');
+            
+            return `Semana ${monDay}/${monMonth} al ${sunDay}/${sunMonth}`;
+        }
+
+        // Initialize elements
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+            
+            // Check if there is a custom spreadsheet URL saved in localStorage, else use default
+            const savedUrl = localStorage.getItem('snackeando_sheet_url') || DEFAULT_SHEET_URL;
+            document.getElementById('sheet-url-input').value = savedUrl;
+            fetchDataFromGoogleSheet(savedUrl);
+        });
+
+        // Open/Close Modal
+        function openSheetModal() {
+            document.getElementById('sheetModal').style.display = 'flex';
+        }
+        function closeSheetModal() {
+            document.getElementById('sheetModal').style.display = 'none';
+        }
+
+        // Save URL and fetch
+        function saveSheetUrl() {
+            const url = document.getElementById('sheet-url-input').value.trim();
+            if (url) {
+                localStorage.setItem('snackeando_sheet_url', url);
+                fetchDataFromGoogleSheet(url);
+            } else {
+                localStorage.removeItem('snackeando_sheet_url');
+                fetchDataFromGoogleSheet(DEFAULT_SHEET_URL);
+            }
+            closeSheetModal();
+        }
+
+        // Fetch Google Sheet CSV for both tabs (gid 0 and gid 1226302399)
+        function fetchDataFromGoogleSheet(url) {
+            console.log("Fetching live sheet data from:", url);
+            
+            // Extract the spreadsheet ID
+            const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            if (!match) {
+                console.error("Invalid Google Sheet URL format.");
+                alert("URL de Google Sheet inválida. Usando datos estáticos.");
+                renderDashboard(SNACKEANDO_RAW_DATA);
+                return;
+            }
+            
+            const sheetId = match[1];
+            // Define export URLs for both tabs with cache-busting
+            const urlProd = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0&t=${Date.now()}`;
+            const urlCash = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=1226302399&t=${Date.now()}`;
+
+            Promise.all([
+                fetch(urlProd).then(res => {
+                    if (!res.ok) throw new Error("Error fetching products sheet");
+                    return res.text();
+                }),
+                fetch(urlCash).then(res => {
+                    if (!res.ok) throw new Error("Error fetching cash sheet");
+                    return res.text();
+                })
+            ])
+            .then(([csvProdsText, csvCashText]) => {
+                parseGoogleSheets(csvProdsText, csvCashText);
+            })
+            .catch(err => {
+                console.error("Error loading live data, using static database:", err);
+                if (url !== DEFAULT_SHEET_URL) {
+                    alert("No se pudo sincronizar el Google Sheet. Cargando base estática.");
+                }
+                renderDashboard(SNACKEANDO_RAW_DATA);
+            });
+        }
+
+        // CSV parsing helper (supports double quotes)
+        function parseCSV(text) {
+            const lines = text.split(/\r?\n/);
+            const result = [];
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const cols = [];
+                let insideQuote = false;
+                let entry = '';
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    if (char === '"') {
+                        insideQuote = !insideQuote;
+                    } else if (char === ',' && !insideQuote) {
+                        cols.push(entry.trim());
+                        entry = '';
+                    } else {
+                        entry += char;
+                    }
+                }
+                cols.push(entry.trim());
+                result.push(cols);
+            }
+            return result;
+        }
+
+        // Date helper (converts DD/MM/YYYY to YYYY-MM-DD)
+        function parseDate(dateStr) {
+            if (!dateStr) return '';
+            if (dateStr.includes('-')) return dateStr;
+            const parts = dateStr.split('/');
+            if (parts.length === 3) {
+                let day = parts[0].padStart(2, '0');
+                let month = parts[1].padStart(2, '0');
+                let year = parts[2];
+                return `${year}-${month}-${day}`;
+            }
+            return dateStr;
+        }
+
+        // Parse and consolidate Google Sheet data
+        function parseGoogleSheets(csvProdsText, csvCashText) {
+            try {
+                // 1. Parse Products Sheet (gid: 0)
+                const parsedProds = parseCSV(csvProdsText);
+                const dataProd = parsedProds.slice(1); // skip headers
+                
+                const productUnits = {};
+                const productRevenue = {};
+                const productSKU = {};
+
+                dataProd.forEach(row => {
+                    if (row.length < 7 || !row[0]) return;
+                    const sku = row[3];
+                    const prodName = row[4];
+                    const units = parseInt(row[5]) || 0;
+                    const amount = parseFloat(row[6].replace(/[$,]/g, '')) || 0.0;
+
+                    if (!prodName || prodName === "None" || prodName === "null" || prodName === "") return;
+
+                    productUnits[prodName] = (productUnits[prodName] || 0) + units;
+                    productRevenue[prodName] = (productRevenue[prodName] || 0.0) + amount;
+                    productSKU[prodName] = sku;
+                });
+
+                const prodList = [];
+                for (const name in productUnits) {
+                    prodList.push({
+                        sku: productSKU[name],
+                        name: name,
+                        units: productUnits[name],
+                        revenue: productRevenue[name]
+                    });
+                }
+
+                // Top 10 by revenue
+                const topProducts = [...prodList].sort((a, b) => b.revenue - a.revenue).slice(0, 10);
+                // Bottom 5 by units (units > 0)
+                const bottomProducts = prodList.filter(x => x.units > 0).sort((a, b) => a.units - b.units).slice(0, 5);
+
+                // 2. Parse Cash/Card Sheet (gid: 1226302399)
+                const parsedCash = parseCSV(csvCashText);
+                const dataCash = parsedCash.slice(1); // skip headers
+
+                const dailyMap = {};
+                let totalSales = 0;
+                let totalUnits = 0;
+                let cashSales = 0;
+                let cardSales = 0;
+
+                const machines = {};
+
+                dataCash.forEach(row => {
+                    if (row.length < 11 || !row[0]) return;
+                    const dateStr = parseDate(row[0]);
+                    const machine = row[1];
+                    const cardUnits = parseInt(row[5]) || 0;
+                    const cardAmt = parseFloat(row[6].replace(/[$,]/g, '')) || 0.0;
+                    const cashUnits = parseInt(row[7]) || 0;
+                    const cashAmt = parseFloat(row[8].replace(/[$,]/g, '')) || 0.0;
+                    const totUnits = parseInt(row[9]) || 0;
+                    const totAmt = parseFloat(row[10].replace(/[$,]/g, '')) || 0.0;
+
+                    totalSales += totAmt;
+                    totalUnits += totUnits;
+                    cashSales += cashAmt;
+                    cardSales += cardAmt;
+
+                    if (!machines[machine]) {
+                        machines[machine] = {
+                            id: machine,
+                            name: machine === "IB0009" ? "Planta Baja - Oficinas" : (machine === "IB0010" ? "Área de Producción - Planta" : `Máquina ${machine}`),
+                            place: row[3] || "N/A",
+                            location: row[2] || "N/A",
+                            type: row[4] || "N/A",
+                            cashSales: 0, cardSales: 0, totalSales: 0,
+                            cashUnits: 0, cardUnits: 0, totalUnits: 0,
+                            startDate: null,
+                            _startCompareDate: null
+                        };
+                    }
+
+                    machines[machine].cashSales += cashAmt;
+                    machines[machine].cardSales += cardAmt;
+                    machines[machine].totalSales += totAmt;
+                    machines[machine].cashUnits += cashUnits;
+                    machines[machine].cardUnits += cardUnits;
+                    machines[machine].totalUnits += totUnits;
+
+                    // Set startDate for machine dynamically
+                    if (totAmt > 0 || totUnits > 0) {
+                        const originalDate = row[0]; // e.g. "30/07/2026"
+                        if (!machines[machine].startDate || dateStr < machines[machine]._startCompareDate) {
+                            machines[machine]._startCompareDate = dateStr;
+                            machines[machine].startDate = originalDate;
+                        }
+                    }
+
+                    if (!dailyMap[dateStr]) {
+                        dailyMap[dateStr] = {
+                            date: dateStr,
+                            total_sales: 0,
+                            total_units: 0
+                        };
+                    }
+
+                    const cashKey = `${machine}_cash`;
+                    const cardKey = `${machine}_card`;
+                    const unitsKey = `${machine}_units`;
+
+                    dailyMap[dateStr][cashKey] = (dailyMap[dateStr][cashKey] || 0) + cashAmt;
+                    dailyMap[dateStr][cardKey] = (dailyMap[dateStr][cardKey] || 0) + cardAmt;
+                    dailyMap[dateStr][unitsKey] = (dailyMap[dateStr][unitsKey] || 0) + totUnits;
+
+                    dailyMap[dateStr].total_sales += totAmt;
+                    dailyMap[dateStr].total_units += totUnits;
+                });
+
+                const sortedDates = Object.keys(dailyMap).sort();
+                const discoveredMachines = Object.keys(machines);
+                const dailySalesList = sortedDates.map(d => {
+                    const dayObj = dailyMap[d];
+                    discoveredMachines.forEach(m => {
+                        if (dayObj[`${m}_cash`] === undefined) dayObj[`${m}_cash`] = 0.0;
+                        if (dayObj[`${m}_card`] === undefined) dayObj[`${m}_card`] = 0.0;
+                        if (dayObj[`${m}_units`] === undefined) dayObj[`${m}_units`] = 0;
+                    });
+                    return dayObj;
+                });
+
+                // Clean up comparison helper keys
+                discoveredMachines.forEach(m => {
+                    delete machines[m]._startCompareDate;
+                });
+
+                const finalData = {
+                    dateRange: {
+                        start: sortedDates[0] || "",
+                        end: sortedDates[sortedDates.length - 1] || ""
+                    },
+                    summary: {
+                        totalSales: totalSales,
+                        totalUnits: totalUnits,
+                        cashSales: cashSales,
+                        cardSales: cardSales,
+                        profitMargin: 0.12,
+                        estimatedProfit: totalSales * 0.12
+                    },
+                    machines: machines,
+                    dailySales: dailySalesList,
+                    topProducts: topProducts,
+                    bottomProducts: bottomProducts
+                };
+
+                // Update global data reference and render
+                window.SNACKEANDO_RAW_DATA = finalData;
+                renderDashboard(finalData);
+                console.log("Live Google Sheet parsed and rendered successfully!", finalData);
+            } catch (e) {
+                console.error("Error parsing live sheet data:", e);
+                alert("Error al procesar la información de Google Sheet. Cargando base estática.");
+                renderDashboard(SNACKEANDO_RAW_DATA);
+            }
+        }
+
+        // Main render engine
+        function renderDashboard(data) {
+            // Check and populate machine start dates if missing (fallback/static database)
+            for (const id in data.machines) {
+                if (!data.machines[id].startDate) {
+                    let earliestDateStr = null;
+                    let earliestDisplay = "Sin ventas";
+                    data.dailySales.forEach(day => {
+                        const dayCash = day[`${id}_cash`] || 0;
+                        const dayCard = day[`${id}_card`] || 0;
+                        const dayUnits = day[`${id}_units`] || 0;
+                        if (dayUnits > 0 || (dayCash + dayCard) > 0) {
+                            if (!earliestDateStr || day.date < earliestDateStr) {
+                                earliestDateStr = day.date;
+                                const parts = day.date.split('-');
+                                earliestDisplay = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : day.date;
+                            }
+                        }
+                    });
+                    data.machines[id].startDate = earliestDisplay;
+                }
+            }
+
+            // 1. Load KPI cards
+            document.getElementById('kpi-sales').innerHTML = `$${Math.round(data.summary.totalSales).toLocaleString('es-MX')}`;
+            document.getElementById('kpi-profit').innerHTML = `$${Math.round(data.summary.estimatedProfit).toLocaleString('es-MX')}`;
+            document.getElementById('kpi-units').innerHTML = data.summary.totalUnits.toLocaleString('es-MX');
+            
+            const costVal = data.summary.totalSales - data.summary.estimatedProfit;
+            document.getElementById('kpi-cost').innerHTML = `Costo de venta: $${Math.round(costVal).toLocaleString('es-MX')}`;
+
+            const avgTicket = data.summary.totalSales / data.summary.totalUnits;
+            document.getElementById('kpi-ticket').innerHTML = `$${avgTicket.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+            // Calculate total unique dates in daily sales data to determine active operational days
+            const numDays = data.dailySales.length || 12; // fallback to 12 if empty
+
+            // Date formatting helper for introductory text
+            function formatSpanishDate(dateStr) {
+                if (!dateStr) return "";
+                const parts = dateStr.split('-');
+                if (parts.length !== 3) return dateStr;
+                const day = parseInt(parts[2]);
+                const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+                const month = monthNames[parseInt(parts[1]) - 1];
+                const year = parts[0];
+                return `${day} de ${month} de ${year}`;
+            }
+
+            // Generate and populate dynamic footnote
+            const startFormatted = formatSpanishDate(data.dateRange.start);
+            const endFormatted = formatSpanishDate(data.dateRange.end);
+            const totalSalesFormatted = Math.round(data.summary.totalSales).toLocaleString('es-MX');
+            
+            // Get leader info dynamically
+            const leader = data.topProducts[0] || { name: "N/A", revenue: 0 };
+            const leaderPctVal = data.summary.totalSales > 0 ? Math.round((leader.revenue / data.summary.totalSales) * 100) : 0;
+            const leaderRevenueFormatted = Math.round(leader.revenue).toLocaleString('es-MX');
+            
+            const footnoteHTML = `
+                El análisis considera las ventas del <strong>${startFormatted}</strong> al <strong>${endFormatted}</strong> 
+                (<strong>${numDays}</strong> días de operación) sobre una venta total acumulada de <strong>$${totalSalesFormatted} MXN</strong>. 
+                Por ejemplo, el producto líder (<strong>${leader.name}</strong>) representa el <strong>${leaderPctVal}%</strong> de la venta total con 
+                <strong>$${leaderRevenueFormatted} MXN</strong> facturados.
+            `;
+            document.getElementById('table-footnote-top10').innerHTML = footnoteHTML;
+
+            // 2. Load Top 10 Table
+            const topBody = document.getElementById('top-products-body');
+            topBody.innerHTML = '';
+            data.topProducts.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const avgDaily = Math.round(item.units / numDays);
+                const pctVal = data.summary.totalSales > 0 ? Math.round((item.revenue / data.summary.totalSales) * 100) : 0;
+                const pctText = (pctVal === 0 && item.revenue > 0) ? "<1%" : `${pctVal}%`;
+
+                tr.innerHTML = `
+                    <td class="td-rank">#${index + 1}</td>
+                    <td>${item.sku}</td>
+                    <td class="td-name">${item.name}</td>
+                    <td class="td-number font-semibold">${item.units}</td>
+                    <td class="td-number font-semibold text-slate-400">${avgDaily}</td>
+                    <td class="td-number font-semibold text-emerald-400">$${Math.round(item.revenue).toLocaleString('es-MX')}</td>
+                    <td class="td-number font-semibold text-slate-400">${pctText}</td>
+                `;
+                topBody.appendChild(tr);
+            });
+
+            // 3. Load Bottom 5 Table
+            const bottomBody = document.getElementById('bottom-products-body');
+            bottomBody.innerHTML = '';
+            data.bottomProducts.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const avgDaily = Math.round(item.units / numDays);
+                const pctVal = data.summary.totalSales > 0 ? Math.round((item.revenue / data.summary.totalSales) * 100) : 0;
+                const pctText = (pctVal === 0 && item.revenue > 0) ? "<1%" : `${pctVal}%`;
+
+                tr.innerHTML = `
+                    <td class="td-rank">#${index + 1}</td>
+                    <td class="td-name">${item.name}</td>
+                    <td class="td-number font-semibold text-rose-400">${item.units}</td>
+                    <td class="td-number font-semibold text-slate-400">${avgDaily}</td>
+                    <td class="td-number font-semibold">$${Math.round(item.revenue).toLocaleString('es-MX')}</td>
+                    <td class="td-number font-semibold text-slate-400">${pctText}</td>
+                `;
+                bottomBody.appendChild(tr);
+            });
+
+            // 4. Initialize Side Charts (Static structures)
+            renderSideCharts(data, 'diario');
+
+            // 5. Initialize Main Chart
+            renderMainChart(data, 'diario');
+
+            // 6. Initialize Dynamic Narrative
+            renderNarrative(data);
+        }
+
+        // Render Dynamic Strategic Narratives based on live sheet data
+        function renderNarrative(data) {
+            const numDays = data.dailySales.length || 12;
+            const totalSales = Math.round(data.summary.totalSales);
+            const profit = Math.round(data.summary.estimatedProfit);
+            const cost = totalSales - profit;
+
+            const ib09Sales = Math.round(data.machines.IB0009.totalSales);
+            const ib10Sales = Math.round(data.machines.IB0010.totalSales);
+            const ib09Pct = totalSales > 0 ? ((ib09Sales / totalSales) * 100).toFixed(1) : "0.0";
+            const ib10Pct = totalSales > 0 ? ((ib10Sales / totalSales) * 100).toFixed(1) : "0.0";
+
+            const cashSales = Math.round(data.summary.cashSales);
+            const cashPct = totalSales > 0 ? ((cashSales / totalSales) * 100).toFixed(1) : "0.0";
+
+            // Determine top and bottom machines
+            let topMachine = "IB0010 (Planta)";
+            let topMachineSales = ib10Sales;
+            let topMachinePct = ib10Pct;
+            let bottomMachine = "IB0009 (Oficinas)";
+            let bottomMachineSales = ib09Sales;
+            let bottomMachinePct = ib09Pct;
+
+            if (ib09Sales > ib10Sales) {
+                topMachine = "IB0009 (Oficinas)";
+                topMachineSales = ib09Sales;
+                topMachinePct = ib09Pct;
+                bottomMachine = "IB0010 (Planta)";
+                bottomMachineSales = ib10Sales;
+                bottomMachinePct = ib10Pct;
+            }
+
+            // Products
+            const top1 = data.topProducts[0];
+            const top2 = data.topProducts[1];
+            const top3 = data.topProducts[2];
+            
+            const bot1 = data.bottomProducts[0];
+            const bot2 = data.bottomProducts[1];
+
+            // Render Financial Behavior
+            const financialText = `
+                El análisis de los primeros <strong>${numDays} días</strong> de operaciones de Snackeando demuestra un arranque con facturación total de <strong>$${totalSales.toLocaleString('es-MX')} MXN</strong>. 
+                Alineando las ventas con un margen del <strong>12%</strong>, el negocio genera una utilidad neta estimada de <strong>$${profit.toLocaleString('es-MX')} MXN</strong> sobre costos unitarios 
+                de adquisición y logística acumulados por <strong>$${cost.toLocaleString('es-MX')} MXN</strong>. 
+                <br><br>
+                La máquina de mayor facturación en el período es la <strong>${topMachine}</strong>, que genera <strong>$${topMachineSales.toLocaleString('es-MX')} MXN</strong> (${topMachinePct}% de la facturación global) en comparación 
+                con los <strong>$${bottomMachineSales.toLocaleString('es-MX')} MXN</strong> (${bottomMachinePct}%) de la máquina <strong>${bottomMachine}</strong>. Esta diferencia en volumen es impulsada por la mayor densidad de usuarios y 
+                frecuencia de compra de la planta de producción.
+            `;
+            document.getElementById('analysis-text-financial').innerHTML = financialText;
+
+            // Render Inventory / Logistics
+            const topProductsList = [top1, top2, top3].filter(Boolean).map(p => `<strong>${p.name}</strong>`).join(', ');
+            const botProductsList = [bot1, bot2].filter(Boolean).map(p => `<strong>${p.name}</strong> (${p.units} unidades)`).join(' y ');
+            const top1Avg = top1 ? Math.round(top1.units / numDays) : 0;
+
+            const inventoryText = `
+                <strong>Mapeo de Métodos de Pago</strong>: El <strong>${cashPct}% ($${cashSales.toLocaleString('es-MX')} MXN)</strong> de los ingresos del período se realizó a través de monedas y billetes (Efectivo). Esto recalca la 
+                importancia de la política de monedero de Cantaloupe SEED: <strong>los conductores de ruta deben mantener sin falta la base fija de monedero de cambio (float) a $500 pesos</strong> 
+                en cada visita para no arriesgar la aceptación de billetes y permitir auditorías contables cuadradas.
+                <br><br>
+                <strong>Ajuste de Catálogo (SKUs de Baja Rotación)</strong>: Productos del final de la tabla (Bottom 5), como ${botProductsList || 'ninguno'}, demuestran una velocidad de venta lenta. Se sugiere a la administración <strong>disminuir su límite Par de llenado</strong> 
+                en el planograma a solo 3 o 4 piezas por espiral para prevenir caducidades y merma, y rotar ese espacio a productos del Top 10, tales como ${topProductsList || 'ninguno'}, que dominan más del 25% del total de ingresos del arranque (con <strong>${top1?.name}</strong> promediando <strong>${top1Avg} unidades venta diarias</strong>).
+            `;
+            document.getElementById('analysis-text-inventory').innerHTML = inventoryText;
+        }
+
+        // Render payment split dona and machine comparison bar charts
+        function renderSideCharts(data, period) {
+            const ctxPayment = document.getElementById('paymentSplitChart').getContext('2d');
+            const ctxMachine = document.getElementById('machineShareChart').getContext('2d');
+
+            if (paymentSplitChartInst) paymentSplitChartInst.destroy();
+            if (machineShareChartInst) machineShareChartInst.destroy();
+
+            // 1. Payment Split Chart (Static doughnut of overall totals)
+            paymentSplitChartInst = new Chart(ctxPayment, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Efectivo', 'Tarjeta'],
+                    datasets: [{
+                        data: [data.summary.cashSales, data.summary.cardSales],
+                        backgroundColor: ['#c5a880', '#1c253a'],
+                        borderColor: 'rgba(255, 255, 255, 0.05)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: '#9ca3af',
+                                font: { family: 'Inter', size: 10 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = data.summary.totalSales;
+                                    const cash = data.summary.cashSales;
+                                    const card = data.summary.cardSales;
+                                    const pctCash = total > 0 ? Math.round(cash / total * 100) : 0;
+                                    const pctCard = total > 0 ? Math.round(card / total * 100) : 0;
+                                    return [
+                                        `Cobro: ${context.label}`,
+                                        `Venta Total: $${Math.round(total).toLocaleString('es-MX')}`,
+                                        `Venta Tarjeta: $${Math.round(card).toLocaleString('es-MX')} (${pctCard}%)`,
+                                        `Venta Efectivo: $${Math.round(cash).toLocaleString('es-MX')} (${pctCash}%)`
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. Machine Share Chart (Dynamic bar chart based on selected period)
+            let labels = ['IB0009', 'IB0010'];
+            let datasets = [];
+            
+            // Build cache arrays: window.MACHINE_CHART_CACHE[datasetIdx][labelIdx] = { total, cash, card }
+            window.MACHINE_CHART_CACHE = [];
+
+            if (period === 'diario') {
+                const ib09_cash = data.machines.IB0009.cashSales;
+                const ib09_card = data.machines.IB0009.cardSales;
+                const ib10_cash = data.machines.IB0010.cashSales;
+                const ib10_card = data.machines.IB0010.cardSales;
+
+                datasets = [
+                    {
+                        label: 'Efectivo',
+                        data: [ib09_cash, ib10_cash],
+                        backgroundColor: '#c5a880'
+                    },
+                    {
+                        label: 'Tarjeta',
+                        data: [ib09_card, ib10_card],
+                        backgroundColor: '#1c253a'
+                    }
+                ];
+
+                window.MACHINE_CHART_CACHE = [
+                    [
+                        { total: ib09_cash + ib09_card, cash: ib09_cash, card: ib09_card },
+                        { total: ib10_cash + ib10_card, cash: ib10_cash, card: ib10_card }
+                    ],
+                    [
+                        { total: ib09_cash + ib09_card, cash: ib09_cash, card: ib09_card },
+                        { total: ib10_cash + ib10_card, cash: ib10_cash, card: ib10_card }
+                    ]
+                ];
+            }
+            else if (period === 'semanal') {
+                // Dynamic week grouping for machines
+                const weekGroups = {};
+                data.dailySales.forEach(day => {
+                    const label = getWeekRangeLabel(day.date);
+                    if (!weekGroups[label]) {
+                        weekGroups[label] = {
+                            IB0009: { total: 0, cash: 0, card: 0 },
+                            IB0010: { total: 0, cash: 0, card: 0 }
+                        };
+                    }
+                    weekGroups[label].IB0009.cash += day.IB0009_cash;
+                    weekGroups[label].IB0009.card += day.IB0009_card;
+                    weekGroups[label].IB0009.total += (day.IB0009_cash + day.IB0009_card);
+
+                    weekGroups[label].IB0010.cash += day.IB0010_cash;
+                    weekGroups[label].IB0010.card += day.IB0010_card;
+                    weekGroups[label].IB0010.total += (day.IB0010_cash + day.IB0010_card);
+                });
+
+                const sortedWeeks = Object.keys(weekGroups).sort((a, b) => {
+                    const aParts = a.match(/(\d+)\/(\d+)/);
+                    const bParts = b.match(/(\d+)\/(\d+)/);
+                    return (parseInt(aParts[2]) * 100 + parseInt(aParts[1])) - (parseInt(bParts[2]) * 100 + parseInt(bParts[1]));
+                });
+
+                const colors = ['#c5a880', '#1c253a', '#4b5563', '#9ca3af'];
+                
+                datasets = sortedWeeks.map((weekLabel, wIdx) => {
+                    const weekData = weekGroups[weekLabel];
+                    return {
+                        label: weekLabel,
+                        data: [weekData.IB0009.total, weekData.IB0010.total],
+                        backgroundColor: colors[wIdx % colors.length]
+                    };
+                });
+
+                window.MACHINE_CHART_CACHE = sortedWeeks.map(weekLabel => {
+                    const weekData = weekGroups[weekLabel];
+                    return [
+                        { total: weekData.IB0009.total, cash: weekData.IB0009.cash, card: weekData.IB0009.card },
+                        { total: weekData.IB0010.total, cash: weekData.IB0010.cash, card: weekData.IB0010.card }
+                    ];
+                });
+            }
+            else if (period === 'mensual') {
+                let jul_09_cash = 0, jul_09_card = 0, aug_09_cash = 0, aug_09_card = 0;
+                let jul_10_cash = 0, jul_10_card = 0, aug_10_cash = 0, aug_10_card = 0;
+                
+                data.dailySales.forEach(day => {
+                    if (day.date.startsWith('2026-07')) {
+                        jul_09_cash += day.IB0009_cash;
+                        jul_09_card += day.IB0009_card;
+                        jul_10_cash += day.IB0010_cash;
+                        jul_10_card += day.IB0010_card;
+                    } else {
+                        aug_09_cash += day.IB0009_cash;
+                        aug_09_card += day.IB0009_card;
+                        aug_10_cash += day.IB0010_cash;
+                        aug_10_card += day.IB0010_card;
+                    }
+                });
+
+                const ib09_jul_total = jul_09_cash + jul_09_card;
+                const ib09_aug_total = aug_09_cash + aug_09_card;
+                const ib10_jul_total = jul_10_cash + jul_10_card;
+                const ib10_aug_total = aug_10_cash + aug_10_card;
+
+                datasets = [
+                    {
+                        label: 'Julio 2026',
+                        data: [ib09_jul_total, ib10_jul_total],
+                        backgroundColor: '#c5a880'
+                    },
+                    {
+                        label: 'Agosto 2026',
+                        data: [ib09_aug_total, ib10_aug_total],
+                        backgroundColor: '#1c253a'
+                    }
+                ];
+
+                window.MACHINE_CHART_CACHE = [
+                    [
+                        { total: ib09_jul_total, cash: jul_09_cash, card: jul_09_card },
+                        { total: ib10_jul_total, cash: jul_10_cash, card: jul_10_card }
+                    ],
+                    [
+                        { total: ib09_aug_total, cash: aug_09_cash, card: aug_09_card },
+                        { total: ib10_aug_total, cash: aug_10_cash, card: aug_10_card }
+                    ]
+                ];
+            }
+
+            machineShareChartInst = new Chart(ctxMachine, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: { color: '#9ca3af', font: { family: 'Inter', size: 10 } },
+                            grid: { color: 'rgba(255,255,255,0.03)' }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#9ca3af',
+                                font: { family: 'Inter', size: 9 },
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString('es-MX');
+                                }
+                            },
+                            grid: { color: 'rgba(255,255,255,0.03)' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#9ca3af',
+                                font: { family: 'Inter', size: 9 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const datasetIdx = context.datasetIndex;
+                                    const labelIdx = context.dataIndex;
+                                    const item = window.MACHINE_CHART_CACHE[datasetIdx][labelIdx] || { total: 0, cash: 0, card: 0 };
+                                    const total = item.total;
+                                    const cash = item.cash;
+                                    const card = item.card;
+                                    const pctCash = total > 0 ? Math.round(cash / total * 100) : 0;
+                                    const pctCard = total > 0 ? Math.round(card / total * 100) : 0;
+                                    
+                                    const seriesLabel = context.dataset.label;
+                                    const machineId = context.label;
+                                    const machineMeta = data.machines[machineId] || {};
+                                    const startDate = machineMeta.startDate || "Sin ventas";
+                                    
+                                    return [
+                                        `Máquina: ${machineId} (${seriesLabel})`,
+                                        `Fecha Arranque: ${startDate}`,
+                                        `Venta Total: $${Math.round(total).toLocaleString('es-MX')}`,
+                                        `Venta Tarjeta: $${Math.round(card).toLocaleString('es-MX')} (${pctCard}%)`,
+                                        `Venta Efectivo: $${Math.round(cash).toLocaleString('es-MX')} (${pctCash}%)`
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render main sales trend chart
+        function renderMainChart(data, period) {
+            const ctxMain = document.getElementById('mainChart').getContext('2d');
+            if (mainChartInst) mainChartInst.destroy();
+
+            let labels = [];
+            let datasetSalesTotal = [];
+            let datasetSalesCash = [];
+            let datasetSalesCard = [];
+
+            if (period === 'diario') {
+                document.getElementById('main-chart-title').innerText = "Ventas Diarias Consolidadas";
+                document.getElementById('main-chart-subtitle').innerText = "Facturación acumulada día por día en pesos";
+
+                data.dailySales.forEach(day => {
+                    labels.push(day.date.substring(5)); // Show MM-DD format
+                    datasetSalesTotal.push(day.total_sales);
+                    datasetSalesCash.push(day.IB0009_cash + day.IB0010_cash);
+                    datasetSalesCard.push(day.IB0009_card + day.IB0010_card);
+                });
+            } 
+            else if (period === 'semanal') {
+                document.getElementById('main-chart-title').innerText = "Ventas Semanales";
+                document.getElementById('main-chart-subtitle').innerText = "Ventas agrupadas por semanas operativas (Lunes a Domingo)";
+
+                // Dynamic calendar week grouping
+                const weekGroups = {};
+                data.dailySales.forEach(day => {
+                    const label = getWeekRangeLabel(day.date);
+                    if (!weekGroups[label]) {
+                        weekGroups[label] = { total: 0, cash: 0, card: 0 };
+                    }
+                    weekGroups[label].total += day.total_sales;
+                    weekGroups[label].cash += (day.IB0009_cash + day.IB0010_cash);
+                    weekGroups[label].card += (day.IB0009_card + day.IB0010_card);
+                });
+
+                labels = Object.keys(weekGroups).sort((a, b) => {
+                    const aParts = a.match(/(\d+)\/(\d+)/);
+                    const bParts = b.match(/(\d+)\/(\d+)/);
+                    return (parseInt(aParts[2]) * 100 + parseInt(aParts[1])) - (parseInt(bParts[2]) * 100 + parseInt(bParts[1]));
+                });
+
+                labels.forEach(lbl => {
+                    datasetSalesTotal.push(weekGroups[lbl].total);
+                    datasetSalesCash.push(weekGroups[lbl].cash);
+                    datasetSalesCard.push(weekGroups[lbl].card);
+                });
+            } 
+            else if (period === 'mensual') {
+                document.getElementById('main-chart-title').innerText = "Ventas Mensuales";
+                document.getElementById('main-chart-subtitle').innerText = "Facturación total agrupada por mes";
+
+                labels = ['Julio 2026', 'Agosto 2026'];
+                
+                // Calculate monthly totals
+                let jul_total = 0, jul_cash = 0, jul_card = 0;
+                let aug_total = 0, aug_cash = 0, aug_card = 0;
+
+                data.dailySales.forEach(day => {
+                    if (day.date.startsWith('2026-07')) {
+                        jul_total += day.total_sales;
+                        jul_cash += (day.IB0009_cash + day.IB0010_cash);
+                        jul_card += (day.IB0009_card + day.IB0010_card);
+                    } else {
+                        aug_total += day.total_sales;
+                        aug_cash += (day.IB0009_cash + day.IB0010_cash);
+                        aug_card += (day.IB0009_card + day.IB0010_card);
+                    }
+                });
+
+                datasetSalesTotal = [jul_total, aug_total];
+                datasetSalesCash = [jul_cash, aug_cash];
+                datasetSalesCard = [jul_card, aug_card];
+            }
+
+            // Cache computed values for tooltips
+            window.MAIN_CHART_CACHE = {
+                totals: datasetSalesTotal,
+                cash: datasetSalesCash,
+                card: datasetSalesCard
+            };
+
+            // Create Chart Instance
+            mainChartInst = new Chart(ctxMain, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            type: 'line',
+                            label: 'Ventas Totales',
+                            data: datasetSalesTotal,
+                            borderColor: '#c5a880',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#c5a880',
+                            fill: false,
+                            tension: 0.15
+                        },
+                        {
+                            type: 'bar',
+                            label: 'Ventas en Efectivo',
+                            data: datasetSalesCash,
+                            backgroundColor: 'rgba(197, 168, 128, 0.4)',
+                            borderColor: 'rgba(197, 168, 128, 0.1)',
+                            borderWidth: 1
+                        },
+                        {
+                            type: 'bar',
+                            label: 'Ventas con Tarjeta',
+                            data: datasetSalesCard,
+                            backgroundColor: 'rgba(28, 37, 58, 0.75)',
+                            borderColor: 'rgba(255, 255, 255, 0.05)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: { color: '#9ca3af', font: { family: 'Inter', size: 10 } },
+                            grid: { color: 'rgba(255,255,255,0.03)' }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#9ca3af',
+                                font: { family: 'Inter', size: 10 },
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString('es-MX');
+                                }
+                            },
+                            grid: { color: 'rgba(255,255,255,0.03)' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#9ca3af',
+                                font: { family: 'Inter', size: 10 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const idx = context.dataIndex;
+                                    const total = window.MAIN_CHART_CACHE.totals[idx] || 0;
+                                    const cash = window.MAIN_CHART_CACHE.cash[idx] || 0;
+                                    const card = window.MAIN_CHART_CACHE.card[idx] || 0;
+                                    const pctCash = total > 0 ? Math.round(cash / total * 100) : 0;
+                                    const pctCard = total > 0 ? Math.round(card / total * 100) : 0;
+                                    
+                                    return [
+                                        `Periodo: ${context.label}`,
+                                        `Venta Total: $${Math.round(total).toLocaleString('es-MX')}`,
+                                        `Venta Tarjeta: $${Math.round(card).toLocaleString('es-MX')} (${pctCard}%)`,
+                                        `Venta Efectivo: $${Math.round(cash).toLocaleString('es-MX')} (${pctCash}%)`
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Change Period function
+        function changePeriod(period) {
+            // Remove active classes
+            document.querySelectorAll('.period-tabs .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Set current active
+            document.getElementById('btn-' + period).classList.add('active');
+
+            // Render chart based on selected period
+            renderMainChart(SNACKEANDO_RAW_DATA, period);
+            renderSideCharts(SNACKEANDO_RAW_DATA, period);
+        }
+    </script>
+</body>
+</html>
