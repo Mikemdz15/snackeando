@@ -1094,6 +1094,12 @@
             <span class="db-status-badge" id="user-role-badge" style="background: rgba(197, 168, 128, 0.1); border-color: rgba(197, 168, 128, 0.2); font-weight: 600; color: #c5a880; font-size: 0.75rem;">
                 Rol: Lector
             </span>
+            <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px 12px;">
+                <i data-lucide="calendar" style="width: 14px; height: 14px; color: #c5a880;"></i>
+                <select id="general-month-filter" onchange="onGeneralFilterChange()" style="background: transparent; border: none; color: #fff; font-size: 0.8rem; outline: none; cursor: pointer; padding-right: 5px; font-weight: 500;">
+                    <option value="ALL" style="background: #0f1524; color: #fff;">Año Acumulado</option>
+                </select>
+            </div>
             <button class="btn-link-sheet" id="btn-manage-users-id" onclick="openUsersModal()" style="display: none; background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); color: #60a5fa;">
                 <i data-lucide="users" class="w-3.5 h-3.5"></i>
                 Usuarios
@@ -1332,9 +1338,17 @@
                     </button>
                 </div>
                 
-                <!-- Tasks List -->
-                <div class="tasks-list" id="tasks-list-container">
-                    <!-- Task items will be rendered here -->
+                <!-- Tasks List Split -->
+                <div class="tasks-list">
+                    <h4 style="color: #c5a880; font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; text-align: left;">Pendientes Activos</h4>
+                    <div id="tasks-list-container">
+                        <!-- Active task items will be rendered here -->
+                    </div>
+                    
+                    <h4 style="color: #10b981; font-size: 0.9rem; font-weight: 600; margin-top: 30px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; text-align: left;">Acciones Solventadas</h4>
+                    <div id="completed-tasks-list-container">
+                        <!-- Completed task items will be rendered here -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -1577,172 +1591,331 @@
         }
 
         // Parse and consolidate Google Sheet data
+        // Global raw CSV rows references for dynamic month filtering
+        window.RAW_CSV_PRODS_ROWS = null;
+        window.RAW_CSV_CASH_ROWS = null;
+
+        // Parse and consolidate Google Sheet data
         function parseGoogleSheets(csvProdsText, csvCashText) {
             try {
-                // 1. Parse Products Sheet (gid: 0)
+                // 1. Parse and slice headers
                 const parsedProds = parseCSV(csvProdsText);
-                const dataProd = parsedProds.slice(1); // skip headers
+                window.RAW_CSV_PRODS_ROWS = parsedProds.slice(1); // skip headers
                 
-                const productUnits = {};
-                const productRevenue = {};
-                const productSKU = {};
-
-                dataProd.forEach(row => {
-                    if (row.length < 7 || !row[0]) return;
-                    const sku = row[3];
-                    const prodName = row[4];
-                    const units = parseInt(row[5]) || 0;
-                    const amount = parseFloat(row[6].replace(/[$,]/g, '')) || 0.0;
-
-                    if (!prodName || prodName === "None" || prodName === "null" || prodName === "") return;
-
-                    productUnits[prodName] = (productUnits[prodName] || 0) + units;
-                    productRevenue[prodName] = (productRevenue[prodName] || 0.0) + amount;
-                    productSKU[prodName] = sku;
-                });
-
-                const prodList = [];
-                for (const name in productUnits) {
-                    prodList.push({
-                        sku: productSKU[name],
-                        name: name,
-                        units: productUnits[name],
-                        revenue: productRevenue[name]
-                    });
-                }
-
-                // Top 10 by revenue
-                const topProducts = [...prodList].sort((a, b) => b.revenue - a.revenue).slice(0, 10);
-                // Bottom 5 by units (units > 0)
-                const bottomProducts = prodList.filter(x => x.units > 0).sort((a, b) => a.units - b.units).slice(0, 5);
-
-                // 2. Parse Cash/Card Sheet (gid: 1226302399)
                 const parsedCash = parseCSV(csvCashText);
-                const dataCash = parsedCash.slice(1); // skip headers
+                window.RAW_CSV_CASH_ROWS = parsedCash.slice(1); // skip headers
 
-                const dailyMap = {};
-                let totalSales = 0;
-                let totalUnits = 0;
-                let cashSales = 0;
-                let cardSales = 0;
+                // 2. Populate Month/Year selector
+                populateMonthFilter();
 
-                const machines = {};
-
-                dataCash.forEach(row => {
-                    if (row.length < 11 || !row[0]) return;
-                    const dateStr = parseDate(row[0]);
-                    const machine = row[1];
-                    const cardUnits = parseInt(row[5]) || 0;
-                    const cardAmt = parseFloat(row[6].replace(/[$,]/g, '')) || 0.0;
-                    const cashUnits = parseInt(row[7]) || 0;
-                    const cashAmt = parseFloat(row[8].replace(/[$,]/g, '')) || 0.0;
-                    const totUnits = parseInt(row[9]) || 0;
-                    const totAmt = parseFloat(row[10].replace(/[$,]/g, '')) || 0.0;
-
-                    totalSales += totAmt;
-                    totalUnits += totUnits;
-                    cashSales += cashAmt;
-                    cardSales += cardAmt;
-
-                    if (!machines[machine]) {
-                        machines[machine] = {
-                            id: machine,
-                            name: machine === "IB0009" ? "Planta Baja - Oficinas" : (machine === "IB0010" ? "Área de Producción - Planta" : `Máquina ${machine}`),
-                            place: row[3] || "N/A",
-                            location: row[2] || "N/A",
-                            type: row[4] || "N/A",
-                            cashSales: 0, cardSales: 0, totalSales: 0,
-                            cashUnits: 0, cardUnits: 0, totalUnits: 0,
-                            startDate: null,
-                            _startCompareDate: null
-                        };
-                    }
-
-                    machines[machine].cashSales += cashAmt;
-                    machines[machine].cardSales += cardAmt;
-                    machines[machine].totalSales += totAmt;
-                    machines[machine].cashUnits += cashUnits;
-                    machines[machine].cardUnits += cardUnits;
-                    machines[machine].totalUnits += totUnits;
-
-                    // Set startDate for machine dynamically
-                    if (totAmt > 0 || totUnits > 0) {
-                        const originalDate = row[0]; // e.g. "30/07/2026"
-                        if (!machines[machine].startDate || dateStr < machines[machine]._startCompareDate) {
-                            machines[machine]._startCompareDate = dateStr;
-                            machines[machine].startDate = originalDate;
-                        }
-                    }
-
-                    if (!dailyMap[dateStr]) {
-                        dailyMap[dateStr] = {
-                            date: dateStr,
-                            total_sales: 0,
-                            total_units: 0
-                        };
-                    }
-
-                    const cashKey = `${machine}_cash`;
-                    const cardKey = `${machine}_card`;
-                    const unitsKey = `${machine}_units`;
-
-                    dailyMap[dateStr][cashKey] = (dailyMap[dateStr][cashKey] || 0) + cashAmt;
-                    dailyMap[dateStr][cardKey] = (dailyMap[dateStr][cardKey] || 0) + cardAmt;
-                    dailyMap[dateStr][unitsKey] = (dailyMap[dateStr][unitsKey] || 0) + totUnits;
-
-                    dailyMap[dateStr].total_sales += totAmt;
-                    dailyMap[dateStr].total_units += totUnits;
-                });
-
-                const sortedDates = Object.keys(dailyMap).sort();
-                const discoveredMachines = Object.keys(machines);
-                const dailySalesList = sortedDates.map(d => {
-                    const dayObj = dailyMap[d];
-                    discoveredMachines.forEach(m => {
-                        if (dayObj[`${m}_cash`] === undefined) dayObj[`${m}_cash`] = 0.0;
-                        if (dayObj[`${m}_card`] === undefined) dayObj[`${m}_card`] = 0.0;
-                        if (dayObj[`${m}_units`] === undefined) dayObj[`${m}_units`] = 0;
-                    });
-                    return dayObj;
-                });
-
-                // Clean up comparison helper keys
-                discoveredMachines.forEach(m => {
-                    delete machines[m]._startCompareDate;
-                });
-
-                const finalData = {
-                    dateRange: {
-                        start: sortedDates[0] || "",
-                        end: sortedDates[sortedDates.length - 1] || ""
-                    },
-                    summary: {
-                        totalSales: totalSales,
-                        totalUnits: totalUnits,
-                        cashSales: cashSales,
-                        cardSales: cardSales,
-                        profitMargin: 0.12,
-                        estimatedProfit: totalSales * 0.12
-                    },
-                    machines: machines,
-                    dailySales: dailySalesList,
-                    topProducts: topProducts,
-                    bottomProducts: bottomProducts
-                };
-
-                // Update global data reference and render
-                window.SNACKEANDO_RAW_DATA = finalData;
-                renderDashboard(finalData);
-                console.log("Live Google Sheet parsed and rendered successfully!", finalData);
+                // 3. Apply general filter (default to ALL / Año Acumulado)
+                applyGeneralFilterAndRender();
+                console.log("Live Google Sheet parsed and initialized successfully!");
             } catch (e) {
                 console.error("Error parsing live sheet data:", e);
                 alert("Error al procesar la información de Google Sheet. Cargando base estática.");
-                renderDashboard(SNACKEANDO_RAW_DATA);
+                
+                // Initialize static months and render static data
+                populateMonthFilter();
+                applyGeneralFilterAndRender();
             }
+        }
+
+        // Extract available month-years in dataset
+        function extractMonths(dataCash) {
+            const monthsSet = new Set();
+            dataCash.forEach(row => {
+                if (row.length < 11 || !row[0]) return;
+                const parsed = parseDate(row[0]);
+                if (parsed && parsed.length >= 7) {
+                    const monthYear = parsed.substring(0, 7); // "YYYY-MM"
+                    monthsSet.add(monthYear);
+                }
+            });
+            return Array.from(monthsSet).sort();
+        }
+
+        // Build HTML Month Select options
+        function populateMonthFilter() {
+            const select = document.getElementById('general-month-filter');
+            if (!select) return;
+            select.innerHTML = '<option value="ALL" style="background: #0f1524; color: #fff;">Año Acumulado</option>';
+
+            let months = [];
+            if (window.RAW_CSV_CASH_ROWS) {
+                months = extractMonths(window.RAW_CSV_CASH_ROWS);
+            } else if (typeof SNACKEANDO_RAW_DATA !== 'undefined' && SNACKEANDO_RAW_DATA.dailySales) {
+                const staticMonths = new Set();
+                SNACKEANDO_RAW_DATA.dailySales.forEach(day => {
+                    if (day.date && day.date.length >= 7) {
+                        staticMonths.add(day.date.substring(0, 7));
+                    }
+                });
+                months = Array.from(staticMonths).sort();
+            }
+
+            const monthNames = {
+                "01": "Enero", "02": "Febrero", "03": "Marzo", "04": "Abril",
+                "05": "Mayo", "06": "Junio", "07": "Julio", "08": "Agosto",
+                "09": "Septiembre", "10": "Octubre", "11": "Noviembre", "12": "Diciembre"
+            };
+
+            months.forEach(m => {
+                const parts = m.split('-');
+                if (parts.length === 2) {
+                    const label = `${monthNames[parts[1]] || parts[1]} ${parts[0]}`;
+                    const option = document.createElement('option');
+                    option.value = m;
+                    option.style.background = "#0f1524";
+                    option.style.color = "#fff";
+                    option.innerText = label;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        function onGeneralFilterChange() {
+            applyGeneralFilterAndRender();
+        }
+
+        // Apply filters on dataset and recalculate dashboard summaries
+        function applyGeneralFilterAndRender() {
+            const select = document.getElementById('general-month-filter');
+            const monthYear = select ? select.value : 'ALL';
+            
+            console.log("Applying general temporal filter:", monthYear);
+
+            // If we don't have RAW_CSV_ROWS loaded, filter the static database fallback
+            if (!window.RAW_CSV_CASH_ROWS) {
+                filterAndRenderStaticData(monthYear);
+                return;
+            }
+
+            // Filter raw rows by date monthYear
+            const filteredProds = window.RAW_CSV_PRODS_ROWS.filter(row => {
+                if (row.length < 7 || !row[0]) return false;
+                if (monthYear === 'ALL') return true;
+                const dateStr = parseDate(row[0]);
+                return dateStr && dateStr.startsWith(monthYear);
+            });
+
+            const filteredCash = window.RAW_CSV_CASH_ROWS.filter(row => {
+                if (row.length < 11 || !row[0]) return false;
+                if (monthYear === 'ALL') return true;
+                const dateStr = parseDate(row[0]);
+                return dateStr && dateStr.startsWith(monthYear);
+            });
+
+            // Recalculate Products stats
+            const productUnits = {};
+            const productRevenue = {};
+            const productSKU = {};
+
+            filteredProds.forEach(row => {
+                const sku = row[3];
+                const prodName = row[4];
+                const units = parseInt(row[5]) || 0;
+                const amount = parseFloat(row[6].replace(/[$,]/g, '')) || 0.0;
+
+                if (!prodName || prodName === "None" || prodName === "null" || prodName === "") return;
+
+                productUnits[prodName] = (productUnits[prodName] || 0) + units;
+                productRevenue[prodName] = (productRevenue[prodName] || 0.0) + amount;
+                productSKU[prodName] = sku;
+            });
+
+            const prodList = [];
+            for (const name in productUnits) {
+                prodList.push({
+                    sku: productSKU[name],
+                    name: name,
+                    units: productUnits[name],
+                    revenue: productRevenue[name]
+                });
+            }
+
+            const topProducts = [...prodList].sort((a, b) => b.revenue - a.revenue).slice(0, 10);
+            const bottomProducts = prodList.filter(x => x.units > 0).sort((a, b) => a.units - b.units).slice(0, 5);
+
+            // Recalculate Cash / Card stats
+            const dailyMap = {};
+            let totalSales = 0;
+            let totalUnits = 0;
+            let cashSales = 0;
+            let cardSales = 0;
+            const machines = {};
+
+            filteredCash.forEach(row => {
+                const dateStr = parseDate(row[0]);
+                const machine = row[1];
+                const cardUnits = parseInt(row[5]) || 0;
+                const cardAmt = parseFloat(row[6].replace(/[$,]/g, '')) || 0.0;
+                const cashUnits = parseInt(row[7]) || 0;
+                const cashAmt = parseFloat(row[8].replace(/[$,]/g, '')) || 0.0;
+                const totUnits = parseInt(row[9]) || 0;
+                const totAmt = parseFloat(row[10].replace(/[$,]/g, '')) || 0.0;
+
+                totalSales += totAmt;
+                totalUnits += totUnits;
+                cashSales += cashAmt;
+                cardSales += cardAmt;
+
+                if (!machines[machine]) {
+                    machines[machine] = {
+                        id: machine,
+                        name: machine === "IB0009" ? "Planta Baja - Oficinas" : (machine === "IB0010" ? "Área de Producción - Planta" : `Máquina ${machine}`),
+                        place: row[3] || "N/A",
+                        location: row[2] || "N/A",
+                        type: row[4] || "N/A",
+                        cashSales: 0, cardSales: 0, totalSales: 0,
+                        cashUnits: 0, cardUnits: 0, totalUnits: 0,
+                        startDate: null,
+                        _startCompareDate: null
+                    };
+                }
+
+                machines[machine].cashSales += cashAmt;
+                machines[machine].cardSales += cardAmt;
+                machines[machine].totalSales += totAmt;
+                machines[machine].cashUnits += cashUnits;
+                machines[machine].cardUnits += cardUnits;
+                machines[machine].totalUnits += totUnits;
+
+                if (totAmt > 0 || totUnits > 0) {
+                    const originalDate = row[0];
+                    if (!machines[machine].startDate || dateStr < machines[machine]._startCompareDate) {
+                        machines[machine]._startCompareDate = dateStr;
+                        machines[machine].startDate = originalDate;
+                    }
+                }
+
+                if (!dailyMap[dateStr]) {
+                    dailyMap[dateStr] = {
+                        date: dateStr,
+                        total_sales: 0,
+                        total_units: 0
+                    };
+                }
+
+                const cashKey = `${machine}_cash`;
+                const cardKey = `${machine}_card`;
+                const unitsKey = `${machine}_units`;
+
+                dailyMap[dateStr][cashKey] = (dailyMap[dateStr][cashKey] || 0) + cashAmt;
+                dailyMap[dateStr][cardKey] = (dailyMap[dateStr][cardKey] || 0) + cardAmt;
+                dailyMap[dateStr][unitsKey] = (dailyMap[dateStr][unitsKey] || 0) + totUnits;
+
+                dailyMap[dateStr].total_sales += totAmt;
+                dailyMap[dateStr].total_units += totUnits;
+            });
+
+            const sortedDates = Object.keys(dailyMap).sort();
+            const discoveredMachines = Object.keys(machines);
+            const dailySalesList = sortedDates.map(d => {
+                const dayObj = dailyMap[d];
+                discoveredMachines.forEach(m => {
+                    if (dayObj[`${m}_cash`] === undefined) dayObj[`${m}_cash`] = 0.0;
+                    if (dayObj[`${m}_card`] === undefined) dayObj[`${m}_card`] = 0.0;
+                    if (dayObj[`${m}_units`] === undefined) dayObj[`${m}_units`] = 0;
+                });
+                return dayObj;
+            });
+
+            discoveredMachines.forEach(m => {
+                delete machines[m]._startCompareDate;
+            });
+
+            const finalData = {
+                dateRange: {
+                    start: sortedDates[0] || "",
+                    end: sortedDates[sortedDates.length - 1] || ""
+                },
+                summary: {
+                    totalSales: totalSales,
+                    totalUnits: totalUnits,
+                    cashSales: cashSales,
+                    cardSales: cardSales,
+                    profitMargin: 0.12,
+                    estimatedProfit: totalSales * 0.12
+                },
+                machines: machines,
+                dailySales: dailySalesList,
+                topProducts: topProducts,
+                bottomProducts: bottomProducts
+            };
+
+            renderDashboard(finalData);
+        }
+
+        // Apply filters on the static preloaded database fallback
+        function filterAndRenderStaticData(monthYear) {
+            if (monthYear === 'ALL') {
+                renderDashboard(SNACKEANDO_RAW_DATA);
+                return;
+            }
+
+            const filteredDaily = SNACKEANDO_RAW_DATA.dailySales.filter(day => {
+                return day.date && day.date.startsWith(monthYear);
+            });
+
+            let totalSales = 0;
+            let totalUnits = 0;
+            let cashSales = 0;
+            let cardSales = 0;
+
+            const machines = {};
+            for (const key in SNACKEANDO_RAW_DATA.machines) {
+                machines[key] = {
+                    ...SNACKEANDO_RAW_DATA.machines[key],
+                    cashSales: 0, cardSales: 0, totalSales: 0,
+                    cashUnits: 0, cardUnits: 0, totalUnits: 0
+                };
+            }
+
+            filteredDaily.forEach(day => {
+                totalSales += day.total_sales;
+                totalUnits += day.total_units;
+
+                for (const m in machines) {
+                    const cashVal = day[`${m}_cash`] || 0;
+                    const cardVal = day[`${m}_card`] || 0;
+                    const unitsVal = day[`${m}_units`] || 0;
+
+                    machines[m].cashSales += cashVal;
+                    machines[m].cardSales += cardVal;
+                    machines[m].totalSales += (cashVal + cardVal);
+                    machines[m].totalUnits += unitsVal;
+
+                    cashSales += cashVal;
+                    cardSales += cardVal;
+                }
+            });
+
+            const finalData = {
+                dateRange: {
+                    start: filteredDaily[0] ? filteredDaily[0].date : "",
+                    end: filteredDaily[filteredDaily.length - 1] ? filteredDaily[filteredDaily.length - 1].date : ""
+                },
+                summary: {
+                    totalSales: totalSales,
+                    totalUnits: totalUnits,
+                    cashSales: cashSales,
+                    cardSales: cardSales,
+                    profitMargin: 0.12,
+                    estimatedProfit: totalSales * 0.12
+                },
+                machines: machines,
+                dailySales: filteredDaily,
+                topProducts: SNACKEANDO_RAW_DATA.topProducts,
+                bottomProducts: SNACKEANDO_RAW_DATA.bottomProducts
+            };
+
+            renderDashboard(finalData);
         }
 
         // Main render engine
         function renderDashboard(data) {
+            window.CURRENT_ACTIVE_DASHBOARD_DATA = data;
             // Check and populate machine start dates if missing (fallback/static database)
             for (const id in data.machines) {
                 if (!data.machines[id].startDate) {
@@ -2352,9 +2525,10 @@
             // Set current active
             document.getElementById('btn-' + period).classList.add('active');
 
-            // Render chart based on selected period
-            renderMainChart(SNACKEANDO_RAW_DATA, period);
-            renderSideCharts(SNACKEANDO_RAW_DATA, period);
+            // Render chart based on selected period and active filtered data
+            const activeData = window.CURRENT_ACTIVE_DASHBOARD_DATA || SNACKEANDO_RAW_DATA;
+            renderMainChart(activeData, period);
+            renderSideCharts(activeData, period);
         }
 
         // ==========================================
@@ -2582,68 +2756,93 @@
         }
 
         function renderTasks() {
-            const container = document.getElementById('tasks-list-container');
-            if (!container) return;
-            container.innerHTML = '';
+            const activeContainer = document.getElementById('tasks-list-container');
+            const completedContainer = document.getElementById('completed-tasks-list-container');
+            if (!activeContainer || !completedContainer) return;
+            
+            activeContainer.innerHTML = '';
+            completedContainer.innerHTML = '';
 
-            if (tasks.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: #4b5563; font-style: italic; font-size: 0.9rem; padding: 20px 0;">No hay pendientes registrados para revisión directiva.</p>`;
-                return;
+            const activeTasks = tasks.filter(t => !t.is_completed);
+            const completedTasks = tasks.filter(t => t.is_completed);
+
+            if (activeTasks.length === 0) {
+                activeContainer.innerHTML = `<p style="text-align: center; color: #4b5563; font-style: italic; font-size: 0.9rem; padding: 15px 0; text-align: left; margin-left: 30px;">No hay pendientes activos.</p>`;
+            } else {
+                activeTasks.forEach(task => {
+                    const itemDiv = createTaskElement(task);
+                    activeContainer.appendChild(itemDiv);
+                });
             }
 
-            tasks.forEach(task => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = `task-item ${task.is_completed ? 'completed' : ''}`;
-                
-                let commentContent = '';
-                if (task.progress_comment) {
-                    const authorTag = task.progress_comment_by ? ` <span style="font-size: 0.75rem; color: #6b7280; font-style: italic; font-weight: normal; margin-left: 5px;">(por ${task.progress_comment_by})</span>` : '';
-                    commentContent = `<span class="comment-text" id="comment-text-${task.id}" onclick="startEditComment('${task.id}')">${task.progress_comment}</span>${authorTag}`;
-                } else {
-                    commentContent = `<span class="comment-text empty" id="comment-text-${task.id}" onclick="startEditComment('${task.id}')">Haga clic aquí para agregar un comentario de avance...</span>`;
-                }
+            if (completedTasks.length === 0) {
+                completedContainer.innerHTML = `<p style="text-align: center; color: #4b5563; font-style: italic; font-size: 0.9rem; padding: 15px 0; text-align: left; margin-left: 30px;">No hay acciones solventadas.</p>`;
+            } else {
+                completedTasks.forEach(task => {
+                    const itemDiv = createTaskElement(task);
+                    completedContainer.appendChild(itemDiv);
+                });
+            }
 
-                itemDiv.innerHTML = `
-                    <div class="task-row-main">
-                        <div class="task-checkbox-wrapper">
-                            <input type="checkbox" class="task-checkbox" ${task.is_completed ? 'checked' : ''} onchange="toggleTaskCompleted('${task.id}')">
-                        </div>
-                        <div class="task-content">
-                            <div style="flex: 1; display: flex; align-items: center; flex-wrap: wrap;">
-                                <span class="task-text" id="task-text-${task.id}" onclick="startEditTaskDesc('${task.id}')">${task.task_desc}</span>
-                                ${task.task_by ? `<span style="font-size: 0.72rem; color: #6b7280; font-style: italic; font-weight: normal; margin-left: 6px; white-space: nowrap;">(por ${task.task_by})</span>` : ''}
-                            </div>
-                            <div class="task-actions">
-                                <button class="btn-action" onclick="startEditTaskDesc('${task.id}')" title="Editar Pendiente">
-                                    <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
-                                </button>
-                                ${currentUserRole === 'Administrador' ? `
-                                <button class="btn-action btn-delete" onclick="deleteTask('${task.id}')" title="Eliminar">
-                                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
-                                </button>
-                                ` : ''}
-                            </div>
-                        </div>
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }
+
+        // Helper to generate task HTML element
+        function createTaskElement(task) {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = `task-item ${task.is_completed ? 'completed' : ''}`;
+            
+            let commentContent = '';
+            if (task.progress_comment) {
+                const authorTag = task.progress_comment_by ? ` <span style="font-size: 0.75rem; color: #6b7280; font-style: italic; font-weight: normal; margin-left: 5px;">(por ${task.progress_comment_by})</span>` : '';
+                commentContent = `<span class="comment-text" id="comment-text-${task.id}" onclick="startEditComment('${task.id}')">${task.progress_comment}</span>${authorTag}`;
+            } else {
+                commentContent = `<span class="comment-text empty" id="comment-text-${task.id}" onclick="startEditComment('${task.id}')">Haga clic aquí para agregar un comentario de avance...</span>`;
+            }
+
+            itemDiv.innerHTML = `
+                <div class="task-row-main">
+                    <div class="task-checkbox-wrapper">
+                        <input type="checkbox" class="task-checkbox" ${task.is_completed ? 'checked' : ''} onchange="toggleTaskCompleted('${task.id}')">
                     </div>
-                    <div class="task-comment-area" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; margin-top: 8px;">
-                        <span class="comment-header">Avance:</span>
-                        <div style="display: inline-flex; align-items: center; gap: 8px; text-align: left;">
-                            ${commentContent}
-                            ${task.progress_comment ? `
-                            <div style="display: inline-flex; gap: 6px; align-items: center;">
-                                <button class="btn-action" onclick="startEditComment('${task.id}')" title="Editar Avance" style="padding: 2px 4px; display: inline-flex; align-items: center;">
-                                    <i data-lucide="edit-2" style="width: 12px; height: 12px; color: #9ca3af;"></i>
-                                </button>
-                                <button class="btn-action btn-delete" onclick="clearComment('${task.id}')" title="Eliminar Avance" style="padding: 2px 4px; display: inline-flex; align-items: center; background: none; border: none; cursor: pointer;">
-                                    <i data-lucide="x" style="width: 12px; height: 12px; color: #ef4444;"></i>
-                                </button>
-                            </div>
+                    <div class="task-content">
+                        <div style="flex: 1; display: flex; align-items: center; flex-wrap: wrap;">
+                            <span class="task-text" id="task-text-${task.id}" onclick="startEditTaskDesc('${task.id}')">${task.task_desc}</span>
+                            ${task.task_by ? `<span style="font-size: 0.72rem; color: #6b7280; font-style: italic; font-weight: normal; margin-left: 6px; white-space: nowrap;">(por ${task.task_by})</span>` : ''}
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn-action" onclick="startEditTaskDesc('${task.id}')" title="Editar Pendiente">
+                                <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
+                            </button>
+                            ${currentUserRole === 'Administrador' ? `
+                            <button class="btn-action btn-delete" onclick="deleteTask('${task.id}')" title="Eliminar">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                            </button>
                             ` : ''}
                         </div>
                     </div>
-                `;
-                container.appendChild(itemDiv);
-            });
+                </div>
+                <div class="task-comment-area" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; margin-top: 8px;">
+                    <span class="comment-header">Avance:</span>
+                    <div style="display: inline-flex; align-items: center; gap: 8px; text-align: left;">
+                        ${commentContent}
+                        ${task.progress_comment ? `
+                        <div style="display: inline-flex; gap: 6px; align-items: center;">
+                            <button class="btn-action" onclick="startEditComment('${task.id}')" title="Editar Avance" style="padding: 2px 4px; display: inline-flex; align-items: center;">
+                                <i data-lucide="edit-2" style="width: 12px; height: 12px; color: #9ca3af;"></i>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="clearComment('${task.id}')" title="Eliminar Avance" style="padding: 2px 4px; display: inline-flex; align-items: center; background: none; border: none; cursor: pointer;">
+                                <i data-lucide="x" style="width: 12px; height: 12px; color: #ef4444;"></i>
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            return itemDiv;
+        }
 
             if (window.lucide) {
                 window.lucide.createIcons();
