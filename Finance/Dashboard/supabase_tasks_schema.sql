@@ -11,6 +11,7 @@ create table if not exists public.snackeando_tasks (
     task_desc text not null,
     progress_comment text default '',
     progress_comment_by text,
+    task_by text,
     is_completed boolean default false not null
 );
 

@@ -2430,6 +2430,7 @@
                             task_desc: task.task_desc,
                             progress_comment: task.progress_comment,
                             progress_comment_by: task.progress_comment_by,
+                            task_by: task.task_by,
                             is_completed: task.is_completed
                         })
                         .eq('id', task.id);
@@ -2450,6 +2451,7 @@
             const newTask = {
                 task_desc: desc,
                 progress_comment: '',
+                task_by: currentUserName || 'Lector',
                 is_completed: false
             };
 
@@ -2523,6 +2525,7 @@
             const task = tasks.find(t => t.id === id);
             if (task && newDesc) {
                 task.task_desc = newDesc;
+                task.task_by = currentUserName || 'Lector';
                 await saveTaskState(task);
             }
             renderTasks();
@@ -2595,7 +2598,10 @@
                             <input type="checkbox" class="task-checkbox" ${task.is_completed ? 'checked' : ''} onchange="toggleTaskCompleted('${task.id}')">
                         </div>
                         <div class="task-content">
-                            <span class="task-text" id="task-text-${task.id}" onclick="startEditTaskDesc('${task.id}')">${task.task_desc}</span>
+                            <div style="flex: 1; display: flex; align-items: center; flex-wrap: wrap;">
+                                <span class="task-text" id="task-text-${task.id}" onclick="startEditTaskDesc('${task.id}')">${task.task_desc}</span>
+                                ${task.task_by ? `<span style="font-size: 0.72rem; color: #6b7280; font-style: italic; font-weight: normal; margin-left: 6px; white-space: nowrap;">(por ${task.task_by})</span>` : ''}
+                            </div>
                             <div class="task-actions">
                                 <button class="btn-action" onclick="startEditTaskDesc('${task.id}')" title="Editar Pendiente">
                                     <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
