@@ -16,13 +16,26 @@ create table if not exists public.snackeando_users (
 -- 2. Deshabilitar RLS
 alter table public.snackeando_users disable row level security;
 
--- 3. Insertar usuario administrador por defecto
+-- 3. Crear políticas públicas de respaldo por si Supabase fuerza RLS activo
+drop policy if exists "Permitir select publica users" on public.snackeando_users;
+create policy "Permitir select publica users" on public.snackeando_users for select using (true);
+
+drop policy if exists "Permitir insert publica users" on public.snackeando_users;
+create policy "Permitir insert publica users" on public.snackeando_users for insert with check (true);
+
+drop policy if exists "Permitir update publica users" on public.snackeando_users;
+create policy "Permitir update publica users" on public.snackeando_users for update using (true) with check (true);
+
+drop policy if exists "Permitir delete publica users" on public.snackeando_users;
+create policy "Permitir delete publica users" on public.snackeando_users for delete using (true);
+
+-- 4. Insertar usuario administrador por defecto
 insert into public.snackeando_users (username, password, role)
 values ('Miguel Mendez', '123456', 'Administrador')
 on conflict (username) do update 
 set password = '123456', role = 'Administrador';
 
--- 4. Insertar un lector por defecto de prueba
+-- 5. Insertar un lector por defecto de prueba
 insert into public.snackeando_users (username, password, role)
 values ('Invitado', 'socio123', 'Lector')
 on conflict (username) do nothing;

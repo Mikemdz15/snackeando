@@ -13,7 +13,18 @@ create table if not exists public.snackeando_tasks (
     is_completed boolean default false not null
 );
 
--- 2. Deshabilitar RLS para permitir operaciones públicas sin autenticación
--- Esto permite que cualquier lector autorizado con tu enlace de Vercel
--- pueda agregar, editar o marcar como resueltos los pendientes.
+-- 2. Deshabilitar RLS para permitir operaciones públicas
 alter table public.snackeando_tasks disable row level security;
+
+-- 3. Crear políticas públicas de respaldo por si Supabase fuerza RLS activo
+drop policy if exists "Permitir select publica tasks" on public.snackeando_tasks;
+create policy "Permitir select publica tasks" on public.snackeando_tasks for select using (true);
+
+drop policy if exists "Permitir insert publica tasks" on public.snackeando_tasks;
+create policy "Permitir insert publica tasks" on public.snackeando_tasks for insert with check (true);
+
+drop policy if exists "Permitir update publica tasks" on public.snackeando_tasks;
+create policy "Permitir update publica tasks" on public.snackeando_tasks for update using (true) with check (true);
+
+drop policy if exists "Permitir delete publica tasks" on public.snackeando_tasks;
+create policy "Permitir delete publica tasks" on public.snackeando_tasks for delete using (true);
