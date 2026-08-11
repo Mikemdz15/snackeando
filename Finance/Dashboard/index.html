@@ -2562,6 +2562,17 @@
             renderTasks();
         }
 
+        async function clearComment(id) {
+            if (!confirm("¿Estás seguro de eliminar el comentario de avance?")) return;
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.progress_comment = '';
+                task.progress_comment_by = '';
+                await saveTaskState(task);
+            }
+            renderTasks();
+        }
+
         function handleCommentKey(event, id) {
             if (event.key === 'Enter') {
                 saveComment(id);
@@ -2614,9 +2625,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="task-comment-area">
+                    <div class="task-comment-area" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                         <span class="comment-header">Avance:</span>
-                        ${commentContent}
+                        <div style="display: inline-flex; align-items: center; gap: 8px;">
+                            ${commentContent}
+                            ${task.progress_comment ? `
+                            <div style="display: inline-flex; gap: 6px; align-items: center;">
+                                <button class="btn-action" onclick="startEditComment('${task.id}')" title="Editar Avance" style="padding: 2px 4px; display: inline-flex; align-items: center;">
+                                    <i data-lucide="edit-2" style="width: 12px; height: 12px; color: #9ca3af;"></i>
+                                </button>
+                                <button class="btn-action btn-delete" onclick="clearComment('${task.id}')" title="Eliminar Avance" style="padding: 2px 4px; display: inline-flex; align-items: center; background: none; border: none; cursor: pointer;">
+                                    <i data-lucide="x" style="width: 12px; height: 12px; color: #ef4444;"></i>
+                                </button>
+                            </div>
+                            ` : ''}
+                        </div>
                     </div>
                 `;
                 container.appendChild(itemDiv);
