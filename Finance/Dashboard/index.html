@@ -391,6 +391,46 @@
             padding-top: 15px;
         }
 
+        /* USERS MODAL TABLE */
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            text-align: left;
+        }
+        .users-table th, .users-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85rem;
+        }
+        .users-table th {
+            color: #c5a880;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+        .users-table td {
+            color: #9ca3af;
+        }
+        .user-role-lbl {
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .user-role-lbl.admin {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16,185,129,0.2);
+        }
+        .user-role-lbl.lector {
+            background: rgba(197, 168, 128, 0.1);
+            color: #c5a880;
+            border: 1px solid rgba(197,168,128,0.2);
+        }
+
         /* LOGIN OVERLAY UPDATED */
         .login-overlay {
             position: fixed;
@@ -1017,11 +1057,14 @@
                     <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #fff; margin-top: 5px;">Acceso Autorizado</h3>
                 </div>
                 <p style="color: #9ca3af; font-size: 0.8rem; text-align: center; margin-bottom: 20px; line-height: 1.5;">
-                    Ingresa tu código de acceso (Administrador o Socio) para desbloquear la plataforma.
+                    Ingresa tu usuario y contraseña autorizados para desbloquear la plataforma.
                 </p>
+                <div style="margin-bottom: 12px;">
+                    <input type="text" id="login-username-input" class="add-task-form input" placeholder="Usuario (ej. Miguel Mendez)..." style="width: 100%; box-sizing: border-box; text-align: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; color: #fff; font-size: 0.9rem;" onkeydown="if(event.key === 'Enter') attemptLogin()">
+                </div>
                 <div style="margin-bottom: 20px;">
-                    <input type="password" id="login-password-input" class="add-task-form input" placeholder="Código de acceso..." style="width: 100%; box-sizing: border-box; text-align: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; color: #fff; font-size: 0.9rem;" onkeydown="if(event.key === 'Enter') attemptLogin()">
-                    <p id="login-error-msg" style="color: #ef4444; font-size: 0.75rem; text-align: center; margin-top: 8px; display: none;">Código de acceso incorrecto.</p>
+                    <input type="password" id="login-password-input" class="add-task-form input" placeholder="Contraseña..." style="width: 100%; box-sizing: border-box; text-align: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; color: #fff; font-size: 0.9rem;" onkeydown="if(event.key === 'Enter') attemptLogin()">
+                    <p id="login-error-msg" style="color: #ef4444; font-size: 0.75rem; text-align: center; margin-top: 8px; display: none;">Usuario o contraseña incorrectos.</p>
                 </div>
                 <button class="btn-primary" onclick="attemptLogin()" style="width: 100%; justify-content: center; padding: 12px 0; border-radius: 8px; display: flex; align-items: center; gap: 8px; font-size: 0.9rem;">
                     <i data-lucide="key" style="width: 16px; height: 16px;"></i> Ingresar al Dashboard
@@ -1051,6 +1094,10 @@
             <span class="db-status-badge" id="user-role-badge" style="background: rgba(197, 168, 128, 0.1); border-color: rgba(197, 168, 128, 0.2); font-weight: 600; color: #c5a880; font-size: 0.75rem;">
                 Rol: Lector
             </span>
+            <button class="btn-link-sheet" id="btn-manage-users-id" onclick="openUsersModal()" style="display: none; background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); color: #60a5fa;">
+                <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                Usuarios
+            </button>
             <button class="btn-link-sheet" id="btn-link-sheet-id" onclick="openSheetModal()">
                 <i data-lucide="link" class="w-3.5 h-3.5"></i>
                 Vincular Google Sheet
@@ -1310,6 +1357,50 @@
         </div>
     </div>
 
+    <!-- USER MANAGEMENT MODAL (ADMIN ONLY) -->
+    <div class="modal-overlay" id="usersModal">
+        <div class="modal-card" style="max-width: 650px;">
+            <h3 class="modal-title">Administración de Usuarios</h3>
+            <p class="modal-desc" style="margin-bottom: 10px; font-size: 0.85rem; color: #9ca3af;">
+                Crea nuevos perfiles de acceso o restablece sus contraseñas en tiempo real.
+            </p>
+            
+            <!-- Add User Form -->
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 15px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                <input type="text" id="new-user-username" class="modal-input" placeholder="Nombre de usuario..." style="flex: 1; min-width: 150px; margin-bottom: 0; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff;">
+                <input type="text" id="new-user-password" class="modal-input" placeholder="Contraseña..." style="flex: 1; min-width: 120px; margin-bottom: 0; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff;">
+                <select id="new-user-role" class="modal-input" style="flex: 0.8; min-width: 120px; margin-bottom: 0; padding: 10px; background: #0f1524; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; cursor: pointer;">
+                    <option value="Lector">Lector</option>
+                    <option value="Administrador">Administrador</option>
+                </select>
+                <button class="btn-primary" onclick="createUser()" style="padding: 10px 15px; font-size: 0.85rem; border-radius: 6px;">
+                    Crear Usuario
+                </button>
+            </div>
+            
+            <!-- Users List Table -->
+            <div style="max-height: 250px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; margin-top: 15px;">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Rol</th>
+                            <th>Contraseña (Editable)</th>
+                            <th style="text-align: right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="modal-buttons" style="margin-top: 15px; display: flex; justify-content: flex-end;">
+                <button class="btn-secondary" onclick="closeUsersModal()">Cerrar Administrador</button>
+            </div>
+        </div>
+    </div>
+
     <!-- GLOBAL FOOTER -->
     <footer class="dashboard-footer">
         <span class="footer-logo">SNACKEANDO</span>
@@ -1379,6 +1470,7 @@
 
             // Initialize Supabase/Local tasks database
             initTasksDB();
+            initUsersDB();
         });
 
         // Open/Close Modal
@@ -2527,11 +2619,65 @@
         // CONTROL DE ACCESO (USER ROLES LOGIC)
         // ==========================================
         let currentUserRole = null;
+        let currentUserName = null;
+        let isUsersSupabaseActive = false;
+
+        async function initUsersDB() {
+            if (typeof supabase !== 'undefined' && supabase && DB_URL && DB_KEY) {
+                try {
+                    // Test query to check if public.snackeando_users exists
+                    const { error } = await window.supabaseClient
+                        .from('snackeando_users')
+                        .select('id')
+                        .limit(1);
+
+                    if (error && error.code !== 'PGRST116') throw error;
+                    
+                    isUsersSupabaseActive = true;
+
+                    // Check if "Miguel Mendez" exists, auto seed if missing
+                    const { data: checkMendez, error: mendezErr } = await window.supabaseClient
+                        .from('snackeando_users')
+                        .select('id')
+                        .eq('username', 'Miguel Mendez')
+                        .limit(1);
+
+                    if (!mendezErr && (!checkMendez || checkMendez.length === 0)) {
+                        await window.supabaseClient
+                            .from('snackeando_users')
+                            .insert([
+                                { username: "Miguel Mendez", password: "123456", role: "Administrador" }
+                            ]);
+                    }
+                } catch (e) {
+                    console.warn("Supabase users table not ready, using localStorage fallback:", e);
+                    isUsersSupabaseActive = false;
+                }
+            } else {
+                isUsersSupabaseActive = false;
+            }
+
+            getLocalUsers(); // ensure local storage database is seeded
+        }
+
+        function getLocalUsers() {
+            const stored = localStorage.getItem('snackeando_users');
+            if (stored) return JSON.parse(stored);
+            
+            const defaultUsers = [
+                { username: "Miguel Mendez", password: "123456", role: "Administrador" },
+                { username: "Invitado", password: "socio123", role: "Lector" }
+            ];
+            localStorage.setItem('snackeando_users', JSON.stringify(defaultUsers));
+            return defaultUsers;
+        }
 
         function checkSessionLogin() {
             const savedRole = localStorage.getItem('user_role');
-            if (savedRole) {
+            const savedName = localStorage.getItem('user_name');
+            if (savedRole && savedName) {
                 currentUserRole = savedRole;
+                currentUserName = savedName;
                 document.getElementById('loginOverlay').style.display = 'none';
                 applyRolePermissions();
             } else {
@@ -2539,27 +2685,54 @@
             }
         }
 
-        function attemptLogin() {
-            const input = document.getElementById('login-password-input');
+        async function attemptLogin() {
+            const usernameInput = document.getElementById('login-username-input');
+            const passwordInput = document.getElementById('login-password-input');
             const errorMsg = document.getElementById('login-error-msg');
-            const code = input.value.trim();
+            
+            const usernameVal = usernameInput.value.trim();
+            const passwordVal = passwordInput.value.trim();
 
-            if (code === "admin.snackeando" || code === "admin123") {
-                currentUserRole = "Administrador";
+            if (!usernameVal || !passwordVal) return;
+
+            let matchedUser = null;
+
+            if (isUsersSupabaseActive) {
+                try {
+                    const { data, error } = await window.supabaseClient
+                        .from('snackeando_users')
+                        .select('*')
+                        .eq('username', usernameVal)
+                        .eq('password', passwordVal)
+                        .limit(1);
+
+                    if (error) throw error;
+                    if (data && data.length > 0) {
+                        matchedUser = data[0];
+                    }
+                } catch (e) {
+                    console.error("Supabase user login query failed, trying local fallback:", e);
+                }
+            }
+
+            if (!matchedUser) {
+                const localUsers = getLocalUsers();
+                matchedUser = localUsers.find(u => u.username.toLowerCase() === usernameVal.toLowerCase() && u.password === passwordVal);
+            }
+
+            if (matchedUser) {
+                currentUserRole = matchedUser.role;
+                currentUserName = matchedUser.username;
                 localStorage.setItem('user_role', currentUserRole);
-                document.getElementById('loginOverlay').style.display = 'none';
-                errorMsg.style.display = 'none';
-                applyRolePermissions();
-            } else if (code === "socio.snackeando" || code === "socio123" || code === "lector123") {
-                currentUserRole = "Lector";
-                localStorage.setItem('user_role', currentUserRole);
+                localStorage.setItem('user_name', currentUserName);
+                
                 document.getElementById('loginOverlay').style.display = 'none';
                 errorMsg.style.display = 'none';
                 applyRolePermissions();
             } else {
                 errorMsg.style.display = 'block';
             }
-            input.value = '';
+            passwordInput.value = '';
         }
 
         function applyRolePermissions() {
@@ -2578,6 +2751,16 @@
                 }
             }
 
+            // Show/Hide User Management Button
+            const usersButton = document.getElementById('btn-manage-users-id');
+            if (usersButton) {
+                if (currentUserRole === 'Administrador') {
+                    usersButton.style.display = 'flex';
+                } else {
+                    usersButton.style.display = 'none';
+                }
+            }
+
             // Show/Hide Google Sheets Link Button
             const linkButton = document.getElementById('btn-link-sheet-id');
             if (linkButton) {
@@ -2588,15 +2771,198 @@
                 }
             }
 
-            // Re-render tasks to update action buttons (e.g. show/hide delete icon)
+            // Re-render tasks to update action buttons
             renderTasks();
         }
 
         function logout() {
             localStorage.removeItem('user_role');
+            localStorage.removeItem('user_name');
             currentUserRole = null;
+            currentUserName = null;
             document.getElementById('loginOverlay').style.display = 'flex';
-            document.getElementById('login-password-input').focus();
+            document.getElementById('login-username-input').focus();
+        }
+
+        // ==========================================
+        // USUARIOS MANAGER (ADMIN ONLY MODAL CONTROLLER)
+        // ==========================================
+        function openUsersModal() {
+            document.getElementById('usersModal').style.display = 'flex';
+            loadUsersList();
+        }
+
+        function closeUsersModal() {
+            document.getElementById('usersModal').style.display = 'none';
+        }
+
+        async function loadUsersList() {
+            const body = document.getElementById('users-table-body');
+            if (!body) return;
+            body.innerHTML = '';
+
+            let userList = [];
+
+            if (isUsersSupabaseActive) {
+                try {
+                    const { data, error } = await window.supabaseClient
+                        .from('snackeando_users')
+                        .select('*')
+                        .order('username', { ascending: true });
+
+                    if (error) throw error;
+                    userList = data || [];
+                } catch (e) {
+                    console.error("Error loading users from Supabase:", e);
+                }
+            } else {
+                userList = getLocalUsers();
+            }
+
+            userList.forEach(user => {
+                const tr = document.createElement('tr');
+                const isSelf = user.username.toLowerCase() === 'miguel mendez';
+                
+                tr.innerHTML = `
+                    <td style="font-weight: 500; color: #fff;">${user.username}</td>
+                    <td>
+                        <span class="user-role-lbl ${user.role === 'Administrador' ? 'admin' : 'lector'}">${user.role}</span>
+                    </td>
+                    <td>
+                        <input type="text" class="comment-edit-input" value="${user.password}" 
+                            style="width: 130px; padding: 4px 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;"
+                            onchange="updateUserPassword('${user.id || user.username}', this.value)">
+                    </td>
+                    <td style="text-align: right;">
+                        ${isSelf ? `
+                            <span style="font-size: 0.75rem; color: #6b7280; font-style: italic;">Sistema</span>
+                        ` : `
+                            <button class="btn-action btn-delete" onclick="deleteUser('${user.id || user.username}')" title="Eliminar Usuario">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        `}
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }
+
+        async function createUser() {
+            const usernameInput = document.getElementById('new-user-username');
+            const passwordInput = document.getElementById('new-user-password');
+            const roleSelect = document.getElementById('new-user-role');
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            const role = roleSelect.value;
+
+            if (!username || !password) {
+                alert("Completa el nombre de usuario y contraseña.");
+                return;
+            }
+
+            const newUser = { username, password, role };
+
+            if (isUsersSupabaseActive) {
+                try {
+                    const { error } = await window.supabaseClient
+                        .from('snackeando_users')
+                        .insert([newUser]);
+
+                    if (error) {
+                        if (error.code === '23505') alert("El nombre de usuario ya existe.");
+                        else throw error;
+                        return;
+                    }
+                } catch (e) {
+                    console.error("Error creating user in Supabase:", e);
+                }
+            } else {
+                const localUsers = getLocalUsers();
+                if (localUsers.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+                    alert("El nombre de usuario ya existe.");
+                    return;
+                }
+                localUsers.push(newUser);
+                localStorage.setItem('snackeando_users', JSON.stringify(localUsers));
+            }
+
+            usernameInput.value = '';
+            passwordInput.value = '';
+            loadUsersList();
+        }
+
+        async function updateUserPassword(idOrUsername, newPassword) {
+            const trimmed = newPassword.trim();
+            if (!trimmed) {
+                alert("La contraseña no puede estar vacía.");
+                loadUsersList();
+                return;
+            }
+
+            if (isUsersSupabaseActive) {
+                try {
+                    const { error } = await window.supabaseClient
+                        .from('snackeando_users')
+                        .update({ password: trimmed })
+                        .eq('id', idOrUsername);
+
+                    if (error) throw error;
+                } catch (e) {
+                    try {
+                        const { error: err2 } = await window.supabaseClient
+                            .from('snackeando_users')
+                            .update({ password: trimmed })
+                            .eq('username', idOrUsername);
+                        if (err2) throw err2;
+                    } catch (e2) {
+                        console.error("Error resetting user password in Supabase:", e2);
+                    }
+                }
+            } else {
+                const localUsers = getLocalUsers();
+                const idx = localUsers.findIndex(u => u.username === idOrUsername);
+                if (idx !== -1) {
+                    localUsers[idx].password = trimmed;
+                    localStorage.setItem('snackeando_users', JSON.stringify(localUsers));
+                }
+            }
+            alert("Contraseña restablecida con éxito.");
+            loadUsersList();
+        }
+
+        async function deleteUser(idOrUsername) {
+            if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
+
+            if (isUsersSupabaseActive) {
+                try {
+                    const { error } = await window.supabaseClient
+                        .from('snackeando_users')
+                        .delete()
+                        .eq('id', idOrUsername);
+
+                    if (error) throw error;
+                } catch (e) {
+                    try {
+                        const { error: err2 } = await window.supabaseClient
+                            .from('snackeando_users')
+                            .delete()
+                            .eq('username', idOrUsername);
+                        if (err2) throw err2;
+                    } catch (e2) {
+                        console.error("Error deleting user in Supabase:", e2);
+                    }
+                }
+            } else {
+                let localUsers = getLocalUsers();
+                localUsers = localUsers.filter(u => u.username !== idOrUsername);
+                localStorage.setItem('snackeando_users', JSON.stringify(localUsers));
+            }
+            loadUsersList();
         }
     </script>
 </body>
