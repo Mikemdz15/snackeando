@@ -1693,14 +1693,14 @@
 
             // Filter raw rows by date monthYear
             const filteredProds = window.RAW_CSV_PRODS_ROWS.filter(row => {
-                if (row.length < 7 || !row[0]) return false;
+                if (row.length < 7 || !row[1]) return false; // In GID 0 (Products), Date is row[1], Machine ID is row[0]
                 if (monthYear === 'ALL') return true;
-                const dateStr = parseDate(row[0]);
+                const dateStr = parseDate(row[1]); // In GID 0 (Products), Date is row[1], Machine ID is row[0]
                 return dateStr && dateStr.startsWith(monthYear);
             });
 
             const filteredCash = window.RAW_CSV_CASH_ROWS.filter(row => {
-                if (row.length < 11 || !row[0]) return false;
+                if (row.length < 11 || !row[0]) return false; // In GID 1226302399 (Cash), Date is row[0]
                 if (monthYear === 'ALL') return true;
                 const dateStr = parseDate(row[0]);
                 return dateStr && dateStr.startsWith(monthYear);
@@ -1743,7 +1743,32 @@
             let totalUnits = 0;
             let cashSales = 0;
             let cardSales = 0;
-            const machines = {};
+            
+            // Pre-initialize machines to prevent undefined type errors when filtering periods
+            const machines = {
+                "IB0009": {
+                    id: "IB0009",
+                    name: "Planta Baja - Oficinas",
+                    place: "Oficinas Planta Baja Recepcion",
+                    location: "Grupo Alphalab de Mexico",
+                    type: "Snack/Bev (AMS Sensit 3)",
+                    cashSales: 0, cardSales: 0, totalSales: 0,
+                    cashUnits: 0, cardUnits: 0, totalUnits: 0,
+                    startDate: "30/07/2026",
+                    _startCompareDate: "2026-07-30"
+                },
+                "IB0010": {
+                    id: "IB0010",
+                    name: "Área de Producción - Planta",
+                    place: "Planta",
+                    location: "Grupo Alphalab de Mexico",
+                    type: "Snack/Bev (AMS Sensit 3)",
+                    cashSales: 0, cardSales: 0, totalSales: 0,
+                    cashUnits: 0, cardUnits: 0, totalUnits: 0,
+                    startDate: "06/08/2026",
+                    _startCompareDate: "2026-08-06"
+                }
+            };
 
             filteredCash.forEach(row => {
                 const dateStr = parseDate(row[0]);
@@ -1763,7 +1788,7 @@
                 if (!machines[machine]) {
                     machines[machine] = {
                         id: machine,
-                        name: machine === "IB0009" ? "Planta Baja - Oficinas" : (machine === "IB0010" ? "Área de Producción - Planta" : `Máquina ${machine}`),
+                        name: `Máquina ${machine}`,
                         place: row[3] || "N/A",
                         location: row[2] || "N/A",
                         type: row[4] || "N/A",
@@ -2022,11 +2047,18 @@
                 bottomBody.appendChild(tr);
             });
 
+            // Check active period tab in the DOM, defaulting to 'diario'
+            let activePeriod = 'diario';
+            const activeTabBtn = document.querySelector('.period-tabs .tab-btn.active');
+            if (activeTabBtn) {
+                activePeriod = activeTabBtn.id.replace('btn-', '');
+            }
+
             // 4. Initialize Side Charts (Static structures)
-            renderSideCharts(data, 'diario');
+            renderSideCharts(data, activePeriod);
 
             // 5. Initialize Main Chart
-            renderMainChart(data, 'diario');
+            renderMainChart(data, activePeriod);
 
             // 6. Initialize Dynamic Narrative
             renderNarrative(data);
@@ -2200,13 +2232,13 @@
                             IB0010: { total: 0, cash: 0, card: 0 }
                         };
                     }
-                    weekGroups[label].IB0009.cash += day.IB0009_cash;
-                    weekGroups[label].IB0009.card += day.IB0009_card;
-                    weekGroups[label].IB0009.total += (day.IB0009_cash + day.IB0009_card);
+                    weekGroups[label].IB0009.cash += day.IB0009_cash || 0;
+                    weekGroups[label].IB0009.card += day.IB0009_card || 0;
+                    weekGroups[label].IB0009.total += (day.IB0009_cash || 0) + (day.IB0009_card || 0);
 
-                    weekGroups[label].IB0010.cash += day.IB0010_cash;
-                    weekGroups[label].IB0010.card += day.IB0010_card;
-                    weekGroups[label].IB0010.total += (day.IB0010_cash + day.IB0010_card);
+                    weekGroups[label].IB0010.cash += day.IB0010_cash || 0;
+                    weekGroups[label].IB0010.card += day.IB0010_card || 0;
+                    weekGroups[label].IB0010.total += (day.IB0010_cash || 0) + (day.IB0010_card || 0);
                 });
 
                 const sortedWeeks = Object.keys(weekGroups).sort((a, b) => {
@@ -2230,7 +2262,7 @@
                     const weekData = weekGroups[weekLabel];
                     return [
                         { total: weekData.IB0009.total, cash: weekData.IB0009.cash, card: weekData.IB0009.card },
-                        { total: weekData.IB0010.total, cash: weekData.IB0010.cash, card: weekData.IB0010.card }
+                        { total: weekData.IB10.total || weekData.IB0010.total, cash: weekData.IB0010.cash, card: weekData.IB0010.card }
                     ];
                 });
             }
@@ -2239,16 +2271,16 @@
                 let jul_10_cash = 0, jul_10_card = 0, aug_10_cash = 0, aug_10_card = 0;
                 
                 data.dailySales.forEach(day => {
-                    if (day.date.startsWith('2026-07')) {
-                        jul_09_cash += day.IB0009_cash;
-                        jul_09_card += day.IB0009_card;
-                        jul_10_cash += day.IB0010_cash;
-                        jul_10_card += day.IB0010_card;
+                    if (day.date && day.date.startsWith('2026-07')) {
+                        jul_09_cash += day.IB0009_cash || 0;
+                        jul_09_card += day.IB0009_card || 0;
+                        jul_10_cash += day.IB0010_cash || 0;
+                        jul_10_card += day.IB0010_card || 0;
                     } else {
-                        aug_09_cash += day.IB0009_cash;
-                        aug_09_card += day.IB0009_card;
-                        aug_10_cash += day.IB0010_cash;
-                        aug_10_card += day.IB0010_card;
+                        aug_09_cash += day.IB0009_cash || 0;
+                        aug_09_card += day.IB0009_card || 0;
+                        aug_10_cash += day.IB0010_cash || 0;
+                        aug_10_card += day.IB0010_card || 0;
                     }
                 });
 
@@ -2362,10 +2394,10 @@
                 document.getElementById('main-chart-subtitle').innerText = "Facturación acumulada día por día en pesos";
 
                 data.dailySales.forEach(day => {
-                    labels.push(day.date.substring(5)); // Show MM-DD format
-                    datasetSalesTotal.push(day.total_sales);
-                    datasetSalesCash.push(day.IB0009_cash + day.IB0010_cash);
-                    datasetSalesCard.push(day.IB0009_card + day.IB0010_card);
+                    labels.push(day.date ? day.date.substring(5) : ''); // Show MM-DD format
+                    datasetSalesTotal.push(day.total_sales || 0);
+                    datasetSalesCash.push((day.IB0009_cash || 0) + (day.IB0010_cash || 0));
+                    datasetSalesCard.push((day.IB0009_card || 0) + (day.IB0010_card || 0));
                 });
             } 
             else if (period === 'semanal') {
@@ -2379,9 +2411,9 @@
                     if (!weekGroups[label]) {
                         weekGroups[label] = { total: 0, cash: 0, card: 0 };
                     }
-                    weekGroups[label].total += day.total_sales;
-                    weekGroups[label].cash += (day.IB0009_cash + day.IB0010_cash);
-                    weekGroups[label].card += (day.IB0009_card + day.IB0010_card);
+                    weekGroups[label].total += day.total_sales || 0;
+                    weekGroups[label].cash += (day.IB0009_cash || 0) + (day.IB0010_cash || 0);
+                    weekGroups[label].card += (day.IB0009_card || 0) + (day.IB0010_card || 0);
                 });
 
                 labels = Object.keys(weekGroups).sort((a, b) => {
@@ -2407,14 +2439,14 @@
                 let aug_total = 0, aug_cash = 0, aug_card = 0;
 
                 data.dailySales.forEach(day => {
-                    if (day.date.startsWith('2026-07')) {
-                        jul_total += day.total_sales;
-                        jul_cash += (day.IB0009_cash + day.IB0010_cash);
-                        jul_card += (day.IB0009_card + day.IB0010_card);
+                    if (day.date && day.date.startsWith('2026-07')) {
+                        jul_total += day.total_sales || 0;
+                        jul_cash += (day.IB0009_cash || 0) + (day.IB0010_cash || 0);
+                        jul_card += (day.IB0009_card || 0) + (day.IB0010_card || 0);
                     } else {
-                        aug_total += day.total_sales;
-                        aug_cash += (day.IB0009_cash + day.IB0010_cash);
-                        aug_card += (day.IB0009_card + day.IB0010_card);
+                        aug_total += day.total_sales || 0;
+                        aug_cash += (day.IB0009_cash || 0) + (day.IB0010_cash || 0);
+                        aug_card += (day.IB0009_card || 0) + (day.IB0010_card || 0);
                     }
                 });
 
