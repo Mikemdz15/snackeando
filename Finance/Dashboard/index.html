@@ -8,6 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -387,6 +389,209 @@
             margin-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             padding-top: 15px;
+        }
+
+        /* PASOS A SEGUIR / TASK LIST */
+        .tasks-section {
+            margin-top: 30px;
+            margin-bottom: 40px;
+        }
+        .tasks-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow-card);
+        }
+        .tasks-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 15px;
+        }
+        .db-status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #9ca3af;
+        }
+        .status-dot.online {
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+        }
+        .status-dot.local {
+            background: #f59e0b;
+            box-shadow: 0 0 8px #f59e0b;
+        }
+        .status-text {
+            color: #9ca3af;
+        }
+        
+        .add-task-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .add-task-form input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .add-task-form input:focus {
+            border-color: #c5a880;
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .add-task-form button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 20px;
+            font-size: 0.9rem;
+        }
+        
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .task-item {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+        .task-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .task-item.completed {
+            opacity: 0.6;
+        }
+        .task-row-main {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .task-checkbox-wrapper {
+            padding-top: 2px;
+        }
+        .task-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: #c5a880;
+            cursor: pointer;
+        }
+        
+        .task-content {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .task-text {
+            color: #fff;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .task-text:hover {
+            color: #c5a880;
+        }
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: #6b7280;
+        }
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-action {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .btn-action:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+        .btn-action.btn-delete:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .task-edit-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #c5a880;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 0.95rem;
+            padding: 4px 8px;
+            outline: none;
+        }
+        
+        .task-comment-area {
+            margin-left: 30px;
+            padding-left: 12px;
+            border-left: 2px solid rgba(197, 168, 128, 0.15);
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .comment-header {
+            color: #c5a880;
+            font-weight: 500;
+        }
+        .comment-text {
+            color: #9ca3af;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .comment-text:hover {
+            color: #c5a880;
+        }
+        .comment-text.empty {
+            color: #4b5563;
+            font-style: italic;
+        }
+        .comment-edit-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #c5a880;
+            border-radius: 4px;
+            color: #9ca3af;
+            font-size: 0.85rem;
+            padding: 4px 8px;
+            outline: none;
         }
 
         .rankings-row {
@@ -883,6 +1088,35 @@
             </div>
         </div>
 
+        <!-- PASOS A SEGUIR / COMMENTS SECTION -->
+        <div class="tasks-section" id="pasos-a-seguir">
+            <div class="tasks-card">
+                <div class="tasks-card-header">
+                    <div>
+                        <span class="analysis-tag">Revisión Directiva</span>
+                        <h3 class="analysis-heading" style="font-family: 'Playfair Display', serif; font-size: 1.5rem;">Pasos a Seguir</h3>
+                    </div>
+                    <div class="db-status-badge" id="db-status">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Conectando...</span>
+                    </div>
+                </div>
+                
+                <!-- Add Task Form -->
+                <div class="add-task-form">
+                    <input type="text" id="new-task-input" placeholder="Escribe un nuevo pendiente para alta dirección..." onkeydown="if(event.key === 'Enter') addNewTask()" />
+                    <button class="btn-primary" id="add-task-btn" onclick="addNewTask()">
+                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Agregar
+                    </button>
+                </div>
+                
+                <!-- Tasks List -->
+                <div class="tasks-list" id="tasks-list-container">
+                    <!-- Task items will be rendered here -->
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- GOOGLE SHEET CONNECTOR MODAL -->
@@ -964,6 +1198,9 @@
             const savedUrl = localStorage.getItem('snackeando_sheet_url') || DEFAULT_SHEET_URL;
             document.getElementById('sheet-url-input').value = savedUrl;
             fetchDataFromGoogleSheet(savedUrl);
+
+            // Initialize Supabase/Local tasks database
+            initTasksDB();
         });
 
         // Open/Close Modal
@@ -1848,6 +2085,262 @@
             // Render chart based on selected period
             renderMainChart(SNACKEANDO_RAW_DATA, period);
             renderSideCharts(SNACKEANDO_RAW_DATA, period);
+        }
+
+        // ==========================================
+        // PASOS A SEGUIR (TASK MANAGEMENT LOGIC)
+        // ==========================================
+        let tasks = [];
+        let isUsingSupabase = false;
+        
+        const DB_URL = "https://tjoawvfzipnfmgqokdrk.supabase.co";
+        const DB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqb2F3dmZ6aXBuZm1ncW9rZHJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NzMxNTksImV4cCI6MjEwMDI0OTE1OX0.thH5IOqwI6kkBRRNfdHcyvcfD3xGddy96hFSPOCIh9U";
+
+        async function initTasksDB() {
+            const statusDot = document.querySelector('#db-status .status-dot');
+            const statusText = document.querySelector('#db-status .status-text');
+
+            if (typeof supabase !== 'undefined' && supabase && DB_URL && DB_KEY) {
+                try {
+                    // Initialize client
+                    window.supabaseClient = supabase.createClient(DB_URL, DB_KEY);
+                    
+                    // Test query to check if the table exists
+                    const { error } = await window.supabaseClient
+                        .from('snackeando_tasks')
+                        .select('id')
+                        .limit(1);
+
+                    if (error && error.code !== 'PGRST116') throw error;
+
+                    isUsingSupabase = true;
+                    statusDot.className = 'status-dot online';
+                    statusText.innerText = 'Base de datos en la Nube (Supabase)';
+                } catch (e) {
+                    console.warn("Supabase integration failed, falling back to LocalStorage:", e);
+                    isUsingSupabase = false;
+                    statusDot.className = 'status-dot local';
+                    statusText.innerText = 'Almacenamiento Local (Este Navegador)';
+                }
+            } else {
+                isUsingSupabase = false;
+                statusDot.className = 'status-dot local';
+                statusText.innerText = 'Almacenamiento Local (Este Navegador)';
+            }
+
+            await loadTasks();
+        }
+
+        async function loadTasks() {
+            if (isUsingSupabase) {
+                try {
+                    const { data, error } = await window.supabaseClient
+                        .from('snackeando_tasks')
+                        .select('*')
+                        .order('created_at', { ascending: true });
+
+                    if (error) throw error;
+                    tasks = data || [];
+                } catch (e) {
+                    console.error("Error loading tasks from Supabase:", e);
+                }
+            } else {
+                const stored = localStorage.getItem('snackeando_tasks');
+                tasks = stored ? JSON.parse(stored) : [];
+            }
+            renderTasks();
+        }
+
+        async function saveTaskState(task) {
+            if (isUsingSupabase) {
+                try {
+                    const { error } = await window.supabaseClient
+                        .from('snackeando_tasks')
+                        .update({
+                            task_desc: task.task_desc,
+                            progress_comment: task.progress_comment,
+                            is_completed: task.is_completed
+                        })
+                        .eq('id', task.id);
+                    if (error) throw error;
+                } catch (e) {
+                    console.error("Error saving task to Supabase:", e);
+                }
+            } else {
+                localStorage.setItem('snackeando_tasks', JSON.stringify(tasks));
+            }
+        }
+
+        async function addNewTask() {
+            const input = document.getElementById('new-task-input');
+            const desc = input.value.trim();
+            if (!desc) return;
+
+            const newTask = {
+                task_desc: desc,
+                progress_comment: '',
+                is_completed: false
+            };
+
+            if (isUsingSupabase) {
+                try {
+                    const { data, error } = await window.supabaseClient
+                        .from('snackeando_tasks')
+                        .insert([newTask])
+                        .select();
+
+                    if (error) throw error;
+                    if (data && data[0]) {
+                        tasks.push(data[0]);
+                    }
+                } catch (e) {
+                    console.error("Error inserting task into Supabase:", e);
+                }
+            } else {
+                newTask.id = Date.now().toString(); // local numeric id fallback
+                tasks.push(newTask);
+                localStorage.setItem('snackeando_tasks', JSON.stringify(tasks));
+            }
+
+            input.value = '';
+            renderTasks();
+        }
+
+        async function toggleTaskCompleted(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            task.is_completed = !task.is_completed;
+            await saveTaskState(task);
+            renderTasks();
+        }
+
+        async function deleteTask(id) {
+            if (!confirm("¿Estás seguro de eliminar este pendiente?")) return;
+
+            if (isUsingSupabase) {
+                try {
+                    const { error } = await window.supabaseClient
+                        .from('snackeando_tasks')
+                        .delete()
+                        .eq('id', id);
+                    if (error) throw error;
+                    tasks = tasks.filter(t => t.id !== id);
+                } catch (e) {
+                    console.error("Error deleting task from Supabase:", e);
+                }
+            } else {
+                tasks = tasks.filter(t => t.id !== id);
+                localStorage.setItem('snackeando_tasks', JSON.stringify(tasks));
+            }
+            renderTasks();
+        }
+
+        function startEditTaskDesc(id) {
+            const taskEl = document.getElementById(`task-text-${id}`);
+            if (!taskEl) return;
+            const currentDesc = taskEl.innerText;
+            taskEl.innerHTML = `<input type="text" class="task-edit-input" id="edit-desc-input-${id}" value="${currentDesc}" onblur="saveTaskDesc('${id}')" onkeydown="handleDescKey(event, '${id}')">`;
+            const input = document.getElementById(`edit-desc-input-${id}`);
+            input.focus();
+            input.select();
+        }
+
+        async function saveTaskDesc(id) {
+            const input = document.getElementById(`edit-desc-input-${id}`);
+            if (!input) return;
+            const newDesc = input.value.trim();
+            const task = tasks.find(t => t.id === id);
+            if (task && newDesc) {
+                task.task_desc = newDesc;
+                await saveTaskState(task);
+            }
+            renderTasks();
+        }
+
+        function handleDescKey(event, id) {
+            if (event.key === 'Enter') {
+                saveTaskDesc(id);
+            } else if (event.key === 'Escape') {
+                renderTasks();
+            }
+        }
+
+        function startEditComment(id) {
+            const commentEl = document.getElementById(`comment-text-${id}`);
+            if (!commentEl) return;
+            const currentComment = commentEl.classList.contains('empty') ? '' : commentEl.innerText;
+            commentEl.innerHTML = `<input type="text" class="comment-edit-input" id="edit-comment-input-${id}" value="${currentComment}" onblur="saveComment('${id}')" onkeydown="handleCommentKey(event, '${id}')" placeholder="Escribe un avance...">`;
+            const input = document.getElementById(`edit-comment-input-${id}`);
+            input.focus();
+            input.select();
+        }
+
+        async function saveComment(id) {
+            const input = document.getElementById(`edit-comment-input-${id}`);
+            if (!input) return;
+            const newComment = input.value.trim();
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.progress_comment = newComment;
+                await saveTaskState(task);
+            }
+            renderTasks();
+        }
+
+        function handleCommentKey(event, id) {
+            if (event.key === 'Enter') {
+                saveComment(id);
+            } else if (event.key === 'Escape') {
+                renderTasks();
+            }
+        }
+
+        function renderTasks() {
+            const container = document.getElementById('tasks-list-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (tasks.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: #4b5563; font-style: italic; font-size: 0.9rem; padding: 20px 0;">No hay pendientes registrados para revisión directiva.</p>`;
+                return;
+            }
+
+            tasks.forEach(task => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `task-item ${task.is_completed ? 'completed' : ''}`;
+                
+                const commentContent = task.progress_comment
+                    ? `<span class="comment-text" id="comment-text-${task.id}" onclick="startEditComment('${task.id}')">${task.progress_comment}</span>`
+                    : `<span class="comment-text empty" id="comment-text-${task.id}" onclick="startEditComment('${task.id}')">Haga clic aquí para agregar un comentario de avance...</span>`;
+
+                itemDiv.innerHTML = `
+                    <div class="task-row-main">
+                        <div class="task-checkbox-wrapper">
+                            <input type="checkbox" class="task-checkbox" ${task.is_completed ? 'checked' : ''} onchange="toggleTaskCompleted('${task.id}')">
+                        </div>
+                        <div class="task-content">
+                            <span class="task-text" id="task-text-${task.id}" onclick="startEditTaskDesc('${task.id}')">${task.task_desc}</span>
+                            <div class="task-actions">
+                                <button class="btn-action" onclick="startEditTaskDesc('${task.id}')" title="Editar Pendiente">
+                                    <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
+                                </button>
+                                <button class="btn-action btn-delete" onclick="deleteTask('${task.id}')" title="Eliminar">
+                                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="task-comment-area">
+                        <span class="comment-header">Avance:</span>
+                        ${commentContent}
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
         }
     </script>
 </body>
