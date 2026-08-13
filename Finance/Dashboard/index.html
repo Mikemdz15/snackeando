@@ -1008,6 +1008,22 @@
             font-size: 1.2rem;
             color: var(--text-highlight);
         }
+        
+        /* Scrollbar styles for machine checklist dropdown */
+        #machine-checklist-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        #machine-checklist-container::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.02);
+            border-radius: 4px;
+        }
+        #machine-checklist-container::-webkit-scrollbar-thumb {
+            background: rgba(197, 168, 128, 0.3);
+            border-radius: 4px;
+        }
+        #machine-checklist-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(197, 168, 128, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -1099,6 +1115,31 @@
                 <select id="general-month-filter" onchange="onGeneralFilterChange()" style="background: transparent; border: none; color: #fff; font-size: 0.8rem; outline: none; cursor: pointer; padding-right: 5px; font-weight: 500;">
                     <option value="ALL" style="background: #0f1524; color: #fff;">Año Acumulado</option>
                 </select>
+            </div>
+            <!-- Machine Multi-Select Dropdown Container -->
+            <div class="machine-select-dropdown" style="position: relative; display: inline-block;">
+                <button type="button" onclick="toggleMachineDropdown(event)" style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px 12px; color: #fff; font-size: 0.8rem; cursor: pointer; outline: none; font-weight: 500; min-width: 130px; justify-content: space-between;">
+                    <span style="display: flex; align-items: center; gap: 6px;">
+                        <i data-lucide="cpu" style="width: 14px; height: 14px; color: #c5a880;"></i>
+                        <span id="machine-filter-label">Máquinas: Todas</span>
+                    </span>
+                    <i data-lucide="chevron-down" style="width: 12px; height: 12px; color: #9ca3af;"></i>
+                </button>
+                <div id="machine-dropdown-list" style="display: none; position: absolute; top: 110%; right: 0; background: #0f1524; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); padding: 10px; min-width: 250px; z-index: 1000; box-sizing: border-box;">
+                    <!-- Quick Actions -->
+                    <div style="display: flex; gap: 8px; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin-bottom: 8px;">
+                        <button type="button" onclick="selectMachinesPreset('all')" style="background: rgba(197, 168, 128, 0.1); border: 1px solid rgba(197, 168, 128, 0.2); border-radius: 4px; color: #c5a880; font-size: 0.7rem; padding: 3px 6px; cursor: pointer; flex: 1;">Todas</button>
+                        <button type="button" onclick="selectMachinesPreset('none')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #9ca3af; font-size: 0.7rem; padding: 3px 6px; cursor: pointer; flex: 1;">Ninguna</button>
+                    </div>
+                    <!-- Search Input -->
+                    <div style="margin-bottom: 8px;">
+                        <input type="text" id="machine-search-input" oninput="filterMachinesList()" placeholder="Buscar máquina..." style="width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 4px 8px; color: #fff; font-size: 0.75rem; outline: none;" />
+                    </div>
+                    <!-- Checklist Container -->
+                    <div id="machine-checklist-container" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 5px;">
+                        <!-- Checkboxes will be populated dynamically -->
+                    </div>
+                </div>
             </div>
             <button class="btn-link-sheet" id="btn-manage-users-id" onclick="openUsersModal()" style="display: none; background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); color: #60a5fa;">
                 <i data-lucide="users" class="w-3.5 h-3.5"></i>
@@ -1544,7 +1585,10 @@
                 if (url !== DEFAULT_SHEET_URL) {
                     alert("No se pudo sincronizar el Google Sheet. Cargando base estática.");
                 }
-                renderDashboard(SNACKEANDO_RAW_DATA);
+                // Initialize default filter labels on catch fallback
+                populateMonthFilter();
+                populateMachineFilter();
+                applyGeneralFilterAndRender();
             });
         }
 
@@ -1590,10 +1634,11 @@
             return dateStr;
         }
 
-        // Parse and consolidate Google Sheet data
-        // Global raw CSV rows references for dynamic month filtering
+        // Global raw CSV references for dynamic filtering
         window.RAW_CSV_PRODS_ROWS = null;
         window.RAW_CSV_CASH_ROWS = null;
+        window.SELECTED_MACHINES = null;
+        window.AVAILABLE_MACHINES = null;
 
         // Parse and consolidate Google Sheet data
         function parseGoogleSheets(csvProdsText, csvCashText) {
@@ -1605,18 +1650,20 @@
                 const parsedCash = parseCSV(csvCashText);
                 window.RAW_CSV_CASH_ROWS = parsedCash.slice(1); // skip headers
 
-                // 2. Populate Month/Year selector
+                // 2. Populate Month/Year selector & Machine selector
                 populateMonthFilter();
+                populateMachineFilter();
 
-                // 3. Apply general filter (default to ALL / Año Acumulado)
+                // 3. Apply general filters
                 applyGeneralFilterAndRender();
                 console.log("Live Google Sheet parsed and initialized successfully!");
             } catch (e) {
                 console.error("Error parsing live sheet data:", e);
                 alert("Error al procesar la información de Google Sheet. Cargando base estática.");
                 
-                // Initialize static months and render static data
+                // Initialize static months/machines and render static data
                 populateMonthFilter();
+                populateMachineFilter();
                 applyGeneralFilterAndRender();
             }
         }
@@ -1633,6 +1680,19 @@
                 }
             });
             return Array.from(monthsSet).sort();
+        }
+
+        // Extract available machine IDs and details from cash sheet
+        function extractMachines(dataCash) {
+            const machinesMap = {};
+            dataCash.forEach(row => {
+                if (row.length < 11 || !row[1]) return;
+                const id = row[1];
+                if (!machinesMap[id]) {
+                    machinesMap[id] = id === "IB0009" ? "Planta Baja - Oficinas" : (id === "IB0010" ? "Área de Producción - Planta" : `Máquina ${id}`);
+                }
+            });
+            return machinesMap;
         }
 
         // Build HTML Month Select options
@@ -1674,33 +1734,188 @@
             });
         }
 
+        // Build HTML Machine Checkbox Checklist
+        function populateMachineFilter() {
+            const container = document.getElementById('machine-checklist-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            let machinesMap = {};
+            if (window.RAW_CSV_CASH_ROWS) {
+                machinesMap = extractMachines(window.RAW_CSV_CASH_ROWS);
+            } else if (typeof SNACKEANDO_RAW_DATA !== 'undefined' && SNACKEANDO_RAW_DATA.machines) {
+                for (const id in SNACKEANDO_RAW_DATA.machines) {
+                    machinesMap[id] = SNACKEANDO_RAW_DATA.machines[id].name || `Máquina ${id}`;
+                }
+            }
+
+            window.AVAILABLE_MACHINES = machinesMap;
+
+            // Set SELECTED_MACHINES to all if empty or first load
+            const ids = Object.keys(machinesMap);
+            if (!window.SELECTED_MACHINES || window.SELECTED_MACHINES.length === 0) {
+                window.SELECTED_MACHINES = [...ids];
+            } else {
+                // Filter to keep only active ones
+                window.SELECTED_MACHINES = window.SELECTED_MACHINES.filter(id => ids.includes(id));
+                if (window.SELECTED_MACHINES.length === 0) {
+                    window.SELECTED_MACHINES = [...ids];
+                }
+            }
+
+            // Render list items
+            ids.sort().forEach(id => {
+                const label = machinesMap[id];
+                const checked = window.SELECTED_MACHINES.includes(id) ? 'checked' : '';
+
+                const div = document.createElement('div');
+                div.className = 'machine-check-item';
+                div.style = "display: flex; align-items: center; gap: 8px; color: #d1d5db; font-size: 0.75rem; padding: 4px 6px; border-radius: 4px; cursor: pointer; transition: background 0.15s;";
+                div.innerHTML = `
+                    <input type="checkbox" id="chk-mach-${id}" value="${id}" ${checked} onchange="onMachineCheckChange(this)" style="cursor: pointer;" />
+                    <label for="chk-mach-${id}" style="cursor: pointer; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${label} (${id})">
+                        ${label} <span style="color: #6b7280; font-size: 0.65rem;">(${id})</span>
+                    </label>
+                `;
+                // Add hover style effect via mouseover/mouseout
+                div.onmouseover = () => { div.style.background = "rgba(255,255,255,0.03)"; };
+                div.onmouseout = () => { div.style.background = "transparent"; };
+                
+                container.appendChild(div);
+            });
+
+            updateMachineFilterLabel();
+        }
+
+        // Update multi-select dropdown button label
+        function updateMachineFilterLabel() {
+            const labelEl = document.getElementById('machine-filter-label');
+            if (!labelEl) return;
+
+            const allCount = Object.keys(window.AVAILABLE_MACHINES || {}).length;
+            const selCount = (window.SELECTED_MACHINES || []).length;
+
+            if (selCount === allCount) {
+                labelEl.innerText = "Máquinas: Todas";
+            } else if (selCount === 0) {
+                labelEl.innerText = "Máquinas: Ninguna";
+            } else if (selCount === 1) {
+                labelEl.innerText = `Máquina: ${window.SELECTED_MACHINES[0]}`;
+            } else {
+                labelEl.innerText = `Máquinas: ${selCount} de ${allCount}`;
+            }
+        }
+
         function onGeneralFilterChange() {
             applyGeneralFilterAndRender();
         }
+
+        // Triggers when checkbox clicked in dropdown checklist
+        function onMachineCheckChange(chk) {
+            const id = chk.value;
+            if (chk.checked) {
+                if (!window.SELECTED_MACHINES.includes(id)) {
+                    window.SELECTED_MACHINES.push(id);
+                }
+            } else {
+                window.SELECTED_MACHINES = window.SELECTED_MACHINES.filter(x => x !== id);
+            }
+            updateMachineFilterLabel();
+            applyGeneralFilterAndRender();
+        }
+
+        // Toggles select all / none machines in checklist dropdown
+        function selectMachinesPreset(preset) {
+            const checkboxes = document.querySelectorAll('#machine-checklist-container input[type="checkbox"]');
+            window.SELECTED_MACHINES = [];
+            
+            checkboxes.forEach(chk => {
+                if (preset === 'all') {
+                    chk.checked = true;
+                    window.SELECTED_MACHINES.push(chk.value);
+                } else {
+                    chk.checked = false;
+                }
+            });
+            updateMachineFilterLabel();
+            applyGeneralFilterAndRender();
+        }
+
+        // Filters checklist items on input typing
+        function filterMachinesList() {
+            const query = document.getElementById('machine-search-input').value.toLowerCase().trim();
+            const items = document.querySelectorAll('#machine-checklist-container .machine-check-item');
+            
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Toggle machine multi-select visibility
+        function toggleMachineDropdown(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('machine-dropdown-list');
+            if (!dropdown) return;
+            const isHidden = dropdown.style.display === 'none';
+            
+            dropdown.style.display = isHidden ? 'block' : 'none';
+            
+            if (isHidden) {
+                const search = document.getElementById('machine-search-input');
+                if (search) {
+                    search.value = '';
+                    filterMachinesList();
+                    search.focus();
+                }
+            }
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('machine-dropdown-list');
+            if (dropdown && !e.target.closest('.machine-select-dropdown')) {
+                dropdown.style.display = 'none';
+            }
+        });
 
         // Apply filters on dataset and recalculate dashboard summaries
         function applyGeneralFilterAndRender() {
             const select = document.getElementById('general-month-filter');
             const monthYear = select ? select.value : 'ALL';
             
-            console.log("Applying general temporal filter:", monthYear);
+            const selectedMachs = window.SELECTED_MACHINES || [];
+
+            console.log("Applying general filters - Month:", monthYear, "Machines:", selectedMachs);
 
             // If we don't have RAW_CSV_ROWS loaded, filter the static database fallback
             if (!window.RAW_CSV_CASH_ROWS) {
-                filterAndRenderStaticData(monthYear);
+                filterAndRenderStaticData(monthYear, selectedMachs);
                 return;
             }
 
-            // Filter raw rows by date monthYear
+            // Filter raw rows by date monthYear & selectedMachs
             const filteredProds = window.RAW_CSV_PRODS_ROWS.filter(row => {
-                if (row.length < 7 || !row[1]) return false; // In GID 0 (Products), Date is row[1], Machine ID is row[0]
+                if (row.length < 7 || !row[1]) return false; // GID 0: Date is row[1], Machine ID is row[0]
+                
+                const machineId = row[0];
+                if (selectedMachs.length > 0 && !selectedMachs.includes(machineId)) return false;
+
                 if (monthYear === 'ALL') return true;
-                const dateStr = parseDate(row[1]); // In GID 0 (Products), Date is row[1], Machine ID is row[0]
+                const dateStr = parseDate(row[1]);
                 return dateStr && dateStr.startsWith(monthYear);
             });
 
             const filteredCash = window.RAW_CSV_CASH_ROWS.filter(row => {
-                if (row.length < 11 || !row[0]) return false; // In GID 1226302399 (Cash), Date is row[0]
+                if (row.length < 11 || !row[0]) return false; // GID 1226302399: Date is row[0], Machine ID is row[1]
+                
+                const machineId = row[1];
+                if (selectedMachs.length > 0 && !selectedMachs.includes(machineId)) return false;
+
                 if (monthYear === 'ALL') return true;
                 const dateStr = parseDate(row[0]);
                 return dateStr && dateStr.startsWith(monthYear);
@@ -1744,31 +1959,22 @@
             let cashSales = 0;
             let cardSales = 0;
             
-            // Pre-initialize machines to prevent undefined type errors when filtering periods
-            const machines = {
-                "IB0009": {
-                    id: "IB0009",
-                    name: "Planta Baja - Oficinas",
-                    place: "Oficinas Planta Baja Recepcion",
-                    location: "Grupo Alphalab de Mexico",
-                    type: "Snack/Bev (AMS Sensit 3)",
+            // Pre-initialize ALL machines (active + inactive) to prevent undefined type errors when filtering periods
+            const machines = {};
+            for (const id in window.AVAILABLE_MACHINES) {
+                const label = window.AVAILABLE_MACHINES[id];
+                machines[id] = {
+                    id: id,
+                    name: label,
+                    place: "N/A",
+                    location: "N/A",
+                    type: "N/A",
                     cashSales: 0, cardSales: 0, totalSales: 0,
                     cashUnits: 0, cardUnits: 0, totalUnits: 0,
-                    startDate: "30/07/2026",
-                    _startCompareDate: "2026-07-30"
-                },
-                "IB0010": {
-                    id: "IB0010",
-                    name: "Área de Producción - Planta",
-                    place: "Planta",
-                    location: "Grupo Alphalab de Mexico",
-                    type: "Snack/Bev (AMS Sensit 3)",
-                    cashSales: 0, cardSales: 0, totalSales: 0,
-                    cashUnits: 0, cardUnits: 0, totalUnits: 0,
-                    startDate: "06/08/2026",
-                    _startCompareDate: "2026-08-06"
-                }
-            };
+                    startDate: null,
+                    _startCompareDate: null
+                };
+            }
 
             filteredCash.forEach(row => {
                 const dateStr = parseDate(row[0]);
@@ -1785,32 +1991,24 @@
                 cashSales += cashAmt;
                 cardSales += cardAmt;
 
-                if (!machines[machine]) {
-                    machines[machine] = {
-                        id: machine,
-                        name: `Máquina ${machine}`,
-                        place: row[3] || "N/A",
-                        location: row[2] || "N/A",
-                        type: row[4] || "N/A",
-                        cashSales: 0, cardSales: 0, totalSales: 0,
-                        cashUnits: 0, cardUnits: 0, totalUnits: 0,
-                        startDate: null,
-                        _startCompareDate: null
-                    };
-                }
+                if (machines[machine]) {
+                    if (row[3]) machines[machine].place = row[3];
+                    if (row[2]) machines[machine].location = row[2];
+                    if (row[4]) machines[machine].type = row[4];
 
-                machines[machine].cashSales += cashAmt;
-                machines[machine].cardSales += cardAmt;
-                machines[machine].totalSales += totAmt;
-                machines[machine].cashUnits += cashUnits;
-                machines[machine].cardUnits += cardUnits;
-                machines[machine].totalUnits += totUnits;
+                    machines[machine].cashSales += cashAmt;
+                    machines[machine].cardSales += cardAmt;
+                    machines[machine].totalSales += totAmt;
+                    machines[machine].cashUnits += cashUnits;
+                    machines[machine].cardUnits += cardUnits;
+                    machines[machine].totalUnits += totUnits;
 
-                if (totAmt > 0 || totUnits > 0) {
-                    const originalDate = row[0];
-                    if (!machines[machine].startDate || dateStr < machines[machine]._startCompareDate) {
-                        machines[machine]._startCompareDate = dateStr;
-                        machines[machine].startDate = originalDate;
+                    if (totAmt > 0 || totUnits > 0) {
+                        const originalDate = row[0];
+                        if (!machines[machine].startDate || dateStr < machines[machine]._startCompareDate) {
+                            machines[machine]._startCompareDate = dateStr;
+                            machines[machine].startDate = originalDate;
+                        }
                     }
                 }
 
@@ -1822,13 +2020,10 @@
                     };
                 }
 
-                const cashKey = `${machine}_cash`;
-                const cardKey = `${machine}_card`;
-                const unitsKey = `${machine}_units`;
-
-                dailyMap[dateStr][cashKey] = (dailyMap[dateStr][cashKey] || 0) + cashAmt;
-                dailyMap[dateStr][cardKey] = (dailyMap[dateStr][cardKey] || 0) + cardAmt;
-                dailyMap[dateStr][unitsKey] = (dailyMap[dateStr][unitsKey] || 0) + totUnits;
+                // Append aggregate metrics for the machine selected in the daily bucket
+                dailyMap[dateStr][`${machine}_cash`] = (dailyMap[dateStr][`${machine}_cash`] || 0) + cashAmt;
+                dailyMap[dateStr][`${machine}_card`] = (dailyMap[dateStr][`${machine}_card`] || 0) + cardAmt;
+                dailyMap[dateStr][`${machine}_units`] = (dailyMap[dateStr][`${machine}_units`] || 0) + totUnits;
 
                 dailyMap[dateStr].total_sales += totAmt;
                 dailyMap[dateStr].total_units += totUnits;
@@ -1873,15 +2068,14 @@
         }
 
         // Apply filters on the static preloaded database fallback
-        function filterAndRenderStaticData(monthYear) {
-            if (monthYear === 'ALL') {
-                renderDashboard(SNACKEANDO_RAW_DATA);
-                return;
-            }
+        function filterAndRenderStaticData(monthYear, selectedMachs = []) {
+            let filteredDaily = SNACKEANDO_RAW_DATA.dailySales;
 
-            const filteredDaily = SNACKEANDO_RAW_DATA.dailySales.filter(day => {
-                return day.date && day.date.startsWith(monthYear);
-            });
+            if (monthYear !== 'ALL') {
+                filteredDaily = filteredDaily.filter(day => {
+                    return day.date && day.date.startsWith(monthYear);
+                });
+            }
 
             let totalSales = 0;
             let totalUnits = 0;
@@ -1898,10 +2092,14 @@
             }
 
             filteredDaily.forEach(day => {
-                totalSales += day.total_sales;
-                totalUnits += day.total_units;
+                let daySales = 0;
+                let dayUnits = 0;
 
                 for (const m in machines) {
+                    if (selectedMachs.length > 0 && !selectedMachs.includes(m)) {
+                        continue;
+                    }
+
                     const cashVal = day[`${m}_cash`] || 0;
                     const cardVal = day[`${m}_card`] || 0;
                     const unitsVal = day[`${m}_units`] || 0;
@@ -1913,7 +2111,31 @@
 
                     cashSales += cashVal;
                     cardSales += cardVal;
+                    daySales += (cashVal + cardVal);
+                    dayUnits += unitsVal;
                 }
+
+                totalSales += daySales;
+                totalUnits += dayUnits;
+            });
+
+            // Adjust daily sales totals to represent only selected machines
+            const adjustedDaily = filteredDaily.map(day => {
+                const newDay = { ...day, total_sales: 0, total_units: 0 };
+                for (const key in SNACKEANDO_RAW_DATA.machines) {
+                    if (selectedMachs.length === 0 || selectedMachs.includes(key)) {
+                        newDay[`${key}_cash`] = day[`${key}_cash`] || 0;
+                        newDay[`${key}_card`] = day[`${key}_card`] || 0;
+                        newDay[`${key}_units`] = day[`${key}_units`] || 0;
+                        newDay.total_sales += (newDay[`${key}_cash`] + newDay[`${key}_card`]);
+                        newDay.total_units += newDay[`${key}_units`];
+                    } else {
+                        newDay[`${key}_cash`] = 0;
+                        newDay[`${key}_card`] = 0;
+                        newDay[`${key}_units`] = 0;
+                    }
+                }
+                return newDay;
             });
 
             const finalData = {
@@ -1930,7 +2152,7 @@
                     estimatedProfit: totalSales * 0.12
                 },
                 machines: machines,
-                dailySales: filteredDaily,
+                dailySales: adjustedDaily,
                 topProducts: SNACKEANDO_RAW_DATA.topProducts,
                 bottomProducts: SNACKEANDO_RAW_DATA.bottomProducts
             };
@@ -2185,60 +2407,54 @@
             });
 
             // 2. Machine Share Chart (Dynamic bar chart based on selected period)
-            let labels = ['IB0009', 'IB0010'];
+            const labels = Object.keys(data.machines).sort();
             let datasets = [];
             
             // Build cache arrays: window.MACHINE_CHART_CACHE[datasetIdx][labelIdx] = { total, cash, card }
             window.MACHINE_CHART_CACHE = [];
 
             if (period === 'diario') {
-                const ib09_cash = data.machines.IB0009.cashSales;
-                const ib09_card = data.machines.IB0009.cardSales;
-                const ib10_cash = data.machines.IB0010.cashSales;
-                const ib10_card = data.machines.IB0010.cardSales;
+                const cashData = labels.map(mId => data.machines[mId].cashSales || 0);
+                const cardData = labels.map(mId => data.machines[mId].cardSales || 0);
 
                 datasets = [
                     {
                         label: 'Efectivo',
-                        data: [ib09_cash, ib10_cash],
+                        data: cashData,
                         backgroundColor: '#c5a880'
                     },
                     {
                         label: 'Tarjeta',
-                        data: [ib09_card, ib10_card],
+                        data: cardData,
                         backgroundColor: '#1c253a'
                     }
                 ];
 
-                window.MACHINE_CHART_CACHE = [
-                    [
-                        { total: ib09_cash + ib09_card, cash: ib09_cash, card: ib09_card },
-                        { total: ib10_cash + ib10_card, cash: ib10_cash, card: ib10_card }
-                    ],
-                    [
-                        { total: ib09_cash + ib09_card, cash: ib09_cash, card: ib09_card },
-                        { total: ib10_cash + ib10_card, cash: ib10_cash, card: ib10_card }
-                    ]
-                ];
+                const cacheArr = labels.map(mId => {
+                    const mObj = data.machines[mId];
+                    return { total: mObj.totalSales, cash: mObj.cashSales, card: mObj.cardSales };
+                });
+
+                window.MACHINE_CHART_CACHE = [ cacheArr, cacheArr ];
             }
             else if (period === 'semanal') {
                 // Dynamic week grouping for machines
                 const weekGroups = {};
                 data.dailySales.forEach(day => {
-                    const label = getWeekRangeLabel(day.date);
-                    if (!weekGroups[label]) {
-                        weekGroups[label] = {
-                            IB0009: { total: 0, cash: 0, card: 0 },
-                            IB0010: { total: 0, cash: 0, card: 0 }
-                        };
+                    const weekLabel = getWeekRangeLabel(day.date);
+                    if (!weekGroups[weekLabel]) {
+                        weekGroups[weekLabel] = {};
+                        labels.forEach(mId => {
+                            weekGroups[weekLabel][mId] = { total: 0, cash: 0, card: 0 };
+                        });
                     }
-                    weekGroups[label].IB0009.cash += day.IB0009_cash || 0;
-                    weekGroups[label].IB0009.card += day.IB0009_card || 0;
-                    weekGroups[label].IB0009.total += (day.IB0009_cash || 0) + (day.IB0009_card || 0);
-
-                    weekGroups[label].IB0010.cash += day.IB0010_cash || 0;
-                    weekGroups[label].IB0010.card += day.IB0010_card || 0;
-                    weekGroups[label].IB0010.total += (day.IB0010_cash || 0) + (day.IB0010_card || 0);
+                    labels.forEach(mId => {
+                        const cashVal = day[`${mId}_cash`] || 0;
+                        const cardVal = day[`${mId}_card`] || 0;
+                        weekGroups[weekLabel][mId].cash += cashVal;
+                        weekGroups[weekLabel][mId].card += cardVal;
+                        weekGroups[weekLabel][mId].total += (cashVal + cardVal);
+                    });
                 });
 
                 const sortedWeeks = Object.keys(weekGroups).sort((a, b) => {
@@ -2247,71 +2463,70 @@
                     return (parseInt(aParts[2]) * 100 + parseInt(aParts[1])) - (parseInt(bParts[2]) * 100 + parseInt(bParts[1]));
                 });
 
-                const colors = ['#c5a880', '#1c253a', '#4b5563', '#9ca3af'];
+                const colors = ['#c5a880', '#1c253a', '#4b5563', '#9ca3af', '#60a5fa', '#10b981'];
                 
                 datasets = sortedWeeks.map((weekLabel, wIdx) => {
                     const weekData = weekGroups[weekLabel];
                     return {
                         label: weekLabel,
-                        data: [weekData.IB0009.total, weekData.IB0010.total],
+                        data: labels.map(mId => weekData[mId].total),
                         backgroundColor: colors[wIdx % colors.length]
                     };
                 });
 
                 window.MACHINE_CHART_CACHE = sortedWeeks.map(weekLabel => {
                     const weekData = weekGroups[weekLabel];
-                    return [
-                        { total: weekData.IB0009.total, cash: weekData.IB0009.cash, card: weekData.IB0009.card },
-                        { total: weekData.IB10.total || weekData.IB0010.total, cash: weekData.IB0010.cash, card: weekData.IB0010.card }
-                    ];
+                    return labels.map(mId => {
+                        const mData = weekData[mId];
+                        return { total: mData.total, cash: mData.cash, card: mData.card };
+                    });
                 });
             }
             else if (period === 'mensual') {
-                let jul_09_cash = 0, jul_09_card = 0, aug_09_cash = 0, aug_09_card = 0;
-                let jul_10_cash = 0, jul_10_card = 0, aug_10_cash = 0, aug_10_card = 0;
-                
+                const monthGroups = {};
                 data.dailySales.forEach(day => {
-                    if (day.date && day.date.startsWith('2026-07')) {
-                        jul_09_cash += day.IB0009_cash || 0;
-                        jul_09_card += day.IB0009_card || 0;
-                        jul_10_cash += day.IB0010_cash || 0;
-                        jul_10_card += day.IB0010_card || 0;
-                    } else {
-                        aug_09_cash += day.IB0009_cash || 0;
-                        aug_09_card += day.IB0009_card || 0;
-                        aug_10_cash += day.IB0010_cash || 0;
-                        aug_10_card += day.IB0010_card || 0;
+                    if (!day.date) return;
+                    const mKey = day.date.substring(0, 7); // e.g. "2026-08"
+                    if (!monthGroups[mKey]) {
+                        monthGroups[mKey] = {};
+                        labels.forEach(mId => {
+                            monthGroups[mKey][mId] = { total: 0, cash: 0, card: 0 };
+                        });
                     }
+                    labels.forEach(mId => {
+                        const cashVal = day[`${mId}_cash`] || 0;
+                        const cardVal = day[`${mId}_card`] || 0;
+                        monthGroups[mKey][mId].cash += cashVal;
+                        monthGroups[mKey][mId].card += cardVal;
+                        monthGroups[mKey][mId].total += (cashVal + cardVal);
+                    });
                 });
 
-                const ib09_jul_total = jul_09_cash + jul_09_card;
-                const ib09_aug_total = aug_09_cash + aug_09_card;
-                const ib10_jul_total = jul_10_cash + jul_10_card;
-                const ib10_aug_total = aug_10_cash + aug_10_card;
+                const sortedMonths = Object.keys(monthGroups).sort();
+                const monthNames = {
+                    "01": "Enero", "02": "Febrero", "03": "Marzo", "04": "Abril",
+                    "05": "Mayo", "06": "Junio", "07": "Julio", "08": "Agosto",
+                    "09": "Septiembre", "10": "Octubre", "11": "Noviembre", "12": "Diciembre"
+                };
+                const colors = ['#c5a880', '#1c253a', '#4b5563', '#9ca3af', '#60a5fa', '#10b981'];
 
-                datasets = [
-                    {
-                        label: 'Julio 2026',
-                        data: [ib09_jul_total, ib10_jul_total],
-                        backgroundColor: '#c5a880'
-                    },
-                    {
-                        label: 'Agosto 2026',
-                        data: [ib09_aug_total, ib10_aug_total],
-                        backgroundColor: '#1c253a'
-                    }
-                ];
+                datasets = sortedMonths.map((mKey, idx) => {
+                    const parts = mKey.split('-');
+                    const label = `${monthNames[parts[1]] || parts[1]} ${parts[0]}`;
+                    return {
+                        label: label,
+                        data: labels.map(mId => monthGroups[mKey][mId].total),
+                        backgroundColor: colors[idx % colors.length]
+                    };
+                });
 
-                window.MACHINE_CHART_CACHE = [
-                    [
-                        { total: ib09_jul_total, cash: jul_09_cash, card: jul_09_card },
-                        { total: ib10_jul_total, cash: jul_10_cash, card: jul_10_card }
-                    ],
-                    [
-                        { total: ib09_aug_total, cash: aug_09_cash, card: aug_09_card },
-                        { total: ib10_aug_total, cash: aug_10_cash, card: aug_10_card }
-                    ]
-                ];
+                window.MACHINE_CHART_CACHE = sortedMonths.map(mKey => {
+                    const mData = monthGroups[mKey];
+                    return labels.map(mId => {
+                        const cell = mData[mId];
+                        return { total: cell.total, cash: cell.cash, card: cell.card };
+                    });
+                });
             }
 
             machineShareChartInst = new Chart(ctxMachine, {
