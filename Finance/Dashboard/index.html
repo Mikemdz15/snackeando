@@ -1162,7 +1162,7 @@
             <h2 class="hero-title">Análisis de Desempeño Financiero y Ventas Consolidadas</h2>
             <p class="hero-desc">
                 Presentación ejecutiva del comportamiento comercial de la red de activos Snackeando. 
-                Rendimiento consolidado del período inicial de operaciones del 30 de Julio al 10 de Agosto de 2026, 
+                Rendimiento consolidado del período inicial de operaciones del <span id="hero-start-date" style="font-weight: 500; color: #fff;">30 de Julio</span> al <span id="hero-end-date" style="font-weight: 500; color: #fff;">10 de Agosto de 2026</span>, 
                 mapeando ingresos por punto de venta, métodos de cobro, rotación de catálogo e índices de utilidad neta.
             </p>
         </div>
@@ -2214,6 +2214,21 @@
             const startFormatted = formatSpanishDate(data.dateRange.start);
             const endFormatted = formatSpanishDate(data.dateRange.end);
             const totalSalesFormatted = Math.round(data.summary.totalSales).toLocaleString('es-MX');
+
+            // Update hero description date range dynamically
+            const startSpan = document.getElementById('hero-start-date');
+            const endSpan = document.getElementById('hero-end-date');
+            if (startSpan && endSpan) {
+                const startParts = data.dateRange.start.split('-');
+                const endParts = data.dateRange.end.split('-');
+                if (startParts.length === 3 && endParts.length === 3 && startParts[0] === endParts[0]) {
+                    // same year, e.g. remove " de 2026" from startFormatted
+                    startSpan.innerText = startFormatted.replace(` de ${startParts[0]}`, '');
+                } else {
+                    startSpan.innerText = startFormatted;
+                }
+                endSpan.innerText = endFormatted;
+            }
             
             // Get leader info dynamically
             const leader = data.topProducts[0] || { name: "N/A", revenue: 0 };
