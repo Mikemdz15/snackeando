@@ -1353,6 +1353,12 @@
                 <div>
                     <span class="analysis-tag">Catálogo de Rotación</span>
                     <h3 class="analysis-heading" style="margin: 5px 0 0 0; font-family: 'Playfair Display', serif; font-size: 1.5rem;">Desempeño Completo de Productos</h3>
+                    <p style="color: #9ca3af; font-size: 0.8rem; line-height: 1.4; margin-top: 8px; max-width: 800px;">
+                        Esta tabla consolida el rendimiento completo del catálogo de productos con ventas registradas en las máquinas seleccionadas. 
+                        Incluye la capacidad física de almacenamiento, ventas acumuladas y promedios diarios, así como métricas avanzadas de rotación 
+                        (el porcentaje del inventario que se desplaza al día y los días requeridos para renovar el stock por completo de forma teórica) 
+                        y la clasificación ABC basada en aportación de ingresos para optimizar el resurtido y espacio en espirales.
+                    </p>
                 </div>
                 <!-- Export to Excel Button -->
                 <button type="button" onclick="exportProductsToExcel()" class="btn-primary" style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; font-size: 0.8rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
@@ -1409,17 +1415,17 @@
                             <th style="padding: 10px 12px; color: #c5a880;">Rango</th>
                             <th style="padding: 10px 12px; color: #c5a880;">SKU</th>
                             <th style="padding: 10px 12px; color: #c5a880;">Descripción del Producto</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Capacidad</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">No Maqui</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Capacidad Total</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Unidades</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Promedio Diario</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Rotación Diaria</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Días de rotación</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">PVP Promedio</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Ingresos Totales</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">% Venta</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: center;">Clase ABC</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Capacidad Almacenamiento<br/>por Máquina</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Máquinas<br/>Activas</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Capacidad Total<br/>Almacenamiento</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Unidades Vendidas<br/>Totales</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Promedio Diario<br/>Unidades de Venta</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Rotación Diaria (%)</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Días de Rotación<br/>del Inventario</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Precio de Venta<br/>Público Promedio</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Ingresos Totales<br/>($ MXN)</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Participación de<br/>Ventas (%)</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: center;">Clasificación ABC</th>
                         </tr>
                     </thead>
                     <tbody id="catalog-products-body">
@@ -2469,6 +2475,52 @@
             const botProductsList = [bot1, bot2].filter(Boolean).map(p => `<strong>${p.name}</strong> (${p.units} unidades)`).join(' y ');
             const top1Avg = top1 ? Math.round(top1.units / numDays) : 0;
 
+            // Compute high/low rotation items dynamically from valid SKU capacity mappings
+            const selectedMachs = window.SELECTED_MACHINES || [];
+            const machineCount = selectedMachs.length || 1;
+            
+            const validProds = data.allProducts.filter(p => {
+                const capPerMachine = window.SKU_CAPACITY[p.sku] || 0;
+                return capPerMachine > 0;
+            });
+            
+            let highRotItem = null;
+            let lowRotItem = null;
+            
+            if (validProds.length > 0) {
+                const sortedByRotation = [...validProds].map(p => {
+                    const capPerMachine = window.SKU_CAPACITY[p.sku] || 0;
+                    const capTotal = capPerMachine * machineCount;
+                    const avgDaily = p.units / numDays;
+                    const rotPct = capTotal > 0 ? (avgDaily / capTotal) * 100 : 0;
+                    const rotDays = avgDaily > 0 ? (capTotal / avgDaily) : Infinity;
+                    return { ...p, rotPct, rotDays };
+                });
+                
+                // Sort descending for high rotation
+                sortedByRotation.sort((a, b) => b.rotPct - a.rotPct);
+                highRotItem = sortedByRotation[0];
+                
+                // Filter products with sales to find lowest rotation
+                const nonZeroRotation = sortedByRotation.filter(p => p.rotPct > 0);
+                if (nonZeroRotation.length > 0) {
+                    lowRotItem = nonZeroRotation[nonZeroRotation.length - 1];
+                }
+            }
+
+            let rotationAnalysisParagraph = "";
+            if (highRotItem && lowRotItem) {
+                rotationAnalysisParagraph = `
+                    <br><br>
+                    <strong>Análisis de Velocidad de Rotación por SKU</strong>: De acuerdo al catálogo de capacidades del inventario, el producto con mayor velocidad de rotación es 
+                    <strong>${highRotItem.name}</strong>, desplazando diariamente el <strong>${Math.round(highRotItem.rotPct)}%</strong> de su capacidad máxima disponible, 
+                    lo que representa un tiempo teórico de vaciado de <strong>${highRotItem.rotDays.toFixed(1)} días</strong> de stock. 
+                    En contraste, el SKU con movimiento más lento registrado en el periodo es <strong>${lowRotItem.name}</strong>, 
+                    con un desplazamiento de tan solo <strong>${Math.round(lowRotItem.rotPct)}%</strong> al día y una rotación completa estimada en <strong>${lowRotItem.rotDays.toFixed(1)} días</strong>. 
+                    Esta métrica resalta la oportunidad de ajustar espirales o sustituir SKU de baja rotación para liberar valioso espacio de venta.
+                `;
+            }
+
             const inventoryText = `
                 <strong>Mapeo de Métodos de Pago</strong>: El <strong>${cashPct}% ($${cashSales.toLocaleString('es-MX')} MXN)</strong> de los ingresos del período se realizó a través de monedas y billetes (Efectivo). Esto recalca la 
                 importancia de la política de monedero de Cantaloupe SEED: <strong>los conductores de ruta deben mantener sin falta la base fija de monedero de cambio (float) a $500 pesos</strong> 
@@ -2476,6 +2528,7 @@
                 <br><br>
                 <strong>Ajuste de Catálogo (SKUs de Baja Rotación)</strong>: Productos del final de la tabla (Bottom 5), como ${botProductsList || 'ninguno'}, demuestran una velocidad de venta lenta. Se sugiere a la administración <strong>disminuir su límite Par de llenado</strong> 
                 en el planograma a solo 3 o 4 piezas por espiral para prevenir caducidades y merma, y rotar ese espacio a productos del Top 10, tales como ${topProductsList || 'ninguno'}, que dominan más del 25% del total de ingresos del arranque (con <strong>${top1?.name}</strong> promediando <strong>${top1Avg} unidades venta diarias</strong>).
+                ${rotationAnalysisParagraph}
             `;
             document.getElementById('analysis-text-inventory').innerHTML = inventoryText;
         }
