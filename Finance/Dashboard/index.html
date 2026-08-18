@@ -1009,19 +1009,28 @@
             color: var(--text-highlight);
         }
         
-        /* Scrollbar styles for machine checklist dropdown */
-        #machine-checklist-container::-webkit-scrollbar {
+        /* Scrollbar styles for dropdowns and tables */
+        #machine-checklist-container::-webkit-scrollbar,
+        #product-checklist-container::-webkit-scrollbar,
+        .table-container::-webkit-scrollbar {
             width: 4px;
+            height: 4px;
         }
-        #machine-checklist-container::-webkit-scrollbar-track {
+        #machine-checklist-container::-webkit-scrollbar-track,
+        #product-checklist-container::-webkit-scrollbar-track,
+        .table-container::-webkit-scrollbar-track {
             background: rgba(255,255,255,0.02);
             border-radius: 4px;
         }
-        #machine-checklist-container::-webkit-scrollbar-thumb {
+        #machine-checklist-container::-webkit-scrollbar-thumb,
+        #product-checklist-container::-webkit-scrollbar-thumb,
+        .table-container::-webkit-scrollbar-thumb {
             background: rgba(197, 168, 128, 0.3);
             border-radius: 4px;
         }
-        #machine-checklist-container::-webkit-scrollbar-thumb:hover {
+        #machine-checklist-container::-webkit-scrollbar-thumb:hover,
+        #product-checklist-container::-webkit-scrollbar-thumb:hover,
+        .table-container::-webkit-scrollbar-thumb:hover {
             background: rgba(197, 168, 128, 0.5);
         }
     </style>
@@ -1335,6 +1344,85 @@
                         <!-- Filled by JS -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- ALL PRODUCTS SALES CATALOG SECTION -->
+        <div class="analysis-card" style="grid-column: span 2; margin-top: 30px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; box-sizing: border-box;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 16px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <span class="analysis-tag">Catálogo de Rotación</span>
+                    <h3 class="analysis-heading" style="margin: 5px 0 0 0; font-family: 'Playfair Display', serif; font-size: 1.5rem;">Desempeño Completo de Productos</h3>
+                </div>
+                <!-- Export to Excel Button -->
+                <button type="button" onclick="exportProductsToExcel()" class="btn-primary" style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; font-size: 0.8rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
+                    <i data-lucide="download" style="width: 14px; height: 14px;"></i> Exportar a Excel
+                </button>
+            </div>
+            
+            <!-- Filters Control Bar -->
+            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; background: rgba(0,0,0,0.15); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.02);">
+                <!-- Text Filter -->
+                <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
+                    <label style="color: #9ca3af; font-size: 0.75rem; font-weight: 500;">Buscar por Descripción:</label>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <i data-lucide="search" style="width: 14px; height: 14px; color: #6b7280; position: absolute; left: 10px;"></i>
+                        <input type="text" id="catalog-search-input" oninput="onCatalogFilterChange()" placeholder="Escribe el nombre del producto..." style="width: 100%; box-sizing: border-box; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 12px 8px 30px; color: #fff; font-size: 0.8rem; outline: none;" />
+                    </div>
+                </div>
+                
+                <!-- Product Multi-Select Filter Container -->
+                <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
+                    <label style="color: #9ca3af; font-size: 0.75rem; font-weight: 500;">Filtrar Productos Específicos:</label>
+                    <div class="product-select-dropdown" style="position: relative; width: 100%;">
+                        <button type="button" onclick="toggleProductDropdown(event)" style="display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 12px; color: #fff; font-size: 0.8rem; cursor: pointer; outline: none; font-weight: 500; width: 100%; justify-content: space-between; box-sizing: border-box;">
+                            <span style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <i data-lucide="shopping-bag" style="width: 14px; height: 14px; color: #c5a880;"></i>
+                                <span id="product-filter-label">Productos: Todos</span>
+                            </span>
+                            <i data-lucide="chevron-down" style="width: 12px; height: 12px; color: #9ca3af;"></i>
+                        </button>
+                        <div id="product-dropdown-list" style="display: none; position: absolute; top: 110%; left: 0; right: 0; background: #0f1524; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); padding: 10px; z-index: 1000; box-sizing: border-box;">
+                            <!-- Preset Buttons -->
+                            <div style="display: flex; gap: 8px; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin-bottom: 8px;">
+                                <button type="button" onclick="selectProductsPreset('all')" style="background: rgba(197, 168, 128, 0.1); border: 1px solid rgba(197, 168, 128, 0.2); border-radius: 4px; color: #c5a880; font-size: 0.7rem; padding: 3px 6px; cursor: pointer; flex: 1;">Todos</button>
+                                <button type="button" onclick="selectProductsPreset('none')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #9ca3af; font-size: 0.7rem; padding: 3px 6px; cursor: pointer; flex: 1;">Ninguno</button>
+                            </div>
+                            <!-- Dropdown Checklist Search -->
+                            <div style="margin-bottom: 8px;">
+                                <input type="text" id="product-dropdown-search" oninput="filterDropdownProductsList()" placeholder="Buscar producto en la lista..." style="width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 4px 8px; color: #fff; font-size: 0.75rem; outline: none;" />
+                            </div>
+                            <!-- Product Checklist Container -->
+                            <div id="product-checklist-container" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 5px;">
+                                <!-- Checkboxes populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-container" style="overflow-x: auto; max-height: 400px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+                    <thead style="position: sticky; top: 0; background: #0f1524; z-index: 10; border-bottom: 2px solid rgba(255,255,255,0.1);">
+                        <tr>
+                            <th style="padding: 10px 12px; color: #c5a880;">Rango</th>
+                            <th style="padding: 10px 12px; color: #c5a880;">SKU</th>
+                            <th style="padding: 10px 12px; color: #c5a880;">Descripción del Producto</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Unidades</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Prom. Diario Uds. Venta</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Ingresos Totales</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">% Venta</th>
+                        </tr>
+                    </thead>
+                    <tbody id="catalog-products-body">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="catalog-footnote" style="margin-top: 12px; font-size: 0.72rem; color: #6b7280; font-style: italic;">
+                El catálogo muestra todos los productos con ventas registradas en el periodo.
             </div>
         </div>
 
@@ -2061,7 +2149,8 @@
                 machines: machines,
                 dailySales: dailySalesList,
                 topProducts: topProducts,
-                bottomProducts: bottomProducts
+                bottomProducts: bottomProducts,
+                allProducts: prodList
             };
 
             renderDashboard(finalData);
@@ -2138,6 +2227,17 @@
                 return newDay;
             });
 
+            // For static fallback, combine top and bottom lists if any to form allProducts
+            const staticProds = [...(SNACKEANDO_RAW_DATA.topProducts || [])];
+            const seen = new Set();
+            const allStaticProds = [];
+            staticProds.forEach(p => {
+                if (!seen.has(p.name)) {
+                    seen.add(p.name);
+                    allStaticProds.push(p);
+                }
+            });
+
             const finalData = {
                 dateRange: {
                     start: filteredDaily[0] ? filteredDaily[0].date : "",
@@ -2154,7 +2254,8 @@
                 machines: machines,
                 dailySales: adjustedDaily,
                 topProducts: SNACKEANDO_RAW_DATA.topProducts,
-                bottomProducts: SNACKEANDO_RAW_DATA.bottomProducts
+                bottomProducts: SNACKEANDO_RAW_DATA.bottomProducts,
+                allProducts: allStaticProds
             };
 
             renderDashboard(finalData);
@@ -2299,6 +2400,9 @@
 
             // 6. Initialize Dynamic Narrative
             renderNarrative(data);
+
+            // 7. Initialize All Products Catalog
+            renderCatalogSection(data);
         }
 
         // Render Dynamic Strategic Narratives based on live sheet data
@@ -2791,6 +2895,259 @@
             const activeData = window.CURRENT_ACTIVE_DASHBOARD_DATA || SNACKEANDO_RAW_DATA;
             renderMainChart(activeData, period);
             renderSideCharts(activeData, period);
+        }
+
+        // ==========================================
+        // CATALOGO COMPLETO DE PRODUCTOS LOGIC
+        // ==========================================
+        window.CATALOG_SELECTED_PRODUCTS = null;
+
+        function renderCatalogSection(data) {
+            populateCatalogProductFilter(data.allProducts);
+            filterAndRenderCatalogTable();
+        }
+
+        // Build HTML Product Checkbox Checklist inside dropdown
+        function populateCatalogProductFilter(allProducts) {
+            const container = document.getElementById('product-checklist-container');
+            if (!container) return;
+
+            // Extract all unique product names sorted alphabetically
+            const productNames = allProducts.map(p => p.name).sort();
+            
+            // If window.CATALOG_SELECTED_PRODUCTS is null, initialize with all product names
+            if (!window.CATALOG_SELECTED_PRODUCTS) {
+                window.CATALOG_SELECTED_PRODUCTS = [...productNames];
+            } else {
+                // Keep only products that are still in the current dynamic list
+                window.CATALOG_SELECTED_PRODUCTS = window.CATALOG_SELECTED_PRODUCTS.filter(name => productNames.includes(name));
+                // If it becomes empty, reset to all
+                if (window.CATALOG_SELECTED_PRODUCTS.length === 0) {
+                    window.CATALOG_SELECTED_PRODUCTS = [...productNames];
+                }
+            }
+
+            container.innerHTML = '';
+            productNames.forEach((name, idx) => {
+                const checked = window.CATALOG_SELECTED_PRODUCTS.includes(name) ? 'checked' : '';
+                const div = document.createElement('div');
+                div.className = 'product-check-item';
+                div.style = "display: flex; align-items: center; gap: 8px; color: #d1d5db; font-size: 0.75rem; padding: 4px 6px; border-radius: 4px; cursor: pointer; transition: background 0.15s;";
+                div.innerHTML = `
+                    <input type="checkbox" id="chk-prod-${idx}" value="${name}" ${checked} onchange="onCatalogProductCheckChange(this)" style="cursor: pointer;" />
+                    <label for="chk-prod-${idx}" style="cursor: pointer; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${name}">
+                        ${name}
+                    </label>
+                `;
+                div.onmouseover = () => { div.style.background = "rgba(255,255,255,0.03)"; };
+                div.onmouseout = () => { div.style.background = "transparent"; };
+                container.appendChild(div);
+            });
+
+            updateCatalogProductFilterLabel(productNames.length);
+        }
+
+        // Update multi-select dropdown button label for products
+        function updateCatalogProductFilterLabel(totalCount) {
+            const labelEl = document.getElementById('product-filter-label');
+            if (!labelEl) return;
+
+            const selCount = (window.CATALOG_SELECTED_PRODUCTS || []).length;
+
+            if (selCount === totalCount) {
+                labelEl.innerText = "Productos: Todos";
+            } else if (selCount === 0) {
+                labelEl.innerText = "Productos: Ninguno";
+            } else if (selCount === 1) {
+                labelEl.innerText = `Producto: ${window.CATALOG_SELECTED_PRODUCTS[0]}`;
+            } else {
+                labelEl.innerText = `Productos: ${selCount} de ${totalCount}`;
+            }
+        }
+
+        // Triggers when checkbox clicked in product checklist
+        function onCatalogProductCheckChange(chk) {
+            const name = chk.value;
+            if (chk.checked) {
+                if (!window.CATALOG_SELECTED_PRODUCTS.includes(name)) {
+                    window.CATALOG_SELECTED_PRODUCTS.push(name);
+                }
+            } else {
+                window.CATALOG_SELECTED_PRODUCTS = window.CATALOG_SELECTED_PRODUCTS.filter(x => x !== name);
+            }
+            
+            const allItems = window.CURRENT_ACTIVE_DASHBOARD_DATA ? window.CURRENT_ACTIVE_DASHBOARD_DATA.allProducts : [];
+            updateCatalogProductFilterLabel(allItems.length);
+            
+            filterAndRenderCatalogTable();
+        }
+
+        // Toggles select all / none products in checklist dropdown
+        function selectProductsPreset(preset) {
+            const checkboxes = document.querySelectorAll('#product-checklist-container input[type="checkbox"]');
+            window.CATALOG_SELECTED_PRODUCTS = [];
+            
+            checkboxes.forEach(chk => {
+                if (preset === 'all') {
+                    chk.checked = true;
+                    window.CATALOG_SELECTED_PRODUCTS.push(chk.value);
+                } else {
+                    chk.checked = false;
+                }
+            });
+            
+            const allItems = window.CURRENT_ACTIVE_DASHBOARD_DATA ? window.CURRENT_ACTIVE_DASHBOARD_DATA.allProducts : [];
+            updateCatalogProductFilterLabel(allItems.length);
+            
+            filterAndRenderCatalogTable();
+        }
+
+        // Filters checklist items inside product dropdown on typing
+        function filterDropdownProductsList() {
+            const query = document.getElementById('product-dropdown-search').value.toLowerCase().trim();
+            const items = document.querySelectorAll('#product-checklist-container .product-check-item');
+            
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Toggle product multi-select visibility
+        function toggleProductDropdown(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('product-dropdown-list');
+            if (!dropdown) return;
+            const isHidden = dropdown.style.display === 'none';
+            
+            dropdown.style.display = isHidden ? 'block' : 'none';
+            
+            if (isHidden) {
+                const search = document.getElementById('product-dropdown-search');
+                if (search) {
+                    search.value = '';
+                    filterDropdownProductsList();
+                    search.focus();
+                }
+            }
+        }
+
+        // Close product dropdown when clicking outside
+        window.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('product-dropdown-list');
+            if (dropdown && !e.target.closest('.product-select-dropdown')) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Triggered when text search input changes
+        function onCatalogFilterChange() {
+            filterAndRenderCatalogTable();
+        }
+
+        // Render full catalog table
+        function filterAndRenderCatalogTable() {
+            const body = document.getElementById('catalog-products-body');
+            if (!body) return;
+            body.innerHTML = '';
+
+            const activeData = window.CURRENT_ACTIVE_DASHBOARD_DATA;
+            if (!activeData || !activeData.allProducts || activeData.allProducts.length === 0) {
+                body.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">No hay productos con ventas en este periodo.</td></tr>`;
+                return;
+            }
+
+            const searchQuery = document.getElementById('catalog-search-input').value.toLowerCase().trim();
+            const selectedProds = window.CATALOG_SELECTED_PRODUCTS || [];
+
+            // Filter products
+            const filtered = activeData.allProducts.filter(p => {
+                if (searchQuery && !p.name.toLowerCase().includes(searchQuery)) return false;
+                if (selectedProds.length > 0 && !selectedProds.includes(p.name)) return false;
+                return true;
+            });
+
+            // Sort products by revenue descending
+            const sorted = [...filtered].sort((a, b) => b.revenue - a.revenue);
+
+            if (sorted.length === 0) {
+                body.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">Ningún producto coincide con los filtros.</td></tr>`;
+                return;
+            }
+
+            const numDays = activeData.dailySales.length || 12;
+
+            sorted.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+                
+                const avgDaily = item.units / numDays;
+                const pctRevenue = activeData.summary.totalSales > 0 ? (item.revenue / activeData.summary.totalSales * 100).toFixed(1) : "0.0";
+
+                tr.innerHTML = `
+                    <td style="padding: 10px 12px; color: #9ca3af; font-weight: 500;">#${index + 1}</td>
+                    <td style="padding: 10px 12px; color: #9ca3af; font-family: monospace; font-size: 0.8rem;">${item.sku || 'N/A'}</td>
+                    <td style="padding: 10px 12px; color: #fff; font-weight: 500; text-align: left;">${item.name}</td>
+                    <td style="padding: 10px 12px; color: #fff; font-weight: 600; text-align: right;">${item.units.toLocaleString('es-MX')}</td>
+                    <td style="padding: 10px 12px; color: #9ca3af; text-align: right;">${avgDaily.toFixed(1)}</td>
+                    <td style="padding: 10px 12px; color: #c5a880; font-weight: 600; text-align: right;">$${Math.round(item.revenue).toLocaleString('es-MX')}</td>
+                    <td style="padding: 10px 12px; color: #9ca3af; text-align: right; font-weight: 500;">${pctRevenue}%</td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        // Export active filtered catalog to Excel-compatible CSV (UTF-8 BOM)
+        function exportProductsToExcel() {
+            const activeData = window.CURRENT_ACTIVE_DASHBOARD_DATA;
+            if (!activeData || !activeData.allProducts || activeData.allProducts.length === 0) {
+                alert("No hay datos para exportar.");
+                return;
+            }
+
+            const searchQuery = document.getElementById('catalog-search-input').value.toLowerCase().trim();
+            const selectedProds = window.CATALOG_SELECTED_PRODUCTS || [];
+
+            // Filter products
+            const filtered = activeData.allProducts.filter(p => {
+                if (searchQuery && !p.name.toLowerCase().includes(searchQuery)) return false;
+                if (selectedProds.length > 0 && !selectedProds.includes(p.name)) return false;
+                return true;
+            });
+
+            // Sort products by revenue descending
+            const sorted = [...filtered].sort((a, b) => b.revenue - a.revenue);
+            const numDays = activeData.dailySales.length || 12;
+
+            // Build CSV rows
+            let csvContent = "Rango,SKU,Descripcion,Unidades Vendidas,Promedio Diario,Ingresos Totales (MXN),Porcentaje de Venta (%)\n";
+
+            sorted.forEach((item, index) => {
+                const avgDaily = (item.units / numDays).toFixed(2);
+                const pctRevenue = activeData.summary.totalSales > 0 ? (item.revenue / activeData.summary.totalSales * 100).toFixed(2) : "0.00";
+                const cleanName = item.name.replace(/"/g, '""');
+                csvContent += `${index + 1},"${item.sku || 'N/A'}","${cleanName}",${item.units},${avgDaily},${Math.round(item.revenue)},${pctRevenue}\n`;
+            });
+
+            // Trigger download with UTF-8 BOM to prevent Excel accent display issues in Spanish
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            
+            const select = document.getElementById('general-month-filter');
+            const monthLabel = select ? select.options[select.selectedIndex].text.replace(/\s+/g, '_') : 'Acumulado';
+            const filename = `Reporte_Productos_Snackeando_${monthLabel}.csv`;
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // ==========================================
