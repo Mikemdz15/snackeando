@@ -1411,21 +1411,8 @@
             <div class="table-container" style="overflow-x: auto; max-height: 400px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
                 <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
                     <thead style="position: sticky; top: 0; background: #0f1524; z-index: 10; border-bottom: 2px solid rgba(255,255,255,0.1);">
-                        <tr>
-                            <th style="padding: 10px 12px; color: #c5a880;">Rango</th>
-                            <th style="padding: 10px 12px; color: #c5a880;">SKU</th>
-                            <th style="padding: 10px 12px; color: #c5a880;">Descripción del Producto</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Capacidad Almacenamiento<br/>por Máquina</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Máquinas<br/>Activas</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Capacidad Total<br/>Almacenamiento</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Unidades Vendidas<br/>Totales</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Promedio Diario<br/>Unidades de Venta</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Rotación Diaria (%)</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Días de Rotación<br/>del Inventario</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Precio de Venta<br/>Público Promedio</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Ingresos Totales<br/>($ MXN)</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Participación de<br/>Ventas (%)</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: center;">Clasificación ABC</th>
+                        <tr id="catalog-thead-row">
+                            <!-- Rendered dynamically by JS -->
                         </tr>
                     </thead>
                     <tbody id="catalog-products-body">
@@ -2992,6 +2979,35 @@
             "DUM00034": 18
         };
         window.CATALOG_SELECTED_PRODUCTS = null;
+        window.CATALOG_SORT_COLUMN = "revenue";
+        window.CATALOG_SORT_DIRECTION = "desc";
+
+        window.CATALOG_COLUMNS = [
+            { key: "rank", label: "Rango", align: "left" },
+            { key: "sku", label: "SKU", align: "left" },
+            { key: "name", label: "Descripción del Producto", align: "left" },
+            { key: "capPerMachine", label: "Capacidad Almacenamiento<br/>por Máquina", align: "right" },
+            { key: "machineCount", label: "Máquinas<br/>Activas", align: "right" },
+            { key: "capTotal", label: "Capacidad Total<br/>Almacenamiento", align: "right" },
+            { key: "units", label: "Unidades Vendidas<br/>Totales", align: "right" },
+            { key: "avgDaily", label: "Promedio Diario<br/>Unidades de Venta", align: "right" },
+            { key: "rotationDailyPct", label: "Rotación Diaria (%)", align: "right" },
+            { key: "daysOfRotation", label: "Días de Rotación<br/>del Inventario", align: "right" },
+            { key: "pvp", label: "Precio de Venta<br/>Público Promedio", align: "right" },
+            { key: "revenue", label: "Ingresos Totales<br/>($ MXN)", align: "right" },
+            { key: "pctRevenue", label: "Participación de<br/>Ventas (%)", align: "right" },
+            { key: "abcClass", label: "Clasificación ABC", align: "center" }
+        ];
+
+        function setCatalogSort(key) {
+            if (window.CATALOG_SORT_COLUMN === key) {
+                window.CATALOG_SORT_DIRECTION = window.CATALOG_SORT_DIRECTION === "asc" ? "desc" : "asc";
+            } else {
+                window.CATALOG_SORT_COLUMN = key;
+                window.CATALOG_SORT_DIRECTION = "desc";
+            }
+            filterAndRenderCatalogTable();
+        }
 
         function renderCatalogSection(data) {
             populateCatalogProductFilter(data.allProducts);
@@ -3152,6 +3168,19 @@
                 return;
             }
 
+            // Render headers dynamically with sorting indicators
+            const theadRow = document.getElementById('catalog-thead-row');
+            if (theadRow) {
+                theadRow.innerHTML = window.CATALOG_COLUMNS.map(col => {
+                    let arrow = "";
+                    if (window.CATALOG_SORT_COLUMN === col.key) {
+                        arrow = window.CATALOG_SORT_DIRECTION === "asc" ? " ▲" : " ▼";
+                    }
+                    const style = `padding: 10px 12px; color: #c5a880; cursor: pointer; user-select: none; text-align: ${col.align}; white-space: nowrap;`;
+                    return `<th onclick="setCatalogSort('${col.key}')" style="${style}">${col.label}${arrow}</th>`;
+                }).join('');
+            }
+
             const searchQuery = document.getElementById('catalog-search-input').value.toLowerCase().trim();
             const selectedProds = window.CATALOG_SELECTED_PRODUCTS || [];
 
@@ -3162,64 +3191,110 @@
                 return true;
             });
 
-            // Sort products by revenue descending
-            const sorted = [...filtered].sort((a, b) => b.revenue - a.revenue);
+            const numDays = activeData.dailySales.length || 12;
+            const selectedMachs = window.SELECTED_MACHINES || [];
+            const machineCount = selectedMachs.length || 1;
 
-            if (sorted.length === 0) {
+            // Map and calculate all stats first to enable sorting on calculated columns
+            const enriched = filtered.map(item => {
+                const capPerMachine = window.SKU_CAPACITY[item.sku] || 0;
+                const capTotal = capPerMachine * machineCount;
+                const avgDaily = item.units / numDays;
+                const pvp = item.units > 0 ? (item.revenue / item.units) : 0;
+                const pctRevenue = activeData.summary.totalSales > 0 ? (item.revenue / activeData.summary.totalSales * 100) : 0;
+                const rotationDailyPct = capTotal > 0 ? (avgDaily / capTotal * 100) : 0;
+                const daysOfRotation = avgDaily > 0 ? (capTotal / avgDaily) : 0; // use 0 as fallback to prevent Infinity issues in sorting
+
+                return {
+                    ...item,
+                    capPerMachine,
+                    capTotal,
+                    avgDaily,
+                    pvp,
+                    pctRevenue,
+                    rotationDailyPct,
+                    daysOfRotation
+                };
+            });
+
+            // 1. Sort by revenue descending to calculate fixed Pareto Rank and ABC Class
+            enriched.sort((a, b) => b.revenue - a.revenue);
+            const totalCatalogRevenue = enriched.reduce((sum, item) => sum + item.revenue, 0);
+            let runningSum = 0;
+
+            enriched.forEach((item, index) => {
+                runningSum += item.revenue;
+                const cumulativePercent = totalCatalogRevenue > 0 ? (runningSum / totalCatalogRevenue * 100) : 0;
+                
+                item.abcClass = "C";
+                if (cumulativePercent <= 80) item.abcClass = "A";
+                else if (cumulativePercent <= 95) item.abcClass = "B";
+
+                item.revenueRank = index + 1;
+            });
+
+            // 2. Apply dynamic sort column and direction selected by user
+            const sortCol = window.CATALOG_SORT_COLUMN || "revenue";
+            const sortDir = window.CATALOG_SORT_DIRECTION || "desc";
+
+            enriched.sort((a, b) => {
+                let valA = a[sortCol];
+                let valB = b[sortCol];
+
+                // Handle custom field aliases
+                if (sortCol === "rank") {
+                    valA = a.revenueRank;
+                    valB = b.revenueRank;
+                }
+
+                // String comparison
+                if (typeof valA === "string") {
+                    return sortDir === "asc"
+                        ? valA.localeCompare(valB)
+                        : valB.localeCompare(valA);
+                }
+
+                // Number comparison
+                if (valA === undefined || valA === null) valA = 0;
+                if (valB === undefined || valB === null) valB = 0;
+
+                return sortDir === "asc" ? valA - valB : valB - valA;
+            });
+
+            if (enriched.length === 0) {
                 body.innerHTML = `<tr><td colspan="14" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">Ningún producto coincide con los filtros.</td></tr>`;
                 return;
             }
 
-            const numDays = activeData.dailySales.length || 12;
-            const totalCatalogRevenue = sorted.reduce((sum, item) => sum + item.revenue, 0);
-            let runningSum = 0;
-
-            // Get number of active machines from the filter
-            const selectedMachs = window.SELECTED_MACHINES || [];
-            const machineCount = selectedMachs.length || 1;
-
-            sorted.forEach((item, index) => {
+            enriched.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
                 
-                const avgDaily = item.units / numDays;
-                const pvp = item.units > 0 ? (item.revenue / item.units) : 0;
-                const pctRevenue = activeData.summary.totalSales > 0 ? (item.revenue / activeData.summary.totalSales * 100).toFixed(1) : "0.0";
-
-                // Capacity calculations
-                const capPerMachine = window.SKU_CAPACITY[item.sku] || 0;
-                const capTotal = capPerMachine * machineCount;
-                
-                // Daily rotation calculations
-                const rotationDailyPct = capTotal > 0 ? Math.round((avgDaily / capTotal) * 100) : 0;
-                const daysOfRotation = avgDaily > 0 ? (capTotal / avgDaily).toFixed(1) : "N/A";
-
-                runningSum += item.revenue;
-                const cumulativePercent = totalCatalogRevenue > 0 ? (runningSum / totalCatalogRevenue * 100) : 0;
-                
                 let abcBadge = '';
-                if (cumulativePercent <= 80) {
+                if (item.abcClass === "A") {
                     abcBadge = `<span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">Clase A</span>`;
-                } else if (cumulativePercent <= 95) {
+                } else if (item.abcClass === "B") {
                     abcBadge = `<span style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">Clase B</span>`;
                 } else {
                     abcBadge = `<span style="background: rgba(156, 163, 175, 0.15); border: 1px solid rgba(156, 163, 175, 0.3); color: #9ca3af; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">Clase C</span>`;
                 }
 
+                const daysLabel = item.avgDaily > 0 ? `${item.daysOfRotation.toFixed(1)} d` : "N/A";
+
                 tr.innerHTML = `
-                    <td style="padding: 10px 12px; color: #9ca3af; font-weight: 500;">#${index + 1}</td>
+                    <td style="padding: 10px 12px; color: #9ca3af; font-weight: 500;">#${item.revenueRank}</td>
                     <td style="padding: 10px 12px; color: #9ca3af; font-family: monospace; font-size: 0.8rem;">${item.sku || 'N/A'}</td>
                     <td style="padding: 10px 12px; color: #fff; font-weight: 500; text-align: left;">${item.name}</td>
-                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">${capPerMachine || 'N/A'}</td>
+                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">${item.capPerMachine || 'N/A'}</td>
                     <td style="padding: 10px 12px; color: #9ca3af; text-align: right;">${machineCount}</td>
-                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">${capTotal || 'N/A'}</td>
+                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">${item.capTotal || 'N/A'}</td>
                     <td style="padding: 10px 12px; color: #fff; font-weight: 600; text-align: right;">${item.units.toLocaleString('es-MX')}</td>
-                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 600;">${avgDaily.toFixed(2)}</td>
-                    <td style="padding: 10px 12px; color: #c5a880; text-align: right; font-weight: 600;">${rotationDailyPct}%</td>
-                    <td style="padding: 10px 12px; color: #9ca3af; text-align: right; font-weight: 500;">${daysOfRotation === "N/A" ? "N/A" : daysOfRotation + " d"}</td>
-                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">$${pvp.toFixed(2)}</td>
+                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 600;">${item.avgDaily.toFixed(2)}</td>
+                    <td style="padding: 10px 12px; color: #c5a880; text-align: right; font-weight: 600;">${Math.round(item.rotationDailyPct)}%</td>
+                    <td style="padding: 10px 12px; color: #9ca3af; text-align: right; font-weight: 500;">${daysLabel}</td>
+                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">$${item.pvp.toFixed(2)}</td>
                     <td style="padding: 10px 12px; color: #c5a880; font-weight: 600; text-align: right;">$${Math.round(item.revenue).toLocaleString('es-MX')}</td>
-                    <td style="padding: 10px 12px; color: #9ca3af; text-align: right; font-weight: 500;">${pctRevenue}%</td>
+                    <td style="padding: 10px 12px; color: #9ca3af; text-align: right; font-weight: 500;">${item.pctRevenue.toFixed(1)}%</td>
                     <td style="padding: 10px 12px; text-align: center;">${abcBadge}</td>
                 `;
                 body.appendChild(tr);
@@ -3244,36 +3319,78 @@
                 return true;
             });
 
-            // Sort products by revenue descending
-            const sorted = [...filtered].sort((a, b) => b.revenue - a.revenue);
             const numDays = activeData.dailySales.length || 12;
-            const totalCatalogRevenue = sorted.reduce((sum, item) => sum + item.revenue, 0);
-            let runningSum = 0;
-
             const selectedMachs = window.SELECTED_MACHINES || [];
             const machineCount = selectedMachs.length || 1;
 
-            // Build CSV rows
-            let csvContent = "Rango,SKU,Descripcion,Capacidad por Maquina,No Maquinas,Capacidad Total,Unidades Vendidas,Promedio Diario,Rotacion Diaria (%),Dias de Rotacion,PVP Promedio (MXN),Ingresos Totales (MXN),Porcentaje de Venta (%),Clase ABC\n";
-
-            sorted.forEach((item, index) => {
-                const avgDaily = (item.units / numDays).toFixed(2);
-                const pvp = item.units > 0 ? (item.revenue / item.units).toFixed(2) : "0.00";
-                const pctRevenue = activeData.summary.totalSales > 0 ? (item.revenue / activeData.summary.totalSales * 100).toFixed(2) : "0.00";
-                
+            // Enriched list for sorting
+            const enriched = filtered.map(item => {
                 const capPerMachine = window.SKU_CAPACITY[item.sku] || 0;
                 const capTotal = capPerMachine * machineCount;
-                const rotationDailyPct = capTotal > 0 ? Math.round((avgDaily / capTotal) * 100) : 0;
-                const daysOfRotation = avgDaily > 0 ? (capTotal / avgDaily).toFixed(1) : "N/A";
+                const avgDaily = item.units / numDays;
+                const pvp = item.units > 0 ? (item.revenue / item.units) : 0;
+                const pctRevenue = activeData.summary.totalSales > 0 ? (item.revenue / activeData.summary.totalSales * 100) : 0;
+                const rotationDailyPct = capTotal > 0 ? (avgDaily / capTotal * 100) : 0;
+                const daysOfRotation = avgDaily > 0 ? (capTotal / avgDaily) : 0;
 
+                return {
+                    ...item,
+                    capPerMachine,
+                    capTotal,
+                    avgDaily,
+                    pvp,
+                    pctRevenue,
+                    rotationDailyPct,
+                    daysOfRotation
+                };
+            });
+
+            // 1. Sort by revenue descending to calculate ABC and Rank
+            enriched.sort((a, b) => b.revenue - a.revenue);
+            const totalCatalogRevenue = enriched.reduce((sum, item) => sum + item.revenue, 0);
+            let runningSum = 0;
+
+            enriched.forEach((item, index) => {
                 runningSum += item.revenue;
                 const cumulativePercent = totalCatalogRevenue > 0 ? (runningSum / totalCatalogRevenue * 100) : 0;
-                let abcClass = 'Clase C';
-                if (cumulativePercent <= 80) abcClass = 'Clase A';
-                else if (cumulativePercent <= 95) abcClass = 'Clase B';
+                item.abcClass = "Clase C";
+                if (cumulativePercent <= 80) item.abcClass = "Clase A";
+                else if (cumulativePercent <= 95) item.abcClass = "Clase B";
+                item.revenueRank = index + 1;
+            });
 
+            // 2. Sort by the current visual sort key selected in the table
+            const sortCol = window.CATALOG_SORT_COLUMN || "revenue";
+            const sortDir = window.CATALOG_SORT_DIRECTION || "desc";
+
+            enriched.sort((a, b) => {
+                let valA = a[sortCol];
+                let valB = b[sortCol];
+
+                if (sortCol === "rank") {
+                    valA = a.revenueRank;
+                    valB = b.revenueRank;
+                }
+
+                if (typeof valA === "string") {
+                    return sortDir === "asc"
+                        ? valA.localeCompare(valB)
+                        : valB.localeCompare(valA);
+                }
+
+                if (valA === undefined || valA === null) valA = 0;
+                if (valB === undefined || valB === null) valB = 0;
+
+                return sortDir === "asc" ? valA - valB : valB - valA;
+            });
+
+            // Build CSV rows with clarified descriptive headers
+            let csvContent = "Rango,SKU,Descripcion de Producto,Capacidad Almacenamiento por Maquina,Maquinas Activas,Capacidad Total Almacenamiento,Unidades Vendidas Totales,Promedio Diario Unidades de Venta,Rotacion Diaria (%),Dias de Rotacion del Inventario,Precio de Venta Publico Promedio,Ingresos Totales (MXN),Participacion de Ventas (%),Clasificacion ABC\n";
+
+            enriched.forEach(item => {
+                const daysVal = item.avgDaily > 0 ? item.daysOfRotation.toFixed(1) : "N/A";
                 const cleanName = item.name.replace(/"/g, '""');
-                csvContent += `${index + 1},"${item.sku || 'N/A'}","${cleanName}",${capPerMachine},${machineCount},${capTotal},${item.units},${avgDaily},${rotationDailyPct}%,${daysOfRotation},${pvp},${Math.round(item.revenue)},${pctRevenue},${abcClass}\n`;
+                csvContent += `${item.revenueRank},"${item.sku || 'N/A'}","${cleanName}",${item.capPerMachine},${machineCount},${item.capTotal},${item.units},${item.avgDaily.toFixed(2)},${Math.round(item.rotationDailyPct)}%,${daysVal},${item.pvp.toFixed(2)},${Math.round(item.revenue)},${item.pctRevenue.toFixed(2)}%,${item.abcClass}\n`;
             });
 
             // Trigger download with UTF-8 BOM to prevent Excel accent display issues in Spanish
