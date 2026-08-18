@@ -1409,8 +1409,13 @@
                             <th style="padding: 10px 12px; color: #c5a880;">Rango</th>
                             <th style="padding: 10px 12px; color: #c5a880;">SKU</th>
                             <th style="padding: 10px 12px; color: #c5a880;">Descripción del Producto</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Capacidad</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">No Maqui</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Capacidad Total</th>
                             <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Unidades</th>
-                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Prom. Diario Uds. Venta</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Promedio Diario</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Rotación Diaria</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Días de rotación</th>
                             <th style="padding: 10px 12px; color: #c5a880; text-align: right;">PVP Promedio</th>
                             <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Ingresos Totales</th>
                             <th style="padding: 10px 12px; color: #c5a880; text-align: right;">% Venta</th>
@@ -2902,6 +2907,37 @@
         // ==========================================
         // CATALOGO COMPLETO DE PRODUCTOS LOGIC
         // ==========================================
+        window.SKU_CAPACITY = {
+            "VCOCAORI600": 48,
+            "VCOCAORI335": 48,
+            "DUF00093": 24,
+            "5000000402": 24,
+            "5000000182": 24,
+            "VDORNACH61": 10,
+            "AB00009": 12,
+            "VCONM&M37.5": 24,
+            "VGALTRIKI51": 18,
+            "VCHETOS46": 10,
+            "DUC00032": 18,
+            "VGALPRIN42": 18,
+            "DUR00053": 24,
+            "VSABADOB57": 10,
+            "VRANCHER40": 10,
+            "VSABORIG42": 10,
+            "DUC00080": 18,
+            "VGALROCK44": 15,
+            "DUM00039": 24,
+            "VOREOVAI63": 18,
+            "DUH00038": 24,
+            "AB00010": 8,
+            "VMAMUT30": 24,
+            "DUM00046": 24,
+            "VGALOREO63": 18,
+            "VGALPRIRE42": 18,
+            "DUM00051": 24,
+            "DURP0078": 15,
+            "DUM00034": 18
+        };
         window.CATALOG_SELECTED_PRODUCTS = null;
 
         function renderCatalogSection(data) {
@@ -3059,7 +3095,7 @@
 
             const activeData = window.CURRENT_ACTIVE_DASHBOARD_DATA;
             if (!activeData || !activeData.allProducts || activeData.allProducts.length === 0) {
-                body.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">No hay productos con ventas en este periodo.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="14" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">No hay productos con ventas en este periodo.</td></tr>`;
                 return;
             }
 
@@ -3077,13 +3113,17 @@
             const sorted = [...filtered].sort((a, b) => b.revenue - a.revenue);
 
             if (sorted.length === 0) {
-                body.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">Ningún producto coincide con los filtros.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="14" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">Ningún producto coincide con los filtros.</td></tr>`;
                 return;
             }
 
             const numDays = activeData.dailySales.length || 12;
             const totalCatalogRevenue = sorted.reduce((sum, item) => sum + item.revenue, 0);
             let runningSum = 0;
+
+            // Get number of active machines from the filter
+            const selectedMachs = window.SELECTED_MACHINES || [];
+            const machineCount = selectedMachs.length || 1;
 
             sorted.forEach((item, index) => {
                 const tr = document.createElement('tr');
@@ -3092,6 +3132,14 @@
                 const avgDaily = item.units / numDays;
                 const pvp = item.units > 0 ? (item.revenue / item.units) : 0;
                 const pctRevenue = activeData.summary.totalSales > 0 ? (item.revenue / activeData.summary.totalSales * 100).toFixed(1) : "0.0";
+
+                // Capacity calculations
+                const capPerMachine = window.SKU_CAPACITY[item.sku] || 0;
+                const capTotal = capPerMachine * machineCount;
+                
+                // Daily rotation calculations
+                const rotationDailyPct = capTotal > 0 ? Math.round((avgDaily / capTotal) * 100) : 0;
+                const daysOfRotation = avgDaily > 0 ? (capTotal / avgDaily).toFixed(1) : "N/A";
 
                 runningSum += item.revenue;
                 const cumulativePercent = totalCatalogRevenue > 0 ? (runningSum / totalCatalogRevenue * 100) : 0;
@@ -3109,8 +3157,13 @@
                     <td style="padding: 10px 12px; color: #9ca3af; font-weight: 500;">#${index + 1}</td>
                     <td style="padding: 10px 12px; color: #9ca3af; font-family: monospace; font-size: 0.8rem;">${item.sku || 'N/A'}</td>
                     <td style="padding: 10px 12px; color: #fff; font-weight: 500; text-align: left;">${item.name}</td>
+                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">${capPerMachine || 'N/A'}</td>
+                    <td style="padding: 10px 12px; color: #9ca3af; text-align: right;">${machineCount}</td>
+                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">${capTotal || 'N/A'}</td>
                     <td style="padding: 10px 12px; color: #fff; font-weight: 600; text-align: right;">${item.units.toLocaleString('es-MX')}</td>
-                    <td style="padding: 10px 12px; color: #9ca3af; text-align: right;">${avgDaily.toFixed(1)}</td>
+                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 600;">${avgDaily.toFixed(2)}</td>
+                    <td style="padding: 10px 12px; color: #c5a880; text-align: right; font-weight: 600;">${rotationDailyPct}%</td>
+                    <td style="padding: 10px 12px; color: #9ca3af; text-align: right; font-weight: 500;">${daysOfRotation === "N/A" ? "N/A" : daysOfRotation + " d"}</td>
                     <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">$${pvp.toFixed(2)}</td>
                     <td style="padding: 10px 12px; color: #c5a880; font-weight: 600; text-align: right;">$${Math.round(item.revenue).toLocaleString('es-MX')}</td>
                     <td style="padding: 10px 12px; color: #9ca3af; text-align: right; font-weight: 500;">${pctRevenue}%</td>
@@ -3144,14 +3197,22 @@
             const totalCatalogRevenue = sorted.reduce((sum, item) => sum + item.revenue, 0);
             let runningSum = 0;
 
+            const selectedMachs = window.SELECTED_MACHINES || [];
+            const machineCount = selectedMachs.length || 1;
+
             // Build CSV rows
-            let csvContent = "Rango,SKU,Descripcion,Unidades Vendidas,Promedio Diario,PVP Promedio (MXN),Ingresos Totales (MXN),Porcentaje de Venta (%),Clase ABC\n";
+            let csvContent = "Rango,SKU,Descripcion,Capacidad por Maquina,No Maquinas,Capacidad Total,Unidades Vendidas,Promedio Diario,Rotacion Diaria (%),Dias de Rotacion,PVP Promedio (MXN),Ingresos Totales (MXN),Porcentaje de Venta (%),Clase ABC\n";
 
             sorted.forEach((item, index) => {
                 const avgDaily = (item.units / numDays).toFixed(2);
                 const pvp = item.units > 0 ? (item.revenue / item.units).toFixed(2) : "0.00";
                 const pctRevenue = activeData.summary.totalSales > 0 ? (item.revenue / activeData.summary.totalSales * 100).toFixed(2) : "0.00";
                 
+                const capPerMachine = window.SKU_CAPACITY[item.sku] || 0;
+                const capTotal = capPerMachine * machineCount;
+                const rotationDailyPct = capTotal > 0 ? Math.round((avgDaily / capTotal) * 100) : 0;
+                const daysOfRotation = avgDaily > 0 ? (capTotal / avgDaily).toFixed(1) : "N/A";
+
                 runningSum += item.revenue;
                 const cumulativePercent = totalCatalogRevenue > 0 ? (runningSum / totalCatalogRevenue * 100) : 0;
                 let abcClass = 'Clase C';
@@ -3159,7 +3220,7 @@
                 else if (cumulativePercent <= 95) abcClass = 'Clase B';
 
                 const cleanName = item.name.replace(/"/g, '""');
-                csvContent += `${index + 1},"${item.sku || 'N/A'}","${cleanName}",${item.units},${avgDaily},${pvp},${Math.round(item.revenue)},${pctRevenue},${abcClass}\n`;
+                csvContent += `${index + 1},"${item.sku || 'N/A'}","${cleanName}",${capPerMachine},${machineCount},${capTotal},${item.units},${avgDaily},${rotationDailyPct}%,${daysOfRotation},${pvp},${Math.round(item.revenue)},${pctRevenue},${abcClass}\n`;
             });
 
             // Trigger download with UTF-8 BOM to prevent Excel accent display issues in Spanish
