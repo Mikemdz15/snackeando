@@ -1411,8 +1411,10 @@
                             <th style="padding: 10px 12px; color: #c5a880;">Descripción del Producto</th>
                             <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Unidades</th>
                             <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Prom. Diario Uds. Venta</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: right;">PVP Promedio</th>
                             <th style="padding: 10px 12px; color: #c5a880; text-align: right;">Ingresos Totales</th>
                             <th style="padding: 10px 12px; color: #c5a880; text-align: right;">% Venta</th>
+                            <th style="padding: 10px 12px; color: #c5a880; text-align: center;">Clase ABC</th>
                         </tr>
                     </thead>
                     <tbody id="catalog-products-body">
@@ -3057,7 +3059,7 @@
 
             const activeData = window.CURRENT_ACTIVE_DASHBOARD_DATA;
             if (!activeData || !activeData.allProducts || activeData.allProducts.length === 0) {
-                body.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">No hay productos con ventas en este periodo.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">No hay productos con ventas en este periodo.</td></tr>`;
                 return;
             }
 
@@ -3075,18 +3077,33 @@
             const sorted = [...filtered].sort((a, b) => b.revenue - a.revenue);
 
             if (sorted.length === 0) {
-                body.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">Ningún producto coincide con los filtros.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">Ningún producto coincide con los filtros.</td></tr>`;
                 return;
             }
 
             const numDays = activeData.dailySales.length || 12;
+            const totalCatalogRevenue = sorted.reduce((sum, item) => sum + item.revenue, 0);
+            let runningSum = 0;
 
             sorted.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
                 
                 const avgDaily = item.units / numDays;
+                const pvp = item.units > 0 ? (item.revenue / item.units) : 0;
                 const pctRevenue = activeData.summary.totalSales > 0 ? (item.revenue / activeData.summary.totalSales * 100).toFixed(1) : "0.0";
+
+                runningSum += item.revenue;
+                const cumulativePercent = totalCatalogRevenue > 0 ? (runningSum / totalCatalogRevenue * 100) : 0;
+                
+                let abcBadge = '';
+                if (cumulativePercent <= 80) {
+                    abcBadge = `<span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">Clase A</span>`;
+                } else if (cumulativePercent <= 95) {
+                    abcBadge = `<span style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">Clase B</span>`;
+                } else {
+                    abcBadge = `<span style="background: rgba(156, 163, 175, 0.15); border: 1px solid rgba(156, 163, 175, 0.3); color: #9ca3af; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">Clase C</span>`;
+                }
 
                 tr.innerHTML = `
                     <td style="padding: 10px 12px; color: #9ca3af; font-weight: 500;">#${index + 1}</td>
@@ -3094,8 +3111,10 @@
                     <td style="padding: 10px 12px; color: #fff; font-weight: 500; text-align: left;">${item.name}</td>
                     <td style="padding: 10px 12px; color: #fff; font-weight: 600; text-align: right;">${item.units.toLocaleString('es-MX')}</td>
                     <td style="padding: 10px 12px; color: #9ca3af; text-align: right;">${avgDaily.toFixed(1)}</td>
+                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">$${pvp.toFixed(2)}</td>
                     <td style="padding: 10px 12px; color: #c5a880; font-weight: 600; text-align: right;">$${Math.round(item.revenue).toLocaleString('es-MX')}</td>
                     <td style="padding: 10px 12px; color: #9ca3af; text-align: right; font-weight: 500;">${pctRevenue}%</td>
+                    <td style="padding: 10px 12px; text-align: center;">${abcBadge}</td>
                 `;
                 body.appendChild(tr);
             });
@@ -3122,15 +3141,25 @@
             // Sort products by revenue descending
             const sorted = [...filtered].sort((a, b) => b.revenue - a.revenue);
             const numDays = activeData.dailySales.length || 12;
+            const totalCatalogRevenue = sorted.reduce((sum, item) => sum + item.revenue, 0);
+            let runningSum = 0;
 
             // Build CSV rows
-            let csvContent = "Rango,SKU,Descripcion,Unidades Vendidas,Promedio Diario,Ingresos Totales (MXN),Porcentaje de Venta (%)\n";
+            let csvContent = "Rango,SKU,Descripcion,Unidades Vendidas,Promedio Diario,PVP Promedio (MXN),Ingresos Totales (MXN),Porcentaje de Venta (%),Clase ABC\n";
 
             sorted.forEach((item, index) => {
                 const avgDaily = (item.units / numDays).toFixed(2);
+                const pvp = item.units > 0 ? (item.revenue / item.units).toFixed(2) : "0.00";
                 const pctRevenue = activeData.summary.totalSales > 0 ? (item.revenue / activeData.summary.totalSales * 100).toFixed(2) : "0.00";
+                
+                runningSum += item.revenue;
+                const cumulativePercent = totalCatalogRevenue > 0 ? (runningSum / totalCatalogRevenue * 100) : 0;
+                let abcClass = 'Clase C';
+                if (cumulativePercent <= 80) abcClass = 'Clase A';
+                else if (cumulativePercent <= 95) abcClass = 'Clase B';
+
                 const cleanName = item.name.replace(/"/g, '""');
-                csvContent += `${index + 1},"${item.sku || 'N/A'}","${cleanName}",${item.units},${avgDaily},${Math.round(item.revenue)},${pctRevenue}\n`;
+                csvContent += `${index + 1},"${item.sku || 'N/A'}","${cleanName}",${item.units},${avgDaily},${pvp},${Math.round(item.revenue)},${pctRevenue},${abcClass}\n`;
             });
 
             // Trigger download with UTF-8 BOM to prevent Excel accent display issues in Spanish
