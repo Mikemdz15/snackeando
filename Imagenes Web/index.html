@@ -42,21 +42,18 @@
                         outfit: ['Outfit', 'sans-serif'],
                         sans: ['Plus Jakarta Sans', 'sans-serif']
                     },
-                    backgroundImage: {
-                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-                    },
                     keyframes: {
                         heroEntrance: {
-                            '0%': { opacity: '0', transform: 'scale(1.08)' },
+                            '0%': { opacity: '0', transform: 'scale(1.05)' },
                             '100%': { opacity: '1', transform: 'scale(1)' }
                         },
                         float: {
                             '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-10px)' },
+                            '50%': { transform: 'translateY(-8px)' },
                         }
                     },
                     animation: {
-                        'hero-bg': 'heroEntrance 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'hero-bg': 'heroEntrance 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                         'float': 'float 5s ease-in-out infinite',
                     }
                 }
@@ -90,7 +87,7 @@
         }
 
         .gradient-text-orange {
-            background: linear-gradient(135deg, #ffffff 0%, #ffedd5 40%, #ff8533 80%, #ff5500 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #ffedd5 35%, #ff8533 75%, #ff5500 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -102,19 +99,19 @@
         }
 
         .gradient-badge {
-            background: linear-gradient(90deg, rgba(255, 102, 0, 0.2) 0%, rgba(245, 158, 11, 0.2) 100%);
-            border: 1px solid rgba(255, 102, 0, 0.4);
+            background: linear-gradient(90deg, rgba(255, 102, 0, 0.25) 0%, rgba(245, 158, 11, 0.25) 100%);
+            border: 1px solid rgba(255, 102, 0, 0.45);
         }
 
-        /* Hero Background with Transition */
+        /* Hero Background with High Clarity & Right Alignment */
         .hero-banner-bg {
             position: absolute;
             inset: 0;
             background-image: url('hero_mall_bg.jpg');
             background-size: cover;
-            background-position: center 35%;
-            filter: brightness(0.48) contrast(1.15);
-            transform-origin: center center;
+            background-position: right center;
+            filter: brightness(0.88) contrast(1.08);
+            transform-origin: center right;
             will-change: transform, opacity;
         }
 
@@ -237,63 +234,64 @@
         </div>
     </header>
 
-    <!-- HERO SECTION -->
-    <section class="relative pt-8 pb-20 lg:pt-14 lg:pb-28 overflow-hidden doodle-bg">
+    <!-- HERO SECTION (MACHINE ON RIGHT, ELEGANT CORPORATE TEXT ON LEFT) -->
+    <section class="relative pt-6 pb-20 lg:pt-10 lg:pb-28 overflow-hidden doodle-bg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             
-            <!-- HERO MAIN CARD WITH MALL BACKGROUND & SMOOTH TRANSITION -->
-            <div class="relative rounded-3xl overflow-hidden border border-slate-700/80 shadow-2xl mb-14">
+            <!-- HERO MAIN CARD WITH RIGHT-ALIGNED MACHINE & DIRECTIONAL TRANSPARENT GRADIENT -->
+            <div class="relative rounded-3xl overflow-hidden border border-slate-700/80 shadow-2xl mb-14 min-h-[580px] lg:min-h-[620px] flex items-center">
                 
-                <!-- Background Image Layer with Animated Entrance & Dark Transparent Overlay -->
+                <!-- Background Image Layer (Brighter, Crisp, Animated Entrance) -->
                 <div class="hero-banner-bg animate-hero-bg"></div>
                 
-                <!-- Subtle Gradient Overlays for High Text Contrast -->
-                <div class="absolute inset-0 bg-gradient-to-b from-brand-dark/85 via-slate-950/80 to-brand-dark/95 z-0"></div>
-                <div class="absolute inset-0 bg-hero-glow z-0"></div>
+                <!-- Directional Horizontal Gradient: Dark & Readable on Left, Fully Transparent on Right to see Machine -->
+                <div class="absolute inset-0 bg-gradient-to-r from-brand-dark/95 via-brand-dark/75 sm:via-brand-dark/50 to-transparent z-0"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-brand-dark/40 z-0"></div>
 
-                <!-- Content Container on top of background -->
-                <div class="relative z-10 py-12 px-6 sm:py-16 sm:px-12 lg:py-20 lg:px-16 text-center max-w-5xl mx-auto">
+                <!-- Content Container: Left-Aligned with Refined Proportions and Air -->
+                <div class="relative z-10 py-12 px-6 sm:py-16 sm:px-10 lg:py-20 lg:px-14 text-left max-w-2xl lg:max-w-3xl">
                     
-                    <!-- TRUST PILLS -->
-                    <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
-                        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full gradient-badge text-brand-goldLight text-xs sm:text-sm font-bold tracking-wide shadow-md backdrop-blur-md">
-                            <i data-lucide="award" class="w-4 h-4 text-brand-gold"></i>
+                    <!-- TRUST PILLS (ELEGANT SMALL SIZES) -->
+                    <div class="flex flex-wrap items-center gap-2.5 mb-6">
+                        <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full gradient-badge text-brand-goldLight text-[11px] sm:text-xs font-bold tracking-wide shadow-md backdrop-blur-md">
+                            <i data-lucide="award" class="w-3.5 h-3.5 text-brand-gold"></i>
                             IMPULSO PARA EMPRESAS MEXICANAS
                         </span>
-                        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/90 text-slate-200 text-xs sm:text-sm font-semibold backdrop-blur-md">
-                            <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-orange"></i>
+                        <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-slate-900/80 border border-slate-700/90 text-slate-300 text-[11px] sm:text-xs font-medium backdrop-blur-md">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-brand-orange"></i>
                             LOS MEJORES COSTOS EN TODO MÉXICO
                         </span>
                     </div>
 
-                    <!-- HERO HEADLINE -->
-                    <h1 class="font-outfit text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] mb-6 drop-shadow-lg">
-                        MÁS QUE UNA MÁQUINA DE SNACKS, <br>
-                        <span class="gradient-text-orange">EL NEGOCIO QUE ESTABAS BUSCANDO.</span>
+                    <!-- HERO HEADLINE (STRONG IMPACT, CRISP CONTRAST) -->
+                    <h1 class="font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-black tracking-tight leading-[1.12] mb-5 drop-shadow-md">
+                        <span class="text-white block">MÁS QUE UNA MÁQUINA DE SNACKS,</span>
+                        <span class="gradient-text-orange block mt-1">EL NEGOCIO QUE ESTABAS BUSCANDO.</span>
                     </h1>
 
-                    <!-- SUBTITLE -->
-                    <p class="text-base sm:text-lg lg:text-xl text-slate-200 font-normal leading-relaxed max-w-3xl mx-auto drop-shadow-md">
+                    <!-- SUBTITLE (ELEGANT, CLEAN, AIRY, CORPORATE POLISH) -->
+                    <p class="text-sm sm:text-base text-slate-300 font-normal leading-relaxed max-w-xl drop-shadow-sm mb-6">
                         Transformamos el descanso y la alimentación en tus oficinas con una <strong class="text-white font-semibold">PRESTACIÓN REAL PARA EMPLEADOS</strong> a costo $0, o impulsa tu patrimonio automatizado: <strong class="text-brand-goldLight font-semibold">DEJA DE TRABAJAR UN AUTO Y MEJOR HAZTE EMPRENDEDOR</strong>.
                     </p>
 
-                    <!-- REASSURANCE MANIFESTO PILL -->
-                    <div class="mt-6 inline-block bg-brand-orange/20 border border-brand-orange/40 backdrop-blur-md rounded-2xl px-6 py-2.5 text-brand-goldLight text-xs sm:text-sm font-extrabold shadow-lg">
-                        🚀 NOSOTROS TE LA INSTALAMOS Y TÚ SOLO PREOCÚPATE POR COBRAR
+                    <!-- REASSURANCE MANIFESTO PILL (SLEEK CHIP) -->
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-brand-orange/15 border border-brand-orange/35 backdrop-blur-md text-brand-goldLight text-xs sm:text-sm font-bold shadow-sm mb-8">
+                        <span>🚀</span>
+                        <span>NOSOTROS TE LA INSTALAMOS Y TÚ SOLO PREOCÚPATE POR COBRAR</span>
                     </div>
 
-                    <!-- CTA BUTTONS (RENAMED: MODELO PARA EMPRESAS & MODELO EMPRENDEDOR) -->
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-5 mt-10 max-w-2xl mx-auto">
+                    <!-- CTA BUTTONS (BALANCED, CLEAN, PROPORTIONED) -->
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 max-w-md">
                         
                         <!-- Button 1: Modelo para empresas -->
-                        <a href="#empresas" class="w-full sm:w-1/2 px-7 py-4 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-gold hover:from-brand-orangeDark hover:to-brand-orange text-white font-extrabold text-base shadow-xl shadow-brand-orange/30 hover:shadow-brand-orange/50 hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-3">
-                            <i data-lucide="building-2" class="w-5 h-5 shrink-0"></i>
+                        <a href="#empresas" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-brand-orange to-brand-gold hover:from-brand-orangeDark hover:to-brand-orange text-white font-bold text-sm sm:text-base shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/45 hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-2.5">
+                            <i data-lucide="building-2" class="w-4 h-4 shrink-0"></i>
                             <span>Modelo para empresas</span>
                         </a>
 
                         <!-- Button 2: Modelo emprendedor -->
-                        <a href="#emprendedores" class="w-full sm:w-1/2 px-7 py-4 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-600/90 text-white font-extrabold text-base shadow-xl hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-3">
-                            <i data-lucide="trending-up" class="w-5 h-5 text-brand-gold shrink-0"></i>
+                        <a href="#emprendedores" class="px-6 py-3.5 rounded-xl bg-slate-900/85 hover:bg-slate-800 border border-slate-700 text-white font-bold text-sm sm:text-base shadow-md backdrop-blur-md hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-2.5">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-brand-gold shrink-0"></i>
                             <span>Modelo emprendedor</span>
                         </a>
 
