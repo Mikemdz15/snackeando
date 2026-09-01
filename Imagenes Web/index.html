@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snackeando | La Revolución del Vending Inteligente en México</title>
+    <meta name="description" content="Snackeando: Vending inteligente para empresas y emprendedores en México. Máquinas automáticas de snacks y bebidas con los mejores costos y subsidio publicitario real.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#ff6600',
+                            orangeLight: '#ff8533',
+                            orangeDark: '#e05200',
+                            gold: '#f59e0b',
+                            goldLight: '#fbbf24',
+                            yellow: '#facc15',
+                            dark: '#080c14',
+                            darkCard: '#0f172a',
+                            darkBorder: '#1e293b',
+                            darkHover: '#1a243b',
+                            neonOrange: '#ff5500',
+                            accentGreen: '#10b981'
+                        }
+                    },
+                    fontFamily: {
+                        outfit: ['Outfit', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'hero-glow': 'radial-gradient(circle at 50% 30%, rgba(255, 102, 0, 0.18) 0%, rgba(15, 23, 42, 0) 70%)',
+                        'card-glow': 'radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.12) 0%, rgba(15, 23, 42, 0) 60%)',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 3s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-12px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Doodle Overlay Inspired by the Snackeando Machine Wrap */
+        .doodle-bg {
+            background-color: #080c14;
+            background-image: 
+                radial-gradient(rgba(255, 102, 0, 0.08) 1px, transparent 0),
+                radial-gradient(rgba(245, 158, 11, 0.06) 1px, #080c14 1px);
+            background-size: 32px 32px;
+            background-position: 0 0, 16px 16px;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-panel-gold {
+            background: rgba(26, 20, 15, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        .gradient-text-orange {
+            background: linear-gradient(135deg, #ffffff 0%, #ffedd5 40%, #ff8533 80%, #ff5500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-text-gold {
+            background: linear-gradient(135deg, #ffffff 0%, #fef3c7 40%, #f59e0b 80%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-badge {
+            background: linear-gradient(90deg, rgba(255, 102, 0, 0.2) 0%, rgba(245, 158, 11, 0.2) 100%);
+            border: 1px solid rgba(255, 102, 0, 0.4);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080c14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #25334d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff6600;
+        }
+
+        /* Smooth tab animations */
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-brand-dark text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-brand-orange selection:text-white">
+
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <aside aria-label="Anuncio promocional" class="bg-gradient-to-r from-brand-orangeDark via-brand-orange to-brand-gold text-white text-xs sm:text-sm font-semibold py-2 px-4 text-center tracking-wide flex items-center justify-center gap-2 shadow-md relative z-50">
+        <span class="inline-flex items-center justify-center bg-white text-brand-orangeDark text-[11px] font-black px-2 py-0.5 rounded-full uppercase">Novedad</span>
+        <span>¡Revolucionamos el Vending en México! <strong>Precios Subsidiados con Publicidad</strong> y <strong>0% de Inversión</strong> para Empresas.</span>
+        <a href="#receta-magica" class="underline hover:text-amber-100 transition-colors hidden sm:inline ml-1">Descubre la Receta Mágica &rarr;</a>
+    </aside>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- BRAND LOGO -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="relative w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-orangeDark to-brand-gold p-[2px] shadow-lg shadow-brand-orange/20 group-hover:shadow-brand-orange/40 transition-all">
+                        <div class="w-full h-full bg-brand-darkCard rounded-[10px] flex items-center justify-center">
+                            <i data-lucide="zap" class="w-6 h-6 text-brand-orange group-hover:scale-110 transition-transform"></i>
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-outfit font-black text-2xl tracking-wider text-white">S'NACK<span class="text-brand-orange">EANDO</span></span>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-brand-goldLight -mt-1">Tus Snacks, Tu Momento</span>
+                    </div>
+                </a>
+
+                <!-- DESKTOP MENU -->
+                <nav class="hidden lg:flex items-center gap-8 text-sm font-medium text-slate-300">
+                    <a href="#modelos" class="hover:text-brand-orangeLight transition-colors">Modelos de Negocio</a>
+                    <a href="#empresas" class="hover:text-brand-orangeLight transition-colors">Para Empresas</a>
+                    <a href="#emprendedores" class="hover:text-brand-orangeLight transition-colors">Para Emprendedores</a>
+                    <a href="#receta-magica" class="hover:text-brand-goldLight transition-colors flex items-center gap-1 font-semibold text-white">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-brand-gold"></i>
+                        La Receta Mágica
+                    </a>
+                    <a href="#maquinas" class="hover:text-brand-orangeLight transition-colors">Nuestras Máquinas</a>
+                    <a href="#calculadora" class="hover:text-brand-orangeLight transition-colors">Calculadora ROI</a>
+                    <a href="#faq" class="hover:text-brand-orangeLight transition-colors">Preguntas</a>
+                </nav>
+
+                <!-- ACTION BUTTONS -->
+                <div class="hidden sm:flex items-center gap-3">
+                    <a href="https://wa.me/5215500000000?text=Hola%20Snackeando,%20quiero%20información%20sobre%20las%20máquinas%20vending" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800/60 hover:bg-slate-800 hover:border-emerald-500/50 text-slate-200 text-sm font-semibold transition-all">
+                        <i data-lucide="message-circle" class="w-4 h-4 text-emerald-400"></i>
+                        <span>WhatsApp</span>
+                    </a>
+                    <a href="#contacto" class="relative group overflow-hidden rounded-xl p-[1px] font-semibold text-sm">
+                        <span class="absolute inset-0 bg-gradient-to-r from-brand-orange to-brand-gold group-hover:from-brand-orangeDark group-hover:to-brand-orange transition-all"></span>
+                        <span class="relative block px-5 py-2.5 rounded-xl bg-brand-darkCard text-white group-hover:bg-transparent transition-colors flex items-center gap-2">
+                            <span>Solicitar Máquina</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                        </span>
+                    </a>
+                </div>
+
+                <!-- MOBILE MENU TOGGLE -->
+                <button id="mobileMenuBtn" aria-label="Abrir menú de navegación" class="lg:hidden p-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 hover:text-white">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- MOBILE DROPDOWN -->
+        <div id="mobileMenu" class="hidden lg:hidden glass-panel border-b border-slate-800 px-6 py-6 space-y-4">
+            <a href="#modelos" class="block text-slate-200 hover:text-brand-orange text-base font-medium mobile-link">Modelos de Negocio</a>
+            <a href="#empresas" class="block text-slate-200 hover:text-brand-orange text-base font-medium mobile-link">Para Empresas</a>
+            <a href="#emprendedores" class="block text-slate-200 hover:text-brand-orange text-base font-medium mobile-link">Para Emprendedores</a>
+            <a href="#receta-magica" class="block text-brand-goldLight font-bold text-base mobile-link flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4 text-brand-gold"></i>
+                La Receta Mágica
+            </a>
+            <a href="#maquinas" class="block text-slate-200 hover:text-brand-orange text-base font-medium mobile-link">Nuestras Máquinas</a>
+            <a href="#calculadora" class="block text-slate-200 hover:text-brand-orange text-base font-medium mobile-link">Calculadora ROI</a>
+            <a href="#faq" class="block text-slate-200 hover:text-brand-orange text-base font-medium mobile-link">Preguntas</a>
+            <div class="pt-4 border-t border-slate-800 flex flex-col gap-3">
+                <a href="#contacto" class="w-full text-center py-3 rounded-xl bg-gradient-to-r from-brand-orange to-brand-gold text-white font-bold mobile-link">Solicitar Máquina</a>
+                <a href="https://wa.me/5215500000000?text=Hola%20Snackeando,%20quiero%20información" target="_blank" rel="noopener noreferrer" class="w-full text-center py-3 rounded-xl bg-emerald-600/20 border border-emerald-500/40 text-emerald-400 font-bold flex items-center justify-center gap-2">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    Chat por WhatsApp
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-12 pb-24 lg:pt-20 lg:pb-32 overflow-hidden doodle-bg">
+        <!-- Glow accents -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-brand-orange/15 rounded-full blur-[140px] pointer-events-none"></div>
+        <div class="absolute top-1/3 right-10 w-[400px] h-[400px] bg-brand-gold/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <!-- TRUST PILLS -->
+            <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full gradient-badge text-brand-goldLight text-xs sm:text-sm font-bold tracking-wide shadow-sm">
+                    <i data-lucide="award" class="w-4 h-4 text-brand-gold"></i>
+                    IMPULSO PARA EMPRESAS MEXICANAS
+                </span>
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300 text-xs sm:text-sm font-semibold">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-orange"></i>
+                    LOS MEJORES COSTOS EN TODO MÉXICO
+                </span>
+            </div>
+
+            <!-- HERO HEADLINE & PITCH -->
+            <div class="text-center max-w-4xl mx-auto mb-12">
+                <h1 class="font-outfit text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6">
+                    MÁS QUE UNA MÁQUINA DE SNACKS, <br>
+                    <span class="gradient-text-orange">EL NEGOCIO QUE ESTABAS BUSCANDO.</span>
+                </h1>
+                <p class="text-lg sm:text-xl text-slate-300 font-normal leading-relaxed max-w-3xl mx-auto">
+                    Transformamos el descanso y la alimentación en tus oficinas con una <strong class="text-white font-semibold">PRESTACIÓN REAL PARA EMPLEADOS</strong> a costo $0, o impulsa tu patrimonio automatizado: <strong class="text-brand-goldLight font-semibold">DEJA DE TRABAJAR UN AUTO Y MEJOR HAZTE EMPRENDEDOR</strong>.
+                </p>
+                <div class="mt-4 inline-block bg-brand-orange/10 border border-brand-orange/30 rounded-2xl px-5 py-2.5 text-brand-orangeLight text-sm font-bold">
+                    🚀 NOSOTROS TE LA INSTALAMOS Y TÚ SOLO PREOCÚPATE POR COBRAR
+                </div>
+            </div>
+
+            <!-- CTA BUTTONS -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 max-w-xl mx-auto">
+                <a href="#empresas" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-gold hover:from-brand-orangeDark hover:to-brand-orange text-white font-bold text-base shadow-xl shadow-brand-orange/25 hover:shadow-brand-orange/40 hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-2">
+                    <i data-lucide="building-2" class="w-5 h-5"></i>
+                    <span>Máquina para mi Empresa (Gratis)</span>
+                </a>
+                <a href="#emprendedores" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700/80 border border-slate-600/80 text-white font-bold text-base hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-2">
+                    <i data-lucide="trending-up" class="w-5 h-5 text-brand-gold"></i>
+                    <span>Quiero Emprender con Vending</span>
+                </a>
+            </div>
+
+            <!-- HERO VISUAL / MACHINE SHOWCASE -->
+            <div class="relative max-w-5xl mx-auto">
+                
+                <!-- Main Showcase Container -->
+                <div class="relative rounded-3xl overflow-hidden glass-panel border border-slate-700/80 p-6 sm:p-10 shadow-2xl">
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        
+                        <!-- Left Machine Specs & Features -->
+                        <div class="lg:col-span-4 space-y-5 order-2 lg:order-1">
+                            <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-brand-orange/50 transition-colors">
+                                <div class="flex items-center gap-3 mb-1.5">
+                                    <div class="p-2 rounded-lg bg-brand-orange/20 text-brand-orange">
+                                        <i data-lucide="credit-card" class="w-5 h-5"></i>
+                                    </div>
+                                    <h2 class="font-outfit font-bold text-base text-white">Cobro Multiformato</h2>
+                                </div>
+                                <p class="text-xs text-slate-400">Tarjetas de crédito/débito, Apple Pay, Google Pay, billetes y monedas con cambio automático.</p>
+                            </div>
+
+                            <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-brand-gold/50 transition-colors">
+                                <div class="flex items-center gap-3 mb-1.5">
+                                    <div class="p-2 rounded-lg bg-brand-gold/20 text-brand-gold">
+                                        <i data-lucide="wifi" class="w-5 h-5"></i>
+                                    </div>
+                                    <h2 class="font-outfit font-bold text-base text-white">Telemetría en Vivo 24/7</h2>
+                                </div>
+                                <p class="text-xs text-slate-400">Monitoreo en tiempo real de inventarios, ventas y corte de caja desde tu smartphone.</p>
+                            </div>
+
+                            <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-emerald-500/50 transition-colors">
+                                <div class="flex items-center gap-3 mb-1.5">
+                                    <div class="p-2 rounded-lg bg-emerald-500/20 text-emerald-400">
+                                        <i data-lucide="sparkles" class="w-5 h-5"></i>
+                                    </div>
+                                    <h2 class="font-outfit font-bold text-base text-white">Diseño Exclusivo Snackeando</h2>
+                                </div>
+                                <p class="text-xs text-slate-400">Vinil temático alegre de alta resistencia con iluminación LED de ultra bajo consumo.</p>
+                            </div>
+                        </div>
+
+                        <!-- Center Real Machine Image -->
+                        <div class="lg:col-span-4 flex justify-center order-1 lg:order-2 relative group">
+                            <div class="relative max-w-[280px] sm:max-w-[340px]">
+                                <div class="absolute -inset-2 bg-gradient-to-t from-brand-orange/30 via-brand-gold/20 to-transparent rounded-3xl blur-xl group-hover:blur-2xl transition-all"></div>
+                                <img src="ams_perspective.png" alt="Máquina Vending Snackeando Modelo AMS" class="relative w-full h-auto drop-shadow-[0_20px_35px_rgba(0,0,0,0.8)] transform group-hover:scale-105 transition-transform duration-500 animate-float">
+                                <div class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-brand-darkCard/95 border border-brand-orange/50 text-[11px] font-bold px-3 py-1 rounded-full text-brand-goldLight shadow-lg flex items-center gap-1.5 whitespace-nowrap">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                                    <span>Equipo Real Snackeando AMS</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Stats & Differentiators -->
+                        <div class="lg:col-span-4 space-y-5 order-3">
+                            <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-brand-orange/50 transition-colors">
+                                <div class="flex items-center gap-3 mb-1.5">
+                                    <div class="p-2 rounded-lg bg-brand-orange/20 text-brand-orange">
+                                        <i data-lucide="package-check" class="w-5 h-5"></i>
+                                    </div>
+                                    <h2 class="font-outfit font-bold text-base text-white">Sensor Caída Garantizada</h2>
+                                </div>
+                                <p class="text-xs text-slate-400">Si un producto no cae, el cliente no paga o puede seleccionar otro al instante. Cero atorones.</p>
+                            </div>
+
+                            <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-brand-gold/50 transition-colors">
+                                <div class="flex items-center gap-3 mb-1.5">
+                                    <div class="p-2 rounded-lg bg-brand-gold/20 text-brand-gold">
+                                        <i data-lucide="thermometer-snowflake" class="w-5 h-5"></i>
+                                    </div>
+                                    <h2 class="font-outfit font-bold text-base text-white">Refrigeración Inteligente</h2>
+                                </div>
+                                <p class="text-xs text-slate-400">Bebidas y botanas siempre frescas a temperatura perfecta, operando a 110V estándar.</p>
+                            </div>
+
+                            <div class="p-4 rounded-2xl bg-gradient-to-br from-brand-orangeDark/30 to-brand-gold/20 border border-brand-orange/40">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-bold text-brand-goldLight uppercase tracking-wider">Capacidad Máxima</span>
+                                    <span class="text-xs bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded">6 Charolas</span>
+                                </div>
+                                <div class="text-2xl font-black text-white font-outfit">Hasta 350+ piezas</div>
+                                <p class="text-[11px] text-slate-300 mt-0.5">Refrescos, papas, galletas, chocolates, sándwiches y café.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- NUMBERS / IMPACT RIBBON -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 max-w-5xl mx-auto text-center">
+                <div class="glass-panel p-5 rounded-2xl border-slate-800">
+                    <div class="text-3xl sm:text-4xl font-black text-brand-orange font-outfit">$0 MXN</div>
+                    <div class="text-xs sm:text-sm text-slate-300 font-medium mt-1">Costo de Instalación para Empresas</div>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl border-slate-800">
+                    <div class="text-3xl sm:text-4xl font-black text-brand-gold font-outfit">24/7</div>
+                    <div class="text-xs sm:text-sm text-slate-300 font-medium mt-1">Disponibilidad Ininterrumpida</div>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl border-slate-800">
+                    <div class="text-3xl sm:text-4xl font-black text-emerald-400 font-outfit">100%</div>
+                    <div class="text-xs sm:text-sm text-slate-300 font-medium mt-1">Gestión Llave en Mano</div>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl border-slate-800">
+                    <div class="text-3xl sm:text-4xl font-black text-white font-outfit">&lt; 48 hrs</div>
+                    <div class="text-xs sm:text-sm text-slate-300 font-medium mt-1">Instalación y Puesta en Marcha</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: LA RECETA MÁGICA (PUBLICIDAD = SUBSIDIO REAL DE PRECIOS) -->
+    <section id="receta-magica" class="py-20 lg:py-28 relative bg-slate-900/90 border-y border-slate-800 overflow-hidden">
+        
+        <!-- Glows -->
+        <div class="absolute top-1/2 left-0 w-96 h-96 bg-brand-orange/20 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-brand-gold/15 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-gold/15 border border-brand-gold/40 text-brand-goldLight text-xs sm:text-sm font-black uppercase tracking-widest mb-4">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-brand-gold"></i>
+                    NUESTRA VENTAJA DIFERENCIAL
+                </div>
+                <h2 class="font-outfit text-3xl sm:text-5xl font-extrabold text-white leading-tight">
+                    LA RECETA MÁGICA: <br>
+                    <span class="gradient-text-gold">PUBLICIDAD = SUBSIDIO REAL DE PRECIOS</span>
+                </h2>
+                <p class="text-slate-300 text-base sm:text-lg mt-4 leading-relaxed">
+                    ¿Cómo logramos ofrecer los precios más accesibles del mercado sin sacrificar calidad ni rentabilidad? Aquí te explicamos el motor detrás de Snackeando.
+                </p>
+            </div>
+
+            <!-- MAGIC FORMULA INFOGRAPHIC / CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                
+                <!-- Step 1: Brands Sponsor -->
+                <div class="glass-panel p-8 rounded-3xl border-slate-800 hover:border-brand-orange/50 transition-all group relative">
+                    <div class="w-14 h-14 rounded-2xl bg-brand-orange/20 border border-brand-orange/40 flex items-center justify-center text-brand-orange mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="megaphone" class="w-7 h-7"></i>
+                    </div>
+                    <div class="text-xs font-bold text-brand-orange uppercase tracking-wider mb-2">Paso 1: Alianzas Estratégicas</div>
+                    <h3 class="font-outfit text-xl font-bold text-white mb-3">Marcas Patrocinan Espacios</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Colaboramos con marcas de primer nivel que buscan visibilidad e impacto directo en nuestras pantallas y viniles de alto tráfico diario.
+                    </p>
+                </div>
+
+                <!-- Step 2: Direct Price Subsidy -->
+                <div class="glass-panel-gold p-8 rounded-3xl border-brand-gold/40 hover:border-brand-gold transition-all group relative shadow-xl shadow-brand-gold/10">
+                    <div class="w-14 h-14 rounded-2xl bg-brand-gold/20 border border-brand-gold/50 flex items-center justify-center text-brand-gold mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="percent" class="w-7 h-7"></i>
+                    </div>
+                    <div class="text-xs font-bold text-brand-gold uppercase tracking-wider mb-2">Paso 2: Subsidio Directo</div>
+                    <h3 class="font-outfit text-xl font-bold text-white mb-3">El Ingreso Publicitario Descuenta los Snacks</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Esa inversión publicitaria se transfiere como un descuento directo en el precio de venta al público. ¡Snacks de marca favorita a precios que no existen en ningún otro lado!
+                    </p>
+                </div>
+
+                <!-- Step 3: Win-Win for Everyone -->
+                <div class="glass-panel p-8 rounded-3xl border-slate-800 hover:border-emerald-500/50 transition-all group relative">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="rocket" class="w-7 h-7"></i>
+                    </div>
+                    <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">Paso 3: Ganancia Segura</div>
+                    <h3 class="font-outfit text-xl font-bold text-white mb-3">Emprendimiento y Bienestar Inmediato</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Tus colaboradores disfrutan de los mejores precios, y tú como emprendedor u operador obtienes una rotación acelerada con altos márgenes netos.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- PUNCHY MANIFESTO BANNER -->
+            <div class="mt-12 p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-brand-orangeDark/40 via-brand-darkCard to-brand-gold/20 border border-brand-orange/50 relative overflow-hidden">
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+                    <div class="space-y-2 text-center lg:text-left">
+                        <h4 class="font-outfit text-2xl sm:text-3xl font-extrabold text-white">
+                            SIN LETRAS CHIQUITAS, SIN RODEOS NI TRÁMITES TARDADOS
+                        </h4>
+                        <p class="text-slate-300 text-sm sm:text-base max-w-2xl">
+                            Todo rápido y transparente para que inicies <strong>hoy mismo</strong> tu nueva fase de emprendimiento o recibas tu máquina corporativa sin complicaciones.
+                        </p>
+                    </div>
+                    <a href="#contacto" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-gold hover:from-brand-orangeDark hover:to-brand-orange text-white font-extrabold text-sm sm:text-base shadow-lg shadow-brand-orange/30 whitespace-nowrap transition-all flex items-center gap-2">
+                        <span>Iniciar Hoy Mismo</span>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: BUSINESS MODELS (INTERACTIVE TABS) -->
+    <section id="modelos" class="py-20 lg:py-28 relative doodle-bg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-xs font-black uppercase tracking-widest text-brand-orange block mb-2">SOLUCIONES ADAPTADAS A TI</span>
+                <h2 class="font-outfit text-3xl sm:text-5xl font-extrabold text-white">
+                    ELIGE TU MODELO DE ÉXITO
+                </h2>
+                <p class="text-slate-300 text-base sm:text-lg mt-3">
+                    Ya seas una empresa buscando consentir a su personal o un inversionista buscando ingresos pasivos, Snackeando tiene el plan perfecto.
+                </p>
+
+                <!-- TAB SWITCHER -->
+                <div class="mt-8 inline-flex p-1.5 rounded-2xl bg-slate-900 border border-slate-700/80 shadow-inner max-w-full overflow-x-auto">
+                    <button onclick="switchTab('tab-empresas', this)" class="tab-btn active px-5 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 bg-gradient-to-r from-brand-orange to-brand-gold text-white shadow-md">
+                        <i data-lucide="building-2" class="w-4 h-4"></i>
+                        <span>Para Empresas (Prestación $0)</span>
+                    </button>
+                    <button onclick="switchTab('tab-emprendedores', this)" class="tab-btn px-5 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 text-slate-300 hover:text-white">
+                        <i data-lucide="trending-up" class="w-4 h-4"></i>
+                        <span>Para Emprendedores (Franquicia)</span>
+                    </button>
+                    <button onclick="switchTab('tab-espacios', this)" class="tab-btn px-5 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 text-slate-300 hover:text-white">
+                        <i data-lucide="map-pin" class="w-4 h-4"></i>
+                        <span>Dueños de Locaciones (Renta)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 1: PARA EMPRESAS -->
+            <div id="tab-empresas" class="tab-content active">
+                <div id="empresas" class="scroll-mt-28 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    
+                    <div class="lg:col-span-6 space-y-6">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase">
+                            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                            Cero Inversión • Servicio Todo Incluido
+                        </div>
+
+                        <h3 class="font-outfit text-3xl sm:text-4xl font-bold text-white leading-tight">
+                            PRESTACIÓN REAL PARA EMPLEADOS <br>
+                            <span class="text-brand-orange">SIN QUE TU EMPRESA GASTE UN SOLO PESO</span>
+                        </h3>
+
+                        <p class="text-slate-300 text-base leading-relaxed">
+                            Mejora el clima laboral, reduce tiempos muertos de traslados para comprar botanas y ofrece a tu equipo sus marcas preferidas 24/7 al pie de su oficina o planta.
+                        </p>
+
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="p-2.5 rounded-xl bg-brand-orange/20 text-brand-orange shrink-0">
+                                    <i data-lucide="truck" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white text-base">Instalación y Resurtido Continuo</h4>
+                                    <p class="text-xs text-slate-400 mt-1">Llevamos la máquina, la conectamos y monitoreamos remotamente el stock para resurtir antes de que se agote.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="p-2.5 rounded-xl bg-brand-gold/20 text-brand-gold shrink-0">
+                                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white text-base">Mantenimiento y Soporte 360°</h4>
+                                    <p class="text-xs text-slate-400 mt-1">Cualquier eventualidad técnica es resuelta por nuestro equipo sin interrumpir tus operaciones.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 shrink-0">
+                                    <i data-lucide="tags" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white text-base">Precios Subsidiados con Publicidad</h4>
+                                    <p class="text-xs text-slate-400 mt-1">Tus colaboradores pagan menos que en tiendas de conveniencia gracias a nuestro esquema publicitario.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-4">
+                            <a href="#contacto" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-gold text-white font-bold text-base shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40 hover:-translate-y-0.5 transition-all">
+                                <span>Solicitar Máquina para mi Empresa</span>
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right Column Machine Feature Mockup -->
+                    <div class="lg:col-span-6">
+                        <div class="relative rounded-3xl overflow-hidden glass-panel border border-slate-700/80 p-6 sm:p-8">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+                                <div>
+                                    <span class="text-xs text-brand-goldLight font-bold uppercase">Plan Corporativo</span>
+                                    <h4 class="font-outfit text-xl font-bold text-white">Beneficios Empresariales</h4>
+                                </div>
+                                <span class="bg-emerald-500/20 text-emerald-400 text-xs font-extrabold px-3 py-1 rounded-full">Recomendado +50 empleados</span>
+                            </div>
+
+                            <div class="relative rounded-2xl overflow-hidden mb-6 bg-slate-950 flex justify-center p-4">
+                                <img src="ams_shelves.png" alt="Charolas y variedad de productos Snackeando" class="max-h-[300px] object-contain rounded-xl shadow-lg">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 text-left">
+                                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+                                    <div class="text-brand-orange font-bold text-sm">Aumento de Productividad</div>
+                                    <div class="text-xs text-slate-400 mt-0.5">Menos salidas fuera del centro de trabajo.</div>
+                                </div>
+                                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+                                    <div class="text-brand-gold font-bold text-sm">Variedad Saludable y Antojos</div>
+                                    <div class="text-xs text-slate-400 mt-0.5">Botanas clásicas, agua, jugos, barras energéticas.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB 2: PARA EMPRENDEDORES -->
+            <div id="tab-emprendedores" class="tab-content">
+                <div id="emprendedores" class="scroll-mt-28 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    
+                    <div class="lg:col-span-6 space-y-6">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-gold/15 border border-brand-gold/30 text-brand-goldLight text-xs font-bold uppercase">
+                            <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+                            Negocio Semi-Automatizado de Alto Rendimiento
+                        </div>
+
+                        <h3 class="font-outfit text-3xl sm:text-4xl font-bold text-white leading-tight">
+                            DEJA DE TRABAJAR UN AUTO Y <br>
+                            <span class="gradient-text-orange">MEJOR HAZTE EMPRENDEDOR</span>
+                        </h3>
+
+                        <p class="text-slate-300 text-base leading-relaxed">
+                            No pases 12 horas al día en el tráfico sufriendo desgaste físico, gasolina y depreciación de vehículo. Con Snackeando eres dueño de un activo que vende las 24 horas del día mientras tú te dedicas a recolectar ganancias.
+                        </p>
+
+                        <!-- COMPARISON HIGHLIGHTS -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-2xl bg-red-950/20 border border-red-900/40">
+                                <div class="flex items-center gap-2 text-red-400 font-bold text-sm mb-2">
+                                    <i data-lucide="x-circle" class="w-4 h-4"></i>
+                                    <span>Trabajar un Auto de App</span>
+                                </div>
+                                <ul class="text-xs text-slate-400 space-y-1.5">
+                                    <li>❌ 10-12 horas diarias frente al volante</li>
+                                    <li>❌ Riesgo de choques y asaltos</li>
+                                    <li>❌ Gasto alto de gasolina y mantenimiento</li>
+                                    <li>❌ Si no manejas, no ganas nada</li>
+                                </ul>
+                            </div>
+
+                            <div class="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/40">
+                                <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm mb-2">
+                                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                    <span>Vending con Snackeando</span>
+                                </div>
+                                <ul class="text-xs text-slate-300 space-y-1.5">
+                                    <li>✅ Solo 2 a 3 horas por semana de resurtido</li>
+                                    <li>✅ Venta 24/7 incluso mientras duermes</li>
+                                    <li>✅ Cero empleados y costos fijos mínimos</li>
+                                    <li>✅ Telemetría móvil para ver tus cobros</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-900/90 border border-brand-orange/30">
+                            <div class="text-sm font-bold text-brand-goldLight">
+                                💡 NOSOTROS TE LA INSTALAMOS Y TÚ SOLO PREOCÚPATE POR COBRAR
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">
+                                Te acompañamos en la búsqueda de la mejor locación, configuración de precios, capacitación técnica y suministro directo de producto con descuento mayorista.
+                            </p>
+                        </div>
+
+                        <div class="pt-2">
+                            <a href="#calculadora" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-gold text-white font-bold text-base shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40 hover:-translate-y-0.5 transition-all">
+                                <span>Calcular mis Ganancias Estimadas</span>
+                                <i data-lucide="calculator" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right Column Entrepreneur Machine Photo -->
+                    <div class="lg:col-span-6">
+                        <div class="relative rounded-3xl overflow-hidden glass-panel border border-slate-700/80 p-6 sm:p-8">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+                                <div>
+                                    <span class="text-xs text-brand-gold font-bold uppercase">Equipo Certificado</span>
+                                    <h4 class="font-outfit text-xl font-bold text-white">Máquina AMS Snackeando</h4>
+                                </div>
+                                <span class="bg-brand-orange/20 text-brand-orange text-xs font-extrabold px-3 py-1 rounded-full">Modelo Alta Demanda</span>
+                            </div>
+
+                            <div class="relative rounded-2xl overflow-hidden mb-6 bg-slate-950 flex justify-center p-4">
+                                <img src="ams_side_logo.png" alt="Máquina Snackeando vista lateral" class="max-h-[300px] object-contain rounded-xl shadow-lg">
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs text-slate-400">Retorno de Inversión Estimado</div>
+                                    <div class="text-lg font-black text-emerald-400 font-outfit">8 a 14 Meses</div>
+                                </div>
+                                <a href="#contacto" class="text-xs font-bold text-brand-orange hover:underline">Cotizar Paquete &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB 3: PARA ESPACIOS Y LOCACIONES -->
+            <div id="tab-espacios" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    
+                    <div class="lg:col-span-6 space-y-6">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-orange/15 border border-brand-orange/30 text-brand-orangeLight text-xs font-bold uppercase">
+                            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                            Monetiza tus Metros Cuadrados Ociosos
+                        </div>
+
+                        <h3 class="font-outfit text-3xl sm:text-4xl font-bold text-white leading-tight">
+                            ¿TIENES UN ESPACIO CON ALTO FLUJO? <br>
+                            <span class="gradient-text-gold">CONVIÉRTELO EN RENTA MENSUAL</span>
+                        </h3>
+
+                        <p class="text-slate-300 text-base leading-relaxed">
+                            Si eres dueño o administrador de un hospital, universidad, gimnasio, plaza comercial, fábrica o edificio residencial, instalamos máquinas Snackeando y te pagamos una renta mensual o comisión por venta.
+                        </p>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                                <i data-lucide="check" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+                                <span class="text-sm text-slate-200">Solo necesitamos 1m² y una toma eléctrica estándar 110V.</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                                <i data-lucide="check" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+                                <span class="text-sm text-slate-200">Mejora los servicios y la experiencia de tus visitantes o inquilinos.</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                                <i data-lucide="check" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+                                <span class="text-sm text-slate-200">Ingresos adicionales garantizados sin inversión ni trabajo operativo para ti.</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <a href="#contacto" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-gold text-white font-bold text-base shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40 transition-all">
+                                <span>Ofrecer mi Ubicación para Vending</span>
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right Column Machine Front Photo -->
+                    <div class="lg:col-span-6">
+                        <div class="relative rounded-3xl overflow-hidden glass-panel border border-slate-700/80 p-6 sm:p-8">
+                            <div class="relative rounded-2xl overflow-hidden bg-slate-950 flex justify-center p-4">
+                                <img src="ams_front.png" alt="Máquina Snackeando frontal" class="max-h-[340px] object-contain rounded-xl shadow-lg">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: NUESTRAS MÁQUINAS (PHOTO GALLERY & TECH SPECS) -->
+    <section id="maquinas" class="py-20 lg:py-28 relative bg-slate-900/80 border-y border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-black uppercase tracking-widest text-brand-gold block mb-2">TECNOLOGÍA Y ROBUSTEZ AMERICANA</span>
+                <h2 class="font-outfit text-3xl sm:text-5xl font-extrabold text-white">
+                    CONOCE LA MÁQUINA SNACKEANDO AMS
+                </h2>
+                <p class="text-slate-300 text-base sm:text-lg mt-3">
+                    Equipos de grado industrial ensamblados para operar 24 horas ininterrumpidas, con capacidad mixta para snacks y bebidas frías.
+                </p>
+            </div>
+
+            <!-- GALLERY AND DETAIL VIEWER -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-16">
+                
+                <!-- Main Featured Photo View -->
+                <div class="lg:col-span-7">
+                    <div class="relative rounded-3xl overflow-hidden glass-panel border border-slate-700 p-6 flex flex-col items-center justify-center min-h-[440px] bg-slate-950/80">
+                        <img id="mainGalleryImg" src="ams_perspective.png" alt="Vista Principal Máquina Snackeando" class="max-h-[420px] object-contain transition-all duration-300 drop-shadow-2xl">
+                        <div id="galleryCaption" class="mt-4 text-xs font-bold text-brand-goldLight bg-slate-900/90 px-4 py-1.5 rounded-full border border-slate-800">
+                            Vista en Perspectiva • Vinil Temático Snackeando
+                        </div>
+                    </div>
+
+                    <!-- Thumbnails -->
+                    <div class="grid grid-cols-5 gap-3 mt-4">
+                        <button onclick="changeGalleryImage('ams_perspective.png', 'Vista en Perspectiva • Vinil Temático Snackeando', this)" class="gallery-thumb active p-2 rounded-xl bg-slate-800 border-2 border-brand-orange transition-all">
+                            <img src="ams_perspective.png" alt="Thumbnail 1" class="h-14 w-full object-contain">
+                        </button>
+                        <button onclick="changeGalleryImage('ams_front.png', 'Vista Frontal Completa • 6 Charolas y Ventana Panorámica', this)" class="gallery-thumb p-2 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 transition-all">
+                            <img src="ams_front.png" alt="Thumbnail 2" class="h-14 w-full object-contain">
+                        </button>
+                        <button onclick="changeGalleryImage('ams_side_logo.png', 'Lateral de Marca • Logotipo S\'nackeando y Acabado Brillante', this)" class="gallery-thumb p-2 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 transition-all">
+                            <img src="ams_side_logo.png" alt="Thumbnail 3" class="h-14 w-full object-contain">
+                        </button>
+                        <button onclick="changeGalleryImage('ams_shelves.png', 'Charolas Interiores • Espirales Ajustables para Botanas y Bebidas', this)" class="gallery-thumb p-2 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 transition-all">
+                            <img src="ams_shelves.png" alt="Thumbnail 4" class="h-14 w-full object-contain">
+                        </button>
+                        <button onclick="changeGalleryImage('ams_internal_open.png', 'Estructura Abierta • Sistema de Refrigeración y Aislamiento', this)" class="gallery-thumb p-2 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 transition-all">
+                            <img src="ams_internal_open.png" alt="Thumbnail 5" class="h-14 w-full object-contain">
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Technical Specification List -->
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="p-6 rounded-3xl glass-panel border border-slate-700">
+                        <h3 class="font-outfit text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <i data-lucide="cpu" class="w-5 h-5 text-brand-orange"></i>
+                            Ficha Técnica y Componentes
+                        </h3>
+
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between py-2 border-b border-slate-800">
+                                <span class="text-slate-400">Modelo / Marca</span>
+                                <span class="font-semibold text-white">AMS Sensit Glass Front (USA)</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-slate-800">
+                                <span class="text-slate-400">Configuración</span>
+                                <span class="font-semibold text-white">Mixta (Refrescos + Botanas + Dulces)</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-slate-800">
+                                <span class="text-slate-400">Capacidad Total</span>
+                                <span class="font-semibold text-brand-goldLight">300 a 380 Unidades</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-slate-800">
+                                <span class="text-slate-400">Sistema de Cobro</span>
+                                <span class="font-semibold text-emerald-400">Lector Nayax Contactless + Efectivo</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-slate-800">
+                                <span class="text-slate-400">Consumo Eléctrico</span>
+                                <span class="font-semibold text-white">110V AC / 60Hz (Bajo Consumo)</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-slate-800">
+                                <span class="text-slate-400">Dimensiones</span>
+                                <span class="font-semibold text-white">183 cm Alto × 99 cm Ancho × 89 cm Fondo</span>
+                            </div>
+                            <div class="flex justify-between py-2">
+                                <span class="text-slate-400">Sensor de Entrega</span>
+                                <span class="font-semibold text-white">Sistema Sensit Garantizado</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-slate-800">
+                            <a href="#contacto" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-orange to-brand-gold text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-95 transition-opacity">
+                                <i data-lucide="file-text" class="w-4 h-4"></i>
+                                <span>Solicitar Ficha Técnica Completa en PDF</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: INTERACTIVE ROI CALCULATOR -->
+    <section id="calculadora" class="py-20 lg:py-28 relative doodle-bg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 text-xs sm:text-sm font-bold uppercase tracking-widest mb-3">
+                    <i data-lucide="calculator" class="w-4 h-4"></i>
+                    SIMULADOR FINANCIERO
+                </div>
+                <h2 class="font-outfit text-3xl sm:text-5xl font-extrabold text-white">
+                    CALCULADORA DE INGRESOS PARA EMPRENDEDORES
+                </h2>
+                <p class="text-slate-300 text-base sm:text-lg mt-3">
+                    Descubre cuánto puedes generar mensualmente operando tu propia red de máquinas expendedoras inteligentes Snackeando.
+                </p>
+            </div>
+
+            <!-- CALCULATOR CARD -->
+            <div class="max-w-4xl mx-auto glass-panel p-6 sm:p-10 rounded-3xl border-slate-700/80 shadow-2xl">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <!-- Sliders Column -->
+                    <div class="lg:col-span-7 space-y-6">
+                        
+                        <!-- Slider 1: Number of Machines -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label for="rangeMachines" class="text-sm font-bold text-slate-200">Número de Máquinas:</label>
+                                <span id="valMachines" class="font-outfit font-black text-xl text-brand-orange">2 Máquinas</span>
+                            </div>
+                            <input type="range" id="rangeMachines" min="1" max="10" value="2" step="1" 
+                                   class="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-orange"
+                                   oninput="calculateROI()">
+                            <div class="flex justify-between text-[11px] text-slate-500 mt-1 font-medium">
+                                <span>1 Máquina</span>
+                                <span>5 Máquinas</span>
+                                <span>10 Máquinas</span>
+                            </div>
+                        </div>
+
+                        <!-- Slider 2: Daily Sales per Machine -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label for="rangeDailySales" class="text-sm font-bold text-slate-200">Ventas Diarias por Máquina (Unidades):</label>
+                                <span id="valDailySales" class="font-outfit font-black text-xl text-brand-gold">45 unidades / día</span>
+                            </div>
+                            <input type="range" id="rangeDailySales" min="15" max="120" value="45" step="5" 
+                                   class="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-gold"
+                                   oninput="calculateROI()">
+                            <div class="flex justify-between text-[11px] text-slate-500 mt-1 font-medium">
+                                <span>15 unids (Bajo tráfico)</span>
+                                <span>45 unids (Promedio)</span>
+                                <span>120 unids (Alto flujo)</span>
+                            </div>
+                        </div>
+
+                        <!-- Slider 3: Average Ticket Price -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label for="rangeTicket" class="text-sm font-bold text-slate-200">Precio Promedio de Venta (PVP):</label>
+                                <span id="valTicket" class="font-outfit font-black text-xl text-emerald-400">$20.00 MXN</span>
+                            </div>
+                            <input type="range" id="rangeTicket" min="15" max="35" value="20" step="1" 
+                                   class="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+                                   oninput="calculateROI()">
+                            <div class="flex justify-between text-[11px] text-slate-500 mt-1 font-medium">
+                                <span>$15 MXN</span>
+                                <span>$25 MXN</span>
+                                <span>$35 MXN</span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-400 leading-relaxed">
+                            💡 <em>Cálculos basados en 30 días de operación continua y un margen bruto promedio del 42% (optimizado por compras mayoristas y subsidio publicitario).</em>
+                        </div>
+                    </div>
+
+                    <!-- Output Results Column -->
+                    <div class="lg:col-span-5 p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-brand-darkCard to-brand-orangeDark/20 border border-brand-orange/40 text-center space-y-4">
+                        
+                        <div>
+                            <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Ventas Brutas Mensuales</span>
+                            <div id="resVentaBruta" class="text-3xl font-black text-white font-outfit mt-0.5">$54,000 MXN</div>
+                        </div>
+
+                        <div class="py-3 border-y border-slate-800/80 space-y-2 text-sm text-left">
+                            <div class="flex justify-between text-slate-300">
+                                <span>Costo de Producto:</span>
+                                <span id="resCostoProd" class="font-bold text-slate-200">-$31,320 MXN</span>
+                            </div>
+                            <div class="flex justify-between text-slate-300">
+                                <span>Renta / Espacio Estimado:</span>
+                                <span id="resRenta" class="font-bold text-slate-200">-$3,000 MXN</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-1">
+                            <span class="text-xs text-emerald-400 font-extrabold uppercase tracking-wider">Ganancia Neta Estimada / Mes</span>
+                            <div id="resGananciaNeta" class="text-3xl sm:text-4xl font-black text-emerald-400 font-outfit mt-1">$19,680 MXN</div>
+                            <span class="text-[11px] text-slate-400 block mt-1">Directo a tu cuenta bancaria</span>
+                        </div>
+
+                        <a href="#contacto" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-orange to-brand-gold hover:from-brand-orangeDark hover:to-brand-orange text-white font-bold text-sm shadow-md block transition-all">
+                            Quiero Comenzar mi Red de Vending
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: BEST LOCATIONS (¿DÓNDE FUNCIONAN MEJOR?) -->
+    <section class="py-20 lg:py-28 relative bg-slate-900/90 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-black uppercase tracking-widest text-brand-orange block mb-2">UBICACIONES ESTRATÉGICAS</span>
+                <h2 class="font-outfit text-3xl sm:text-5xl font-extrabold text-white">
+                    ¿DÓNDE FUNCIONAN MEJOR NUESTRAS MÁQUINAS?
+                </h2>
+                <p class="text-slate-300 text-base sm:text-lg mt-3">
+                    Para un retorno de inversión saludable, recomendamos ubicaciones con una población fija mínima de <strong class="text-brand-goldLight font-bold">100 a 150 personas</strong> o flujo continuo.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <div class="glass-panel p-6 rounded-3xl border-slate-800 hover:border-brand-orange/60 transition-all group">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-orange/20 text-brand-orange flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="building" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-outfit font-bold text-lg text-white mb-2">Oficinas y Corporativos</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Call centers, corporativos, agencias y coworkings con jornadas continuas y alta necesidad de café, bebidas y botanas.
+                    </p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-3xl border-slate-800 hover:border-brand-gold/60 transition-all group">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-gold/20 text-brand-gold flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="factory" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-outfit font-bold text-lg text-white mb-2">Plantas, Fábricas y CEDIS</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Operaciones de 2 o 3 turnos donde el personal no puede salir a comprar alimentos y requiere hidratación constante.
+                    </p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-3xl border-slate-800 hover:border-emerald-500/60 transition-all group">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-outfit font-bold text-lg text-white mb-2">Escuelas y Universidades</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Campus universitarios, preparatorias e institutos con recesos cortos y alta afluencia juvenil durante todo el día.
+                    </p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-3xl border-slate-800 hover:border-brand-orange/60 transition-all group">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-orange/20 text-brand-orange flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="activity" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-outfit font-bold text-lg text-white mb-2">Hospitales y Gimnasios</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Salas de espera con tiempos de permanencia prolongados y áreas fitness con demanda de hidratación y suplementos.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: 4 PASOS SENCILLOS (ONBOARDING) -->
+    <section class="py-20 lg:py-28 relative doodle-bg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-black uppercase tracking-widest text-brand-gold block mb-2">PROCESO LLAVE EN MANO</span>
+                <h2 class="font-outfit text-3xl sm:text-5xl font-extrabold text-white">
+                    NOSOTROS TE LA INSTALAMOS Y TÚ SOLO PREOCÚPATE POR COBRAR
+                </h2>
+                <p class="text-slate-300 text-base sm:text-lg mt-3">
+                    Empezar con Snackeando es tan sencillo como seguir estos 4 pasos:
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+                
+                <div class="glass-panel p-6 rounded-3xl border-slate-800 text-center relative">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-brand-orange to-brand-gold text-white font-black font-outfit text-lg flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-orange/30">
+                        1
+                    </div>
+                    <h3 class="font-outfit font-bold text-lg text-white mb-2">Solicita y Cotiza</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Llenas el formulario o nos escribes por WhatsApp para elegir el modelo que mejor se adapta a tus necesidades.
+                    </p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-3xl border-slate-800 text-center relative">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-brand-orange to-brand-gold text-white font-black font-outfit text-lg flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-orange/30">
+                        2
+                    </div>
+                    <h3 class="font-outfit font-bold text-lg text-white mb-2">Envío e Instalación</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Llevamos la máquina a tu locación, la calibramos, configuramos el lector de tarjetas y dejamos todo listo para operar.
+                    </p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-3xl border-slate-800 text-center relative">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-brand-orange to-brand-gold text-white font-black font-outfit text-lg flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-orange/30">
+                        3
+                    </div>
+                    <h3 class="font-outfit font-bold text-lg text-white mb-2">Capacitación Total</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Te enseñamos paso a paso el resurtido, manejo de precios y monitoreo de ventas en la nube desde tu celular.
+                    </p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-3xl border-slate-800 text-center relative">
+                    <div class="w-12 h-12 rounded-full bg-emerald-500 text-slate-950 font-black font-outfit text-lg flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
+                        4
+                    </div>
+                    <h3 class="font-outfit font-bold text-lg text-white mb-2">¡Cobra y Crece!</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Recibe tus ganancias diarias directamente y escala agregando más máquinas a tu red automatizada.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: FAQ ACCORDION -->
+    <section id="faq" class="py-20 lg:py-28 relative bg-slate-900/90 border-y border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center mb-14">
+                <span class="text-xs font-black uppercase tracking-widest text-brand-orange block mb-2">RESOLVEMOS TUS DUDAS</span>
+                <h2 class="font-outfit text-3xl sm:text-5xl font-extrabold text-white">
+                    PREGUNTAS FRECUENTES
+                </h2>
+            </div>
+
+            <div class="space-y-4">
+                
+                <!-- FAQ Item 1 -->
+                <div class="glass-panel rounded-2xl border-slate-800 overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left font-bold text-white text-base flex justify-between items-center gap-4 hover:text-brand-orange transition-colors">
+                        <span>¿Tiene algún costo para mi empresa instalar una máquina Snackeando?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 shrink-0 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-body hidden px-6 pb-5 text-sm text-slate-300 leading-relaxed border-t border-slate-800/60 pt-3">
+                        Ninguno. Para empresas y corporativos con más de 50 colaboradores en locación, la entrega, instalación, configuración, resurtido de producto y mantenimiento son 100% gratuitos.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="glass-panel rounded-2xl border-slate-800 overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left font-bold text-white text-base flex justify-between items-center gap-4 hover:text-brand-orange transition-colors">
+                        <span>¿Cómo funciona el subsidio publicitario en los precios?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 shrink-0 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-body hidden px-6 pb-5 text-sm text-slate-300 leading-relaxed border-t border-slate-800/60 pt-3">
+                        Comercializamos pautas publicitarias en los viniles y pantallas de nuestras máquinas con marcas nacionales. Esos ingresos nos permiten reducir el precio de venta final de las botanas y bebidas, ofreciendo precios por debajo de cualquier tienda de conveniencia sin sacrificar ganancias para el operador.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="glass-panel rounded-2xl border-slate-800 overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left font-bold text-white text-base flex justify-between items-center gap-4 hover:text-brand-orange transition-colors">
+                        <span>¿Qué requerimientos técnicos se necesitan en el lugar?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 shrink-0 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-body hidden px-6 pb-5 text-sm text-slate-300 leading-relaxed border-t border-slate-800/60 pt-3">
+                        Únicamente un espacio plano de 1m² techado y una toma de corriente convencional de 110V. Nuestras máquinas tienen telemetría celular propia, por lo que no requieren conectarse a la red WiFi de tu empresa.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="glass-panel rounded-2xl border-slate-800 overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left font-bold text-white text-base flex justify-between items-center gap-4 hover:text-brand-orange transition-colors">
+                        <span>¿Qué métodos de pago aceptan las máquinas?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 shrink-0 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-body hidden px-6 pb-5 text-sm text-slate-300 leading-relaxed border-t border-slate-800/60 pt-3">
+                        Aceptan tarjetas de débito y crédito con chip o sin contacto (NFC, Apple Pay, Google Pay), billetero para billetes de $20, $50 y $100 MXN, y monedero que da cambio automático.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="glass-panel rounded-2xl border-slate-800 overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left font-bold text-white text-base flex justify-between items-center gap-4 hover:text-brand-orange transition-colors">
+                        <span>Si compro una máquina para emprender, ¿ustedes me capacitan?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 shrink-0 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-body hidden px-6 pb-5 text-sm text-slate-300 leading-relaxed border-t border-slate-800/60 pt-3">
+                        Totalmente. Incluimos capacitación integral operativa, asesoría en selección de locaciones y productos de alta rotación, y acceso a telemetría móvil para que administres tu negocio fácilmente.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: CONTACT & LEAD FORM -->
+    <section id="contacto" class="py-20 lg:py-28 relative doodle-bg">
+        
+        <!-- Background Glow -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-brand-orange/20 rounded-full blur-[140px] pointer-events-none"></div>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <div class="glass-panel p-8 sm:p-12 rounded-3xl border-slate-700 shadow-2xl">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    
+                    <!-- Form Pitch Info -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange/20 text-brand-orange text-xs font-black uppercase">
+                            Contacto Inmediato
+                        </div>
+
+                        <h2 class="font-outfit text-3xl sm:text-4xl font-extrabold text-white leading-tight">
+                            ¿LISTO PARA OBTENER LA TUYA?
+                        </h2>
+
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Llena este breve formulario y un asesor especializado de Snackeando se pondrá en contacto contigo en menos de 2 horas hábiles.
+                        </p>
+
+                        <div class="space-y-4 pt-2">
+                            <div class="flex items-center gap-3 text-slate-300 text-sm">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+                                <span>Asesoría gratuita sin compromiso.</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-slate-300 text-sm">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+                                <span>Cotizaciones personalizadas al instante.</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-slate-300 text-sm">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+                                <span>Atención para todo México.</span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800">
+                            <div class="text-xs text-slate-400">¿Prefieres respuesta inmediata?</div>
+                            <a href="https://wa.me/5215500000000?text=Hola%20Snackeando,%20quiero%20solicitar%20una%20máquina%20vending" target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex items-center gap-2 text-emerald-400 font-bold text-sm hover:underline">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                Chatear directamente por WhatsApp &rarr;
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Actual Form -->
+                    <div class="lg:col-span-7">
+                        <form id="leadForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                            
+                            <!-- Profile Toggle -->
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Me interesa para:</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <label class="flex items-center gap-2 p-3 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-brand-orange has-[:checked]:border-brand-orange has-[:checked]:bg-brand-orange/10 transition-colors">
+                                        <input type="radio" name="leadType" value="Empresa / Oficinas" checked class="accent-brand-orange">
+                                        <span class="text-xs font-bold text-slate-200">Mi Empresa ($0)</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-3 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-brand-gold has-[:checked]:border-brand-gold has-[:checked]:bg-brand-gold/10 transition-colors">
+                                        <input type="radio" name="leadType" value="Emprendedor / Inversionista" class="accent-brand-gold">
+                                        <span class="text-xs font-bold text-slate-200">Emprender / Franquicia</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="formNombre" class="block text-xs font-bold text-slate-300 mb-1">Nombre Completo *</label>
+                                    <input type="text" id="formNombre" required placeholder="Ej. Carlos Martínez" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-brand-orange">
+                                </div>
+                                <div>
+                                    <label for="formTelefono" class="block text-xs font-bold text-slate-300 mb-1">Teléfono / WhatsApp *</label>
+                                    <input type="tel" id="formTelefono" required placeholder="Ej. 55 1234 5678" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-brand-orange">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="formEmail" class="block text-xs font-bold text-slate-300 mb-1">Correo Electrónico *</label>
+                                    <input type="email" id="formEmail" required placeholder="correo@empresa.com" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-brand-orange">
+                                </div>
+                                <div>
+                                    <label for="formCiudad" class="block text-xs font-bold text-slate-300 mb-1">Ciudad / Estado *</label>
+                                    <input type="text" id="formCiudad" required placeholder="Ej. CDMX / Guadalajara" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-brand-orange">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="formDetalle" class="block text-xs font-bold text-slate-300 mb-1">Detalles (Número de empleados o lugar de instalación)</label>
+                                <textarea id="formDetalle" rows="3" placeholder="Cuéntanos cuántas personas transitan en tu espacio o qué dudas tienes..." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-brand-orange"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-orange via-brand-orangeDark to-brand-gold hover:opacity-95 text-white font-extrabold text-base shadow-xl shadow-brand-orange/30 transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="send" class="w-5 h-5"></i>
+                                <span>Enviar Solicitud y Conectar por WhatsApp</span>
+                            </button>
+
+                            <div id="formSuccess" class="hidden p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs text-center font-bold">
+                                ✅ ¡Gracias! Estamos redirigiendo tu consulta con nuestro asesor...
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-12 text-slate-400 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-900">
+                
+                <!-- Logo Brand -->
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-orangeDark to-brand-gold p-[2px]">
+                        <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                            <i data-lucide="zap" class="w-5 h-5 text-brand-orange"></i>
+                        </div>
+                    </div>
+                    <span class="font-outfit font-black text-xl text-white">S'NACK<span class="text-brand-orange">EANDO</span></span>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="flex flex-wrap justify-center gap-6 text-slate-300">
+                    <a href="#modelos" class="hover:text-brand-orange transition-colors">Modelos</a>
+                    <a href="#empresas" class="hover:text-brand-orange transition-colors">Empresas</a>
+                    <a href="#emprendedores" class="hover:text-brand-orange transition-colors">Emprendedores</a>
+                    <a href="#receta-magica" class="hover:text-brand-gold transition-colors">La Receta Mágica</a>
+                    <a href="#maquinas" class="hover:text-brand-orange transition-colors">Máquinas AMS</a>
+                    <a href="#calculadora" class="hover:text-brand-orange transition-colors">Calculadora</a>
+                </div>
+
+                <!-- Socials / Direct Link -->
+                <div class="flex items-center gap-4">
+                    <a href="https://wa.me/5215500000000" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400 hover:bg-slate-800 transition-colors">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    </a>
+                    <a href="mailto:contacto@snackeando.mx" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-brand-orange hover:bg-slate-800 transition-colors">
+                        <i data-lucide="mail" class="w-4 h-4"></i>
+                    </a>
+                </div>
+
+            </div>
+
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 text-center sm:text-left">
+                <p>© 2026 Snackeando México. Todos los derechos reservados. Impulsando la cultura laboral y el emprendimiento mexicano.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-slate-400">Aviso de Privacidad</a>
+                    <a href="#" class="hover:text-slate-400">Términos y Condiciones</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FLOATING WHATSAPP BUTTON -->
+    <a href="https://wa.me/5215500000000?text=Hola%20Snackeando,%20vi%20la%20página%20web%20y%20quiero%20más%20información" target="_blank" rel="noopener noreferrer" 
+       class="fixed bottom-6 right-6 z-50 p-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold shadow-2xl shadow-emerald-500/40 hover:scale-110 transition-all flex items-center gap-2.5 group"
+       title="Chatea con un asesor por WhatsApp">
+        <i data-lucide="message-circle" class="w-6 h-6"></i>
+        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out text-xs font-extrabold text-slate-950">
+            ¡Cotiza por WhatsApp!
+        </span>
+    </a>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Tabs Logic
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active', 'bg-gradient-to-r', 'from-brand-orange', 'to-brand-gold', 'text-white', 'shadow-md');
+                b.classList.add('text-slate-300');
+            });
+
+            const activeTab = document.getElementById(tabId);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+
+            btn.classList.add('active', 'bg-gradient-to-r', 'from-brand-orange', 'to-brand-gold', 'text-white', 'shadow-md');
+            btn.classList.remove('text-slate-300');
+            lucide.createIcons();
+        }
+
+        // Gallery Image Changer
+        function changeGalleryImage(src, caption, btn) {
+            const mainImg = document.getElementById('mainGalleryImg');
+            const cap = document.getElementById('galleryCaption');
+            
+            mainImg.style.opacity = '0';
+            setTimeout(() => {
+                mainImg.src = src;
+                cap.textContent = caption;
+                mainImg.style.opacity = '1';
+            }, 150);
+
+            document.querySelectorAll('.gallery-thumb').forEach(t => {
+                t.classList.remove('border-brand-orange');
+                t.classList.add('border-transparent');
+            });
+            btn.classList.remove('border-transparent');
+            btn.classList.add('border-brand-orange');
+        }
+
+        // FAQ Toggle
+        function toggleFaq(btn) {
+            const body = btn.nextElementSibling;
+            const icon = btn.querySelector('svg');
+            const isHidden = body.classList.contains('hidden');
+
+            // Close all
+            document.querySelectorAll('.faq-body').forEach(b => b.classList.add('hidden'));
+            document.querySelectorAll('#faq svg').forEach(i => i.style.transform = 'rotate(0deg)');
+
+            if (isHidden) {
+                body.classList.remove('hidden');
+                if (icon) icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // ROI Calculator Logic
+        function calculateROI() {
+            const machines = parseInt(document.getElementById('rangeMachines').value) || 1;
+            const dailySales = parseInt(document.getElementById('rangeDailySales').value) || 45;
+            const ticket = parseFloat(document.getElementById('rangeTicket').value) || 20;
+
+            // Labels
+            document.getElementById('valMachines').textContent = machines + (machines === 1 ? ' Máquina' : ' Máquinas');
+            document.getElementById('valDailySales').textContent = dailySales + ' unidades / día';
+            document.getElementById('valTicket').textContent = '$' + ticket.toFixed(2) + ' MXN';
+
+            // Calculations for 30 days
+            const totalMonthlyUnits = machines * dailySales * 30;
+            const monthlyRevenue = totalMonthlyUnits * ticket;
+            
+            // Average cost of goods: 58% (Gross Margin = 42%)
+            const productCost = monthlyRevenue * 0.58;
+            
+            // Estimated location rent/space share per machine
+            const spaceRent = machines * 1500;
+            
+            // Net profit
+            const netProfit = monthlyRevenue - productCost - spaceRent;
+
+            // Update UI
+            document.getElementById('resVentaBruta').textContent = '$' + monthlyRevenue.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' MXN';
+            document.getElementById('resCostoProd').textContent = '-$' + productCost.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' MXN';
+            document.getElementById('resRenta').textContent = '-$' + spaceRent.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' MXN';
+            document.getElementById('resGananciaNeta').textContent = '$' + (netProfit > 0 ? netProfit : 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' MXN';
+        }
+
+        // Lead Form to WhatsApp Redirect
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const leadType = document.querySelector('input[name="leadType"]:checked')?.value || 'General';
+            const nombre = document.getElementById('formNombre').value;
+            const telefono = document.getElementById('formTelefono').value;
+            const email = document.getElementById('formEmail').value;
+            const ciudad = document.getElementById('formCiudad').value;
+            const detalle = document.getElementById('formDetalle').value;
+
+            const msg = `¡Hola Snackeando! Vengo de la página web.%0A%0A*Tipo de Interés:* ${encodeURIComponent(leadType)}%0A*Nombre:* ${encodeURIComponent(nombre)}%0A*Teléfono:* ${encodeURIComponent(telefono)}%0A*Email:* ${encodeURIComponent(email)}%0A*Ciudad:* ${encodeURIComponent(ciudad)}%0A*Detalles:* ${encodeURIComponent(detalle || 'Ninguno')}`;
+
+            document.getElementById('formSuccess').classList.remove('hidden');
+
+            setTimeout(() => {
+                window.open(`https://wa.me/5215500000000?text=${msg}`, '_blank');
+            }, 800);
+        }
+
+        // Initial Calculation
+        calculateROI();
+    </script>
+</body>
+</html>
