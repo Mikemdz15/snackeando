@@ -44,19 +44,20 @@
                     },
                     backgroundImage: {
                         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-                        'hero-glow': 'radial-gradient(circle at 50% 30%, rgba(255, 102, 0, 0.18) 0%, rgba(15, 23, 42, 0) 70%)',
-                        'card-glow': 'radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.12) 0%, rgba(15, 23, 42, 0) 60%)',
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                        'float-delayed': 'float 6s ease-in-out 3s infinite',
                     },
                     keyframes: {
+                        heroEntrance: {
+                            '0%': { opacity: '0', transform: 'scale(1.08)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' }
+                        },
                         float: {
                             '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-12px)' },
+                            '50%': { transform: 'translateY(-10px)' },
                         }
+                    },
+                    animation: {
+                        'hero-bg': 'heroEntrance 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'float': 'float 5s ease-in-out infinite',
                     }
                 }
             }
@@ -64,7 +65,7 @@
     </script>
 
     <style>
-        /* Custom Doodle Overlay Inspired by the Snackeando Machine Wrap */
+        /* Base Dark Background */
         .doodle-bg {
             background-color: #080c14;
             background-image: 
@@ -75,14 +76,14 @@
         }
 
         .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
+            background: rgba(15, 23, 42, 0.82);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .glass-panel-gold {
-            background: rgba(26, 20, 15, 0.75);
+            background: rgba(26, 20, 15, 0.82);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(245, 158, 11, 0.25);
@@ -103,6 +104,25 @@
         .gradient-badge {
             background: linear-gradient(90deg, rgba(255, 102, 0, 0.2) 0%, rgba(245, 158, 11, 0.2) 100%);
             border: 1px solid rgba(255, 102, 0, 0.4);
+        }
+
+        /* Hero Background with Transition */
+        .hero-banner-bg {
+            position: absolute;
+            inset: 0;
+            background-image: url('hero_mall_bg.jpg');
+            background-size: cover;
+            background-position: center 35%;
+            filter: brightness(0.48) contrast(1.15);
+            transform-origin: center center;
+            will-change: transform, opacity;
+        }
+
+        /* White Photo Room Card */
+        .photo-room-card {
+            background: radial-gradient(circle at 50% 35%, #ffffff 0%, #f8fafc 55%, #e2e8f0 100%);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         /* Custom Scrollbar */
@@ -135,40 +155,38 @@
 <body class="bg-brand-dark text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-brand-orange selection:text-white">
 
     <!-- TOP ANNOUNCEMENT BAR -->
-    <aside aria-label="Anuncio promocional" class="bg-gradient-to-r from-brand-orangeDark via-brand-orange to-brand-gold text-white text-xs sm:text-sm font-semibold py-2 px-4 text-center tracking-wide flex items-center justify-center gap-2 shadow-md relative z-50">
-        <span class="inline-flex items-center justify-center bg-white text-brand-orangeDark text-[11px] font-black px-2 py-0.5 rounded-full uppercase">Novedad</span>
+    <aside aria-label="Anuncio promocional" class="bg-gradient-to-r from-brand-orangeDark via-brand-orange to-brand-gold text-white text-xs sm:text-sm font-semibold py-2.5 px-4 text-center tracking-wide flex items-center justify-center gap-2 shadow-md relative z-50">
+        <span class="inline-flex items-center justify-center bg-white text-brand-orangeDark text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">Novedad</span>
         <span>¡Revolucionamos el Vending en México! <strong>Precios Subsidiados con Publicidad</strong> y <strong>0% de Inversión</strong> para Empresas.</span>
-        <a href="#receta-magica" class="underline hover:text-amber-100 transition-colors hidden sm:inline ml-1">Descubre la Receta Mágica &rarr;</a>
+        <a href="#receta-magica" class="underline hover:text-amber-100 transition-colors hidden sm:inline ml-1 font-bold">Descubre la Receta Mágica &rarr;</a>
     </aside>
 
-    <!-- HEADER / NAVIGATION -->
+    <!-- HEADER / NAVIGATION (CLEAN, SPACIOUS, UNCLUTTERED) -->
     <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 
-                <!-- BRAND LOGO -->
-                <a href="#" class="flex items-center gap-3 group">
+                <!-- BRAND LOGO (SNACKEANDO DE CORRIDO, SIN APÓSTROFE) -->
+                <a href="#" class="flex items-center gap-3.5 group shrink-0">
                     <div class="relative w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-orangeDark to-brand-gold p-[2px] shadow-lg shadow-brand-orange/20 group-hover:shadow-brand-orange/40 transition-all">
                         <div class="w-full h-full bg-brand-darkCard rounded-[10px] flex items-center justify-center">
                             <i data-lucide="zap" class="w-6 h-6 text-brand-orange group-hover:scale-110 transition-transform"></i>
                         </div>
                     </div>
                     <div class="flex flex-col">
-                        <div class="flex items-center gap-1.5">
-                            <span class="font-outfit font-black text-2xl tracking-wider text-white">S'NACK<span class="text-brand-orange">EANDO</span></span>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-brand-goldLight -mt-1">Tus Snacks, Tu Momento</span>
+                        <span class="font-outfit font-black text-2xl tracking-wider text-white leading-none">SNACK<span class="text-brand-orange">EANDO</span></span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-brand-goldLight mt-1">Tus Snacks, Tu Momento</span>
                     </div>
                 </a>
 
-                <!-- DESKTOP MENU -->
-                <nav class="hidden lg:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <!-- DESKTOP MENU (1-LINE, CLEAN SPACING) -->
+                <nav class="hidden xl:flex items-center gap-7 text-sm font-medium text-slate-300 whitespace-nowrap">
                     <a href="#modelos" class="hover:text-brand-orangeLight transition-colors">Modelos de Negocio</a>
                     <a href="#empresas" class="hover:text-brand-orangeLight transition-colors">Para Empresas</a>
                     <a href="#emprendedores" class="hover:text-brand-orangeLight transition-colors">Para Emprendedores</a>
-                    <a href="#receta-magica" class="hover:text-brand-goldLight transition-colors flex items-center gap-1 font-semibold text-white">
+                    <a href="#receta-magica" class="hover:text-brand-goldLight transition-colors flex items-center gap-1.5 font-semibold text-amber-300">
                         <i data-lucide="sparkles" class="w-4 h-4 text-brand-gold"></i>
-                        La Receta Mágica
+                        <span>La Receta Mágica</span>
                     </a>
                     <a href="#maquinas" class="hover:text-brand-orangeLight transition-colors">Nuestras Máquinas</a>
                     <a href="#calculadora" class="hover:text-brand-orangeLight transition-colors">Calculadora ROI</a>
@@ -176,12 +194,12 @@
                 </nav>
 
                 <!-- ACTION BUTTONS -->
-                <div class="hidden sm:flex items-center gap-3">
-                    <a href="https://wa.me/5215500000000?text=Hola%20Snackeando,%20quiero%20información%20sobre%20las%20máquinas%20vending" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800/60 hover:bg-slate-800 hover:border-emerald-500/50 text-slate-200 text-sm font-semibold transition-all">
+                <div class="hidden sm:flex items-center gap-3 shrink-0">
+                    <a href="https://wa.me/5215500000000?text=Hola%20Snackeando,%20quiero%20información%20sobre%20las%20máquinas%20vending" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800/70 hover:bg-slate-800 hover:border-emerald-500/50 text-slate-200 text-sm font-semibold transition-all">
                         <i data-lucide="message-circle" class="w-4 h-4 text-emerald-400"></i>
                         <span>WhatsApp</span>
                     </a>
-                    <a href="#contacto" class="relative group overflow-hidden rounded-xl p-[1px] font-semibold text-sm">
+                    <a href="#contacto" class="relative group overflow-hidden rounded-xl p-[1px] font-bold text-sm">
                         <span class="absolute inset-0 bg-gradient-to-r from-brand-orange to-brand-gold group-hover:from-brand-orangeDark group-hover:to-brand-orange transition-all"></span>
                         <span class="relative block px-5 py-2.5 rounded-xl bg-brand-darkCard text-white group-hover:bg-transparent transition-colors flex items-center gap-2">
                             <span>Solicitar Máquina</span>
@@ -191,14 +209,14 @@
                 </div>
 
                 <!-- MOBILE MENU TOGGLE -->
-                <button id="mobileMenuBtn" aria-label="Abrir menú de navegación" class="lg:hidden p-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 hover:text-white">
+                <button id="mobileMenuBtn" aria-label="Abrir menú de navegación" class="xl:hidden p-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 hover:text-white">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
             </div>
         </div>
 
         <!-- MOBILE DROPDOWN -->
-        <div id="mobileMenu" class="hidden lg:hidden glass-panel border-b border-slate-800 px-6 py-6 space-y-4">
+        <div id="mobileMenu" class="hidden xl:hidden glass-panel border-b border-slate-800 px-6 py-6 space-y-4">
             <a href="#modelos" class="block text-slate-200 hover:text-brand-orange text-base font-medium mobile-link">Modelos de Negocio</a>
             <a href="#empresas" class="block text-slate-200 hover:text-brand-orange text-base font-medium mobile-link">Para Empresas</a>
             <a href="#emprendedores" class="block text-slate-200 hover:text-brand-orange text-base font-medium mobile-link">Para Emprendedores</a>
@@ -220,55 +238,72 @@
     </header>
 
     <!-- HERO SECTION -->
-    <section class="relative pt-12 pb-24 lg:pt-20 lg:pb-32 overflow-hidden doodle-bg">
-        <!-- Glow accents -->
-        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-brand-orange/15 rounded-full blur-[140px] pointer-events-none"></div>
-        <div class="absolute top-1/3 right-10 w-[400px] h-[400px] bg-brand-gold/10 rounded-full blur-[120px] pointer-events-none"></div>
-
+    <section class="relative pt-8 pb-20 lg:pt-14 lg:pb-28 overflow-hidden doodle-bg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             
-            <!-- TRUST PILLS -->
-            <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
-                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full gradient-badge text-brand-goldLight text-xs sm:text-sm font-bold tracking-wide shadow-sm">
-                    <i data-lucide="award" class="w-4 h-4 text-brand-gold"></i>
-                    IMPULSO PARA EMPRESAS MEXICANAS
-                </span>
-                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300 text-xs sm:text-sm font-semibold">
-                    <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-orange"></i>
-                    LOS MEJORES COSTOS EN TODO MÉXICO
-                </span>
-            </div>
+            <!-- HERO MAIN CARD WITH MALL BACKGROUND & SMOOTH TRANSITION -->
+            <div class="relative rounded-3xl overflow-hidden border border-slate-700/80 shadow-2xl mb-14">
+                
+                <!-- Background Image Layer with Animated Entrance & Dark Transparent Overlay -->
+                <div class="hero-banner-bg animate-hero-bg"></div>
+                
+                <!-- Subtle Gradient Overlays for High Text Contrast -->
+                <div class="absolute inset-0 bg-gradient-to-b from-brand-dark/85 via-slate-950/80 to-brand-dark/95 z-0"></div>
+                <div class="absolute inset-0 bg-hero-glow z-0"></div>
 
-            <!-- HERO HEADLINE & PITCH -->
-            <div class="text-center max-w-4xl mx-auto mb-12">
-                <h1 class="font-outfit text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6">
-                    MÁS QUE UNA MÁQUINA DE SNACKS, <br>
-                    <span class="gradient-text-orange">EL NEGOCIO QUE ESTABAS BUSCANDO.</span>
-                </h1>
-                <p class="text-lg sm:text-xl text-slate-300 font-normal leading-relaxed max-w-3xl mx-auto">
-                    Transformamos el descanso y la alimentación en tus oficinas con una <strong class="text-white font-semibold">PRESTACIÓN REAL PARA EMPLEADOS</strong> a costo $0, o impulsa tu patrimonio automatizado: <strong class="text-brand-goldLight font-semibold">DEJA DE TRABAJAR UN AUTO Y MEJOR HAZTE EMPRENDEDOR</strong>.
-                </p>
-                <div class="mt-4 inline-block bg-brand-orange/10 border border-brand-orange/30 rounded-2xl px-5 py-2.5 text-brand-orangeLight text-sm font-bold">
-                    🚀 NOSOTROS TE LA INSTALAMOS Y TÚ SOLO PREOCÚPATE POR COBRAR
+                <!-- Content Container on top of background -->
+                <div class="relative z-10 py-12 px-6 sm:py-16 sm:px-12 lg:py-20 lg:px-16 text-center max-w-5xl mx-auto">
+                    
+                    <!-- TRUST PILLS -->
+                    <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
+                        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full gradient-badge text-brand-goldLight text-xs sm:text-sm font-bold tracking-wide shadow-md backdrop-blur-md">
+                            <i data-lucide="award" class="w-4 h-4 text-brand-gold"></i>
+                            IMPULSO PARA EMPRESAS MEXICANAS
+                        </span>
+                        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/90 text-slate-200 text-xs sm:text-sm font-semibold backdrop-blur-md">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-orange"></i>
+                            LOS MEJORES COSTOS EN TODO MÉXICO
+                        </span>
+                    </div>
+
+                    <!-- HERO HEADLINE -->
+                    <h1 class="font-outfit text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] mb-6 drop-shadow-lg">
+                        MÁS QUE UNA MÁQUINA DE SNACKS, <br>
+                        <span class="gradient-text-orange">EL NEGOCIO QUE ESTABAS BUSCANDO.</span>
+                    </h1>
+
+                    <!-- SUBTITLE -->
+                    <p class="text-base sm:text-lg lg:text-xl text-slate-200 font-normal leading-relaxed max-w-3xl mx-auto drop-shadow-md">
+                        Transformamos el descanso y la alimentación en tus oficinas con una <strong class="text-white font-semibold">PRESTACIÓN REAL PARA EMPLEADOS</strong> a costo $0, o impulsa tu patrimonio automatizado: <strong class="text-brand-goldLight font-semibold">DEJA DE TRABAJAR UN AUTO Y MEJOR HAZTE EMPRENDEDOR</strong>.
+                    </p>
+
+                    <!-- REASSURANCE MANIFESTO PILL -->
+                    <div class="mt-6 inline-block bg-brand-orange/20 border border-brand-orange/40 backdrop-blur-md rounded-2xl px-6 py-2.5 text-brand-goldLight text-xs sm:text-sm font-extrabold shadow-lg">
+                        🚀 NOSOTROS TE LA INSTALAMOS Y TÚ SOLO PREOCÚPATE POR COBRAR
+                    </div>
+
+                    <!-- CTA BUTTONS (RENAMED: MODELO PARA EMPRESAS & MODELO EMPRENDEDOR) -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-5 mt-10 max-w-2xl mx-auto">
+                        
+                        <!-- Button 1: Modelo para empresas -->
+                        <a href="#empresas" class="w-full sm:w-1/2 px-7 py-4 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-gold hover:from-brand-orangeDark hover:to-brand-orange text-white font-extrabold text-base shadow-xl shadow-brand-orange/30 hover:shadow-brand-orange/50 hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-3">
+                            <i data-lucide="building-2" class="w-5 h-5 shrink-0"></i>
+                            <span>Modelo para empresas</span>
+                        </a>
+
+                        <!-- Button 2: Modelo emprendedor -->
+                        <a href="#emprendedores" class="w-full sm:w-1/2 px-7 py-4 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-600/90 text-white font-extrabold text-base shadow-xl hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-3">
+                            <i data-lucide="trending-up" class="w-5 h-5 text-brand-gold shrink-0"></i>
+                            <span>Modelo emprendedor</span>
+                        </a>
+
+                    </div>
+
                 </div>
             </div>
 
-            <!-- CTA BUTTONS -->
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 max-w-xl mx-auto">
-                <a href="#empresas" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-gold hover:from-brand-orangeDark hover:to-brand-orange text-white font-bold text-base shadow-xl shadow-brand-orange/25 hover:shadow-brand-orange/40 hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-2">
-                    <i data-lucide="building-2" class="w-5 h-5"></i>
-                    <span>Máquina para mi Empresa (Gratis)</span>
-                </a>
-                <a href="#emprendedores" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700/80 border border-slate-600/80 text-white font-bold text-base hover:-translate-y-0.5 transition-all text-center flex items-center justify-center gap-2">
-                    <i data-lucide="trending-up" class="w-5 h-5 text-brand-gold"></i>
-                    <span>Quiero Emprender con Vending</span>
-                </a>
-            </div>
-
-            <!-- HERO VISUAL / MACHINE SHOWCASE -->
-            <div class="relative max-w-5xl mx-auto">
-                
-                <!-- Main Showcase Container -->
+            <!-- MACHINE SHOWCASE (CENTER MACHINE IN WHITE STUDIO PHOTO ROOM) -->
+            <div class="relative max-w-6xl mx-auto">
                 <div class="relative rounded-3xl overflow-hidden glass-panel border border-slate-700/80 p-6 sm:p-10 shadow-2xl">
                     
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -306,15 +341,19 @@
                             </div>
                         </div>
 
-                        <!-- Center Real Machine Image -->
-                        <div class="lg:col-span-4 flex justify-center order-1 lg:order-2 relative group">
-                            <div class="relative max-w-[280px] sm:max-w-[340px]">
-                                <div class="absolute -inset-2 bg-gradient-to-t from-brand-orange/30 via-brand-gold/20 to-transparent rounded-3xl blur-xl group-hover:blur-2xl transition-all"></div>
-                                <img src="ams_perspective.png" alt="Máquina Vending Snackeando Modelo AMS" class="relative w-full h-auto drop-shadow-[0_20px_35px_rgba(0,0,0,0.8)] transform group-hover:scale-105 transition-transform duration-500 animate-float">
-                                <div class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-brand-darkCard/95 border border-brand-orange/50 text-[11px] font-bold px-3 py-1 rounded-full text-brand-goldLight shadow-lg flex items-center gap-1.5 whitespace-nowrap">
+                        <!-- Center Real Machine in Pure White Studio / Photo Room -->
+                        <div class="lg:col-span-4 flex justify-center order-1 lg:order-2">
+                            <div class="photo-room-card rounded-3xl p-5 sm:p-6 w-full max-w-[320px] flex flex-col items-center relative group">
+                                
+                                <div class="relative w-full flex justify-center py-2">
+                                    <img src="ams_white_studio.jpg" alt="Equipo Real Snackeando AMS en Photo Room Estudio" class="relative max-h-[340px] sm:max-h-[380px] w-auto object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.35)] transform group-hover:scale-105 transition-transform duration-500">
+                                </div>
+                                
+                                <div class="mt-2 bg-slate-900/90 border border-brand-orange/60 text-[11px] font-extrabold px-4 py-1.5 rounded-full text-brand-goldLight shadow-md flex items-center gap-2">
                                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                                     <span>Equipo Real Snackeando AMS</span>
                                 </div>
+
                             </div>
                         </div>
 
@@ -753,28 +792,28 @@
                 <!-- Main Featured Photo View -->
                 <div class="lg:col-span-7">
                     <div class="relative rounded-3xl overflow-hidden glass-panel border border-slate-700 p-6 flex flex-col items-center justify-center min-h-[440px] bg-slate-950/80">
-                        <img id="mainGalleryImg" src="ams_perspective.png" alt="Vista Principal Máquina Snackeando" class="max-h-[420px] object-contain transition-all duration-300 drop-shadow-2xl">
+                        <img id="mainGalleryImg" src="ams_white_studio.jpg" alt="Vista Principal Máquina Snackeando" class="max-h-[420px] object-contain transition-all duration-300 drop-shadow-2xl">
                         <div id="galleryCaption" class="mt-4 text-xs font-bold text-brand-goldLight bg-slate-900/90 px-4 py-1.5 rounded-full border border-slate-800">
-                            Vista en Perspectiva • Vinil Temático Snackeando
+                            Estudio Photo Room • Máquina AMS Snackeando en Fondo Blanco
                         </div>
                     </div>
 
-                    <!-- Thumbnails -->
+                    <!-- Thumbnails (Including White Studio) -->
                     <div class="grid grid-cols-5 gap-3 mt-4">
-                        <button onclick="changeGalleryImage('ams_perspective.png', 'Vista en Perspectiva • Vinil Temático Snackeando', this)" class="gallery-thumb active p-2 rounded-xl bg-slate-800 border-2 border-brand-orange transition-all">
+                        <button onclick="changeGalleryImage('ams_white_studio.jpg', 'Estudio Photo Room • Máquina AMS Snackeando en Fondo Blanco', this)" class="gallery-thumb active p-2 rounded-xl bg-slate-800 border-2 border-brand-orange transition-all">
+                            <img src="ams_white_studio.jpg" alt="Thumbnail Estudio Blanco" class="h-14 w-full object-contain">
+                        </button>
+                        <button onclick="changeGalleryImage('ams_perspective.png', 'Vista en Perspectiva • Vinil Temático Snackeando', this)" class="gallery-thumb p-2 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 transition-all">
                             <img src="ams_perspective.png" alt="Thumbnail 1" class="h-14 w-full object-contain">
                         </button>
                         <button onclick="changeGalleryImage('ams_front.png', 'Vista Frontal Completa • 6 Charolas y Ventana Panorámica', this)" class="gallery-thumb p-2 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 transition-all">
                             <img src="ams_front.png" alt="Thumbnail 2" class="h-14 w-full object-contain">
                         </button>
-                        <button onclick="changeGalleryImage('ams_side_logo.png', 'Lateral de Marca • Logotipo S\'nackeando y Acabado Brillante', this)" class="gallery-thumb p-2 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 transition-all">
+                        <button onclick="changeGalleryImage('ams_side_logo.png', 'Lateral de Marca • Logotipo Snackeando y Acabado Brillante', this)" class="gallery-thumb p-2 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 transition-all">
                             <img src="ams_side_logo.png" alt="Thumbnail 3" class="h-14 w-full object-contain">
                         </button>
                         <button onclick="changeGalleryImage('ams_shelves.png', 'Charolas Interiores • Espirales Ajustables para Botanas y Bebidas', this)" class="gallery-thumb p-2 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 transition-all">
                             <img src="ams_shelves.png" alt="Thumbnail 4" class="h-14 w-full object-contain">
-                        </button>
-                        <button onclick="changeGalleryImage('ams_internal_open.png', 'Estructura Abierta • Sistema de Refrigeración y Aislamiento', this)" class="gallery-thumb p-2 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 transition-all">
-                            <img src="ams_internal_open.png" alt="Thumbnail 5" class="h-14 w-full object-contain">
                         </button>
                     </div>
                 </div>
@@ -1200,11 +1239,11 @@
                                 <div class="grid grid-cols-2 gap-3">
                                     <label class="flex items-center gap-2 p-3 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-brand-orange has-[:checked]:border-brand-orange has-[:checked]:bg-brand-orange/10 transition-colors">
                                         <input type="radio" name="leadType" value="Empresa / Oficinas" checked class="accent-brand-orange">
-                                        <span class="text-xs font-bold text-slate-200">Mi Empresa ($0)</span>
+                                        <span class="text-xs font-bold text-slate-200">Modelo Empresas ($0)</span>
                                     </label>
                                     <label class="flex items-center gap-2 p-3 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-brand-gold has-[:checked]:border-brand-gold has-[:checked]:bg-brand-gold/10 transition-colors">
                                         <input type="radio" name="leadType" value="Emprendedor / Inversionista" class="accent-brand-gold">
-                                        <span class="text-xs font-bold text-slate-200">Emprender / Franquicia</span>
+                                        <span class="text-xs font-bold text-slate-200">Modelo Emprendedor</span>
                                     </label>
                                 </div>
                             </div>
@@ -1266,7 +1305,7 @@
                             <i data-lucide="zap" class="w-5 h-5 text-brand-orange"></i>
                         </div>
                     </div>
-                    <span class="font-outfit font-black text-xl text-white">S'NACK<span class="text-brand-orange">EANDO</span></span>
+                    <span class="font-outfit font-black text-xl text-white">SNACK<span class="text-brand-orange">EANDO</span></span>
                 </div>
 
                 <!-- Footer Navigation -->
