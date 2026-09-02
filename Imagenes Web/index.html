@@ -499,19 +499,15 @@
                     Ya seas una empresa buscando consentir a su personal o un inversionista buscando ingresos pasivos, Snackeando tiene el plan perfecto.
                 </p>
 
-                <!-- TAB SWITCHER -->
+                <!-- TAB SWITCHER (2 MODELS ONLY) -->
                 <div class="mt-8 inline-flex p-1.5 rounded-2xl bg-slate-900 border border-slate-700/80 shadow-inner max-w-full overflow-x-auto">
-                    <button onclick="switchTab('tab-empresas', this)" class="tab-btn active px-5 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 bg-gradient-to-r from-brand-orange to-brand-gold text-white shadow-md">
+                    <button onclick="switchTab('tab-empresas', this)" class="tab-btn active px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 bg-gradient-to-r from-brand-orange to-brand-gold text-white shadow-md">
                         <i data-lucide="building-2" class="w-4 h-4"></i>
-                        <span>Para Empresas (Prestación $0)</span>
+                        <span>Para Empresas</span>
                     </button>
-                    <button onclick="switchTab('tab-emprendedores', this)" class="tab-btn px-5 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 text-slate-300 hover:text-white">
+                    <button onclick="switchTab('tab-emprendedores', this)" class="tab-btn px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 text-slate-300 hover:text-white">
                         <i data-lucide="trending-up" class="w-4 h-4"></i>
-                        <span>Para Emprendedores (Franquicia)</span>
-                    </button>
-                    <button onclick="switchTab('tab-espacios', this)" class="tab-btn px-5 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 text-slate-300 hover:text-white">
-                        <i data-lucide="map-pin" class="w-4 h-4"></i>
-                        <span>Dueños de Locaciones (Renta)</span>
+                        <span>Para Emprendedores</span>
                     </button>
                 </div>
             </div>
@@ -521,55 +517,65 @@
                 <div id="empresas" class="scroll-mt-28 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
                     
                     <div class="lg:col-span-6 space-y-6">
-                        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase">
-                            <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                            Cero Inversión • Servicio Todo Incluido
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-orange/15 border border-brand-orange/30 text-brand-goldLight text-xs font-bold uppercase">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                            Renta Mensual: $5,500 MXN + IVA • Todo Incluido
                         </div>
 
                         <h3 class="font-outfit text-3xl sm:text-4xl font-bold text-white leading-tight">
-                            PRESTACIÓN REAL PARA EMPLEADOS <br>
-                            <span class="text-brand-orange">SIN QUE TU EMPRESA GASTE UN SOLO PESO</span>
+                            PRESTACIÓN REAL Y BIENESTAR <br>
+                            <span class="text-brand-orange">CON PRECIOS SUBSIDIADOS PARA TUS EMPLEADOS</span>
                         </h3>
 
                         <p class="text-slate-300 text-base leading-relaxed">
-                            Mejora el clima laboral, reduce tiempos muertos de traslados para comprar botanas y ofrece a tu equipo sus marcas preferidas 24/7 al pie de su oficina o planta.
+                            Una inversión directa en el clima laboral y sentido de pertenencia de tu equipo. Mientras las máquinas vending tradicionales en México ofrecen productos costosos, Snackeando subsidia los precios con publicidad para que tus colaboradores disfruten de tarifas que nadie ve en tiendas de conveniencia.
                         </p>
 
-                        <div class="space-y-4">
-                            <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                        <div class="space-y-3.5">
+                            <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
                                 <div class="p-2.5 rounded-xl bg-brand-orange/20 text-brand-orange shrink-0">
-                                    <i data-lucide="truck" class="w-5 h-5"></i>
+                                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-white text-base">Instalación y Resurtido Continuo</h4>
-                                    <p class="text-xs text-slate-400 mt-1">Llevamos la máquina, la conectamos y monitoreamos remotamente el stock para resurtir antes de que se agote.</p>
+                                    <h4 class="font-bold text-white text-sm">Refill Ilimitado Garantizado</h4>
+                                    <p class="text-xs text-slate-400 mt-0.5">Surtimos la máquina las veces que sean necesarias al mes para asegurar que siempre haya producto disponible.</p>
                                 </div>
                             </div>
 
-                            <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                            <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
                                 <div class="p-2.5 rounded-xl bg-brand-gold/20 text-brand-gold shrink-0">
-                                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                                    <i data-lucide="package" class="w-5 h-5"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-white text-base">Mantenimiento y Soporte 360°</h4>
-                                    <p class="text-xs text-slate-400 mt-1">Cualquier eventualidad técnica es resuelta por nuestro equipo sin interrumpir tus operaciones.</p>
+                                    <h4 class="font-bold text-white text-sm">Logística, Almacenamiento y Producto a Nuestro Cargo</h4>
+                                    <p class="text-xs text-slate-400 mt-0.5">Nosotros ponemos los productos a precios inigualables y nos encargamos de todo el abasto. Cero trabajo operativo para ti.</p>
                                 </div>
                             </div>
 
-                            <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                            <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
                                 <div class="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 shrink-0">
-                                    <i data-lucide="tags" class="w-5 h-5"></i>
+                                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-white text-base">Precios Subsidiados con Publicidad</h4>
-                                    <p class="text-xs text-slate-400 mt-1">Tus colaboradores pagan menos que en tiendas de conveniencia gracias a nuestro esquema publicitario.</p>
+                                    <h4 class="font-bold text-white text-sm">Resumen Ejecutivo y Coordinación con RH</h4>
+                                    <p class="text-xs text-slate-400 mt-0.5">Reportes periódicos de consumo de tu personal y apoyo directo a Recursos Humanos para el banderazo de arranque.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="p-2.5 rounded-xl bg-blue-500/20 text-blue-400 shrink-0">
+                                    <i data-lucide="plug" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm">Instalación Fácil (Sin Obra Ni Modificaciones)</h4>
+                                    <p class="text-xs text-slate-400 mt-0.5">Solo requerimos un espacio de 1m² y un enchufe estándar de 110V. Conectamos y empieza a funcionar de inmediato.</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="pt-4">
+                        <div class="pt-2">
                             <a href="#contacto" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-gold text-white font-bold text-base shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40 hover:-translate-y-0.5 transition-all">
-                                <span>Solicitar Máquina para mi Empresa</span>
+                                <span>Contratar Plan Empresas ($5,500 + IVA)</span>
                                 <i data-lucide="arrow-right" class="w-5 h-5"></i>
                             </a>
                         </div>
@@ -632,139 +638,92 @@
                     <div class="lg:col-span-6 space-y-6">
                         <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-gold/15 border border-brand-gold/30 text-brand-goldLight text-xs font-bold uppercase">
                             <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
-                            Negocio Semi-Automatizado de Alto Rendimiento
+                            Renta Mensual: $2,000 MXN • Libertad Total de Fijación de Precios
                         </div>
 
                         <h3 class="font-outfit text-3xl sm:text-4xl font-bold text-white leading-tight">
                             DEJA DE TRABAJAR UN AUTO Y <br>
-                            <span class="gradient-text-orange">MEJOR EMPRENDE</span>
+                            <span class="gradient-text-orange">MEJOR EMPRENDE CON TU PROPIA MÁQUINA</span>
                         </h3>
 
                         <p class="text-slate-300 text-base leading-relaxed">
-                            No pases 12 horas al día en el tráfico sufriendo desgaste físico, gasolina y depreciación de vehículo. Con Snackeando eres dueño de un activo que vende las 24 horas del día mientras tú te dedicas a recolectar ganancias.
+                            Solicita tu máquina y platícanos sobre tu locación. Evaluamos contigo el potencial del lugar y nos encargamos de la instalación y configuración. Tú tienes el control de tu inventario y fijas tus propios precios para maximizar tu rentabilidad.
                         </p>
 
-                        <!-- COMPARISON HIGHLIGHTS -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="p-4 rounded-2xl bg-red-950/20 border border-red-900/40">
-                                <div class="flex items-center gap-2 text-red-400 font-bold text-sm mb-2">
-                                    <i data-lucide="x-circle" class="w-4 h-4"></i>
-                                    <span>Trabajar un Auto de App</span>
+                        <div class="space-y-3.5">
+                            <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="p-2.5 rounded-xl bg-brand-gold/20 text-brand-gold shrink-0">
+                                    <i data-lucide="tag" class="w-5 h-5"></i>
                                 </div>
-                                <ul class="text-xs text-slate-400 space-y-1.5">
-                                    <li>❌ 10-12 horas diarias frente al volante</li>
-                                    <li>❌ Riesgo de choques y asaltos</li>
-                                    <li>❌ Gasto alto de gasolina y mantenimiento</li>
-                                    <li>❌ Si no manejas, no ganas nada</li>
-                                </ul>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm">Renta Accesible ($2,000 MXN/mes) y Abasto Mayorista</h4>
+                                    <p class="text-xs text-slate-400 mt-0.5">Monitoreas tu máquina y nos compras el producto a los mejores costos de mayoreo en México.</p>
+                                </div>
                             </div>
 
-                            <div class="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/40">
-                                <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm mb-2">
-                                    <i data-lucide="check-circle" class="w-4 h-4"></i>
-                                    <span>Vending con Snackeando</span>
+                            <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="p-2.5 rounded-xl bg-brand-orange/20 text-brand-orange shrink-0">
+                                    <i data-lucide="sliders" class="w-5 h-5"></i>
                                 </div>
-                                <ul class="text-xs text-slate-300 space-y-1.5">
-                                    <li>✅ Solo 2 a 3 horas por semana de resurtido</li>
-                                    <li>✅ Venta 24/7 incluso mientras duermes</li>
-                                    <li>✅ Cero empleados y costos fijos mínimos</li>
-                                    <li>✅ Telemetría móvil para ver tus cobros</li>
-                                </ul>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm">Libertad de Precios (PVP) y Rotación Acelerada</h4>
+                                    <p class="text-xs text-slate-400 mt-0.5">Tú decides tu margen. Recomendamos vender entre un 10% a 15% más barato que tiendas para asegurar alta rotación y ganancias constantes.</p>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="p-4 rounded-2xl bg-slate-900/90 border border-brand-orange/30">
-                            <div class="text-sm font-bold text-brand-goldLight">
-                                💡 NOSOTROS TE LA INSTALAMOS Y TÚ SOLO PREOCÚPATE POR COBRAR
+                            <div class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div class="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 shrink-0">
+                                    <i data-lucide="banknote" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm">Cobro Inmediato y Depósito en Menos de 24 Horas</h4>
+                                    <p class="text-xs text-slate-400 mt-0.5">Recolectas tu efectivo directamente de la máquina y recibes transferencias de cobro digital en tu cuenta bancaria en menos de 1 día.</p>
+                                </div>
                             </div>
-                            <p class="text-xs text-slate-400 mt-1">
-                                Te acompañamos en la búsqueda de la mejor locación, configuración de precios, capacitación técnica y suministro directo de producto con descuento mayorista.
-                            </p>
                         </div>
 
                         <div class="pt-2">
                             <a href="#calculadora" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-gold text-white font-bold text-base shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40 hover:-translate-y-0.5 transition-all">
-                                <span>Calcular mis Ganancias Estimadas</span>
+                                <span>Simular Ganancias en la Calculadora ROI</span>
                                 <i data-lucide="calculator" class="w-5 h-5"></i>
                             </a>
                         </div>
                     </div>
 
-                    <!-- Right Column Entrepreneur Machine Photo -->
+                    <!-- Right Column Entrepreneur Machine Photo (Hospital Lounge Re-stock & Cash Collection) -->
                     <div class="lg:col-span-6">
-                        <div class="relative rounded-3xl overflow-hidden glass-panel border border-slate-700/80 p-6 sm:p-8">
-                            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+                        <div class="relative rounded-3xl overflow-hidden glass-panel border border-slate-700/80 p-6 sm:p-7 shadow-2xl">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
                                 <div>
-                                    <span class="text-xs text-brand-gold font-bold uppercase">Equipo Certificado</span>
-                                    <h4 class="font-outfit text-xl font-bold text-white">Máquina AMS Snackeando</h4>
+                                    <span class="text-xs text-brand-gold font-bold uppercase tracking-wider">Caso Real • Locación Hospitalaria</span>
+                                    <h4 class="font-outfit text-xl font-bold text-white">Emprendimiento en Marcha</h4>
                                 </div>
-                                <span class="bg-brand-orange/20 text-brand-orange text-xs font-extrabold px-3 py-1 rounded-full">Modelo Alta Demanda</span>
+                                <span class="bg-emerald-500/20 text-emerald-400 text-xs font-extrabold px-3 py-1 rounded-full border border-emerald-500/30">
+                                    Renta $2,000 MXN/mes
+                                </span>
                             </div>
 
-                            <div class="relative rounded-2xl overflow-hidden mb-6 bg-slate-950 flex justify-center p-4">
-                                <img src="ams_side_logo.png" alt="Máquina Snackeando vista lateral" class="max-h-[300px] object-contain rounded-xl shadow-lg">
-                            </div>
-
-                            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between">
-                                <div>
-                                    <div class="text-xs text-slate-400">Retorno de Inversión Estimado</div>
-                                    <div class="text-lg font-black text-emerald-400 font-outfit">8 a 14 Meses</div>
+                            <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-700/90 group mb-5">
+                                <img src="entrepreneur_hospital.jpg" alt="Emprendedor recolectando ganancias y resurtinedo máquina Snackeando en hospital" class="w-full h-[320px] object-cover object-center group-hover:scale-105 transition-transform duration-500">
+                                
+                                <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between bg-slate-950/85 backdrop-blur-md px-3.5 py-2 rounded-xl border border-brand-gold/40 text-xs shadow-lg">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                        <span class="font-bold text-white">Ventas y Cobro Inmediato</span>
+                                    </div>
+                                    <span class="text-emerald-400 font-extrabold text-[11px]">Depósitos &lt; 24 hrs</span>
                                 </div>
-                                <a href="#contacto" class="text-xs font-bold text-brand-orange hover:underline">Cotizar Paquete &rarr;</a>
                             </div>
-                        </div>
-                    </div>
 
-                </div>
-            </div>
-
-            <!-- TAB 3: PARA ESPACIOS Y LOCACIONES -->
-            <div id="tab-espacios" class="tab-content">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                    
-                    <div class="lg:col-span-6 space-y-6">
-                        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-orange/15 border border-brand-orange/30 text-brand-orangeLight text-xs font-bold uppercase">
-                            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
-                            Monetiza tus Metros Cuadrados Ociosos
-                        </div>
-
-                        <h3 class="font-outfit text-3xl sm:text-4xl font-bold text-white leading-tight">
-                            ¿TIENES UN ESPACIO CON ALTO FLUJO? <br>
-                            <span class="gradient-text-gold">CONVIÉRTELO EN RENTA MENSUAL</span>
-                        </h3>
-
-                        <p class="text-slate-300 text-base leading-relaxed">
-                            Si eres dueño o administrador de un hospital, universidad, gimnasio, plaza comercial, fábrica o edificio residencial, instalamos máquinas Snackeando y te pagamos una renta mensual o comisión por venta.
-                        </p>
-
-                        <div class="space-y-3">
-                            <div class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                                <i data-lucide="check" class="w-5 h-5 text-emerald-400 shrink-0"></i>
-                                <span class="text-sm text-slate-200">Solo necesitamos 1m² y una toma eléctrica estándar 110V.</span>
-                            </div>
-                            <div class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                                <i data-lucide="check" class="w-5 h-5 text-emerald-400 shrink-0"></i>
-                                <span class="text-sm text-slate-200">Mejora los servicios y la experiencia de tus visitantes o inquilinos.</span>
-                            </div>
-                            <div class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                                <i data-lucide="check" class="w-5 h-5 text-emerald-400 shrink-0"></i>
-                                <span class="text-sm text-slate-200">Ingresos adicionales garantizados sin inversión ni trabajo operativo para ti.</span>
-                            </div>
-                        </div>
-
-                        <div class="pt-2">
-                            <a href="#contacto" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-gold text-white font-bold text-base shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40 transition-all">
-                                <span>Ofrecer mi Ubicación para Vending</span>
-                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Right Column Machine Front Photo -->
-                    <div class="lg:col-span-6">
-                        <div class="relative rounded-3xl overflow-hidden glass-panel border border-slate-700/80 p-6 sm:p-8">
-                            <div class="relative rounded-2xl overflow-hidden bg-slate-950 flex justify-center p-4">
-                                <img src="ams_front.png" alt="Máquina Snackeando frontal" class="max-h-[340px] object-contain rounded-xl shadow-lg">
+                            <div class="grid grid-cols-2 gap-3 text-left">
+                                <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                                    <div class="text-brand-gold font-bold text-sm">Resurtido Rápido</div>
+                                    <div class="text-xs text-slate-400 mt-0.5">Solo 2 a 3 horas a la semana para reponer stock.</div>
+                                </div>
+                                <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                                    <div class="text-emerald-400 font-bold text-sm">Retorno Acelerado</div>
+                                    <div class="text-xs text-slate-400 mt-0.5">Flujo de efectivo diario sin empleados.</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -965,8 +924,8 @@
                                 <span id="resCostoProd" class="font-bold text-slate-200">-$31,320 MXN</span>
                             </div>
                             <div class="flex justify-between text-slate-300">
-                                <span>Renta / Espacio Estimado:</span>
-                                <span id="resRenta" class="font-bold text-slate-200">-$3,000 MXN</span>
+                                <span>Renta de Máquinas ($2,000 c/u):</span>
+                                <span id="resRenta" class="font-bold text-slate-200">-$4,000 MXN</span>
                             </div>
                         </div>
 
@@ -1442,19 +1401,19 @@
             const totalMonthlyUnits = machines * dailySales * 30;
             const monthlyRevenue = totalMonthlyUnits * ticket;
             
-            // Average cost of goods: 58% (Gross Margin = 42%)
+            // Average cost of goods: 58% (Gross Margin = 42% con compra mayorista Snackeando)
             const productCost = monthlyRevenue * 0.58;
             
-            // Estimated location rent/space share per machine
-            const spaceRent = machines * 1500;
+            // Machine rental fee: $2,000 MXN per machine per month
+            const machineRent = machines * 2000;
             
             // Net profit
-            const netProfit = monthlyRevenue - productCost - spaceRent;
+            const netProfit = monthlyRevenue - productCost - machineRent;
 
             // Update UI
             document.getElementById('resVentaBruta').textContent = '$' + monthlyRevenue.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' MXN';
             document.getElementById('resCostoProd').textContent = '-$' + productCost.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' MXN';
-            document.getElementById('resRenta').textContent = '-$' + spaceRent.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' MXN';
+            document.getElementById('resRenta').textContent = '-$' + machineRent.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' MXN';
             document.getElementById('resGananciaNeta').textContent = '$' + (netProfit > 0 ? netProfit : 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' MXN';
         }
 
