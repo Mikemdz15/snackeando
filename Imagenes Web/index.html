@@ -832,7 +832,7 @@
                     CALCULADORA DE INGRESOS - MODELO EMPRENDEDOR
                 </h2>
                 <p class="text-slate-300 text-base sm:text-lg mt-3">
-                    Simula tu escenario real de negocio: con un precio de venta promedio de <strong class="text-brand-gold font-bold">$10.00 MXN</strong> por producto y un margen de ganancia del <strong class="text-emerald-400 font-bold">25% al 30%</strong> sobre ventas totales, calcula tus ganancias netas operando 30 días al mes.
+                    Simula tu escenario real de negocio: con un precio de venta promedio de <strong class="text-brand-gold font-bold">$12.00 MXN</strong> por producto y un margen de ganancia del <strong class="text-emerald-400 font-bold">25% al 30%</strong> sobre ventas totales, calcula tus ganancias netas operando 30 días al mes.
                 </p>
             </div>
 
@@ -875,18 +875,18 @@
                             </div>
                         </div>
 
-                        <!-- Slider 3: Average Ticket Price (Default $10.00 MXN) -->
+                        <!-- Slider 3: Average Ticket Price (Default $12.00 MXN) -->
                         <div>
                             <div class="flex justify-between items-center mb-2">
                                 <label for="rangeTicket" class="text-sm font-bold text-slate-200">Precio Promedio de Venta (PVP):</label>
-                                <span id="valTicket" class="font-outfit font-black text-xl text-emerald-400">$10.00 MXN</span>
+                                <span id="valTicket" class="font-outfit font-black text-xl text-emerald-400">$12.00 MXN</span>
                             </div>
-                            <input type="range" id="rangeTicket" min="8" max="25" value="10" step="1" 
+                            <input type="range" id="rangeTicket" min="8" max="25" value="12" step="1" 
                                    class="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
                                    oninput="calculateROI()">
                             <div class="flex justify-between text-[11px] text-slate-500 mt-1 font-medium">
                                 <span>$8 MXN</span>
-                                <span>$10 MXN (Recomendado)</span>
+                                <span>$12 MXN (Recomendado)</span>
                                 <span>$25 MXN</span>
                             </div>
                         </div>
@@ -922,17 +922,17 @@
 
                         <div>
                             <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Ventas Brutas Mensuales</span>
-                            <div id="resVentaBruta" class="text-3xl font-black text-white font-outfit mt-0.5">$48,000 MXN</div>
+                            <div id="resVentaBruta" class="text-3xl font-black text-white font-outfit mt-0.5">$57,600 MXN</div>
                         </div>
 
                         <div class="py-3 border-y border-slate-800/80 space-y-2 text-sm text-left">
                             <div class="flex justify-between text-slate-300">
                                 <span>Costo de Producto:</span>
-                                <span id="resCostoProd" class="font-bold text-slate-200">-$34,560 MXN</span>
+                                <span id="resCostoProd" class="font-bold text-slate-200">-$41,472 MXN</span>
                             </div>
                             <div class="flex justify-between text-slate-300">
                                 <span>Margen Bruto Generado:</span>
-                                <span id="resMargenBruto" class="font-bold text-brand-goldLight">+$13,440 MXN</span>
+                                <span id="resMargenBruto" class="font-bold text-brand-goldLight">+$16,128 MXN</span>
                             </div>
                             <div class="flex justify-between text-slate-300">
                                 <span>Renta de Máquinas ($2,000 c/u):</span>
@@ -942,7 +942,7 @@
 
                         <div class="pt-1">
                             <span class="text-xs text-emerald-400 font-extrabold uppercase tracking-wider">Ganancia Neta Estimada / Mes</span>
-                            <div id="resGananciaNeta" class="text-3xl sm:text-4xl font-black text-emerald-400 font-outfit mt-1">$9,440 MXN</div>
+                            <div id="resGananciaNeta" class="text-3xl sm:text-4xl font-black text-emerald-400 font-outfit mt-1">$12,128 MXN</div>
                             <span class="text-[11px] text-slate-400 block mt-1">Directo a tu bolsillo y cuenta bancaria</span>
                         </div>
 
@@ -1397,11 +1397,11 @@
             }
         }
 
-        // ROI Calculator Logic (Modelo Emprendedor con 25%-30% de margen y $10 PVP promedio)
+        // ROI Calculator Logic (Modelo Emprendedor con 25%-30% de margen y $12 PVP promedio)
         function calculateROI() {
             const machines = parseInt(document.getElementById('rangeMachines').value) || 2;
             const dailySales = parseInt(document.getElementById('rangeDailySales').value) || 80;
-            const ticket = parseFloat(document.getElementById('rangeTicket').value) || 10;
+            const ticket = parseFloat(document.getElementById('rangeTicket').value) || 12;
             const marginPct = (parseFloat(document.getElementById('rangeMargin').value) || 28) / 100;
 
             // Labels
