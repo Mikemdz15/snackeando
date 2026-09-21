@@ -1209,7 +1209,21 @@
                 </div>
             </div>
 
-            <!-- Card 3: Volume -->
+            <!-- Card 3: Machine Rental Income -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-title">Renta de Máquinas</span>
+                    <i data-lucide="building" class="w-4 h-4 metric-icon"></i>
+                </div>
+                <div>
+                    <div class="metric-value" id="kpi-rental">$13,688</div>
+                    <div class="metric-footer">
+                        <span id="kpi-rental-detail">2 máquinas activas ($6,844 c/u)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Volume -->
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-title">Volumen de Venta</span>
@@ -1223,7 +1237,7 @@
                 </div>
             </div>
 
-            <!-- Card 4: Average Unit Price -->
+            <!-- Card 5: Average Unit Price -->
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-title">Precio Promedio Unitario</span>
@@ -1423,6 +1437,85 @@
             
             <div id="catalog-footnote" style="margin-top: 12px; font-size: 0.72rem; color: #6b7280; font-style: italic;">
                 El catálogo muestra todos los productos con ventas registradas en el periodo.
+            </div>
+        </div>
+
+        <!-- ESTADO DE RESULTADOS SECTION -->
+        <div class="analysis-card" id="estado-de-resultados" style="grid-column: span 2; margin-top: 30px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; box-sizing: border-box; backdrop-filter: blur(12px);">
+            <div style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 16px; margin-bottom: 24px;">
+                <span class="analysis-tag" style="color: var(--accent-bronze);">Estado Financiero Consolidado</span>
+                <h3 class="analysis-heading" style="margin: 5px 0 0 0; font-family: 'Playfair Display', serif; font-size: 1.6rem; color: #fff;">Estado de Resultados (Ventas, Costos y Renta de Máquinas)</h3>
+                <p style="color: #9ca3af; font-size: 0.85rem; line-height: 1.5; margin-top: 8px; max-width: 900px;">
+                    Este Estado de Resultados integra la facturación por <strong>Ventas de Productos</strong> junto con el ingreso reconocido por <strong>Renta de Máquinas</strong> ($6,844.00 c/u) para determinar la <strong>Utilidad Bruta Consolidada</strong> y el <strong>Margen Bruto Real</strong> del negocio durante el período operativo.
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: start;">
+                <!-- Financial Breakdown Table / Cards -->
+                <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 20px;">
+                    <h4 style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-bronze); margin-bottom: 16px; font-weight: 700;">Desglose Financiero del Estado de Resultados</h4>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.85rem;">
+                        <!-- Line 1: Product Sales -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                            <span style="color: #d1d5db; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="shopping-bag" style="width: 14px; height: 14px; color: #c5a880;"></i>
+                                Ventas de Productos (Vending)
+                            </span>
+                            <span id="pnl-prod-sales" style="font-weight: 600; color: #fff;">$0</span>
+                        </div>
+
+                        <!-- Line 2: Machine Rental -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                            <span style="color: #d1d5db; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="building" style="width: 14px; height: 14px; color: #3b82f6;"></i>
+                                Otro Ingreso: Renta de Máquinas
+                            </span>
+                            <span id="pnl-rental-income" style="font-weight: 600; color: #3b82f6;">$0</span>
+                        </div>
+
+                        <!-- Line 3: Total Revenue -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 6px; margin: 4px 0;">
+                            <span style="color: #10b981; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="trending-up" style="width: 16px; height: 16px;"></i>
+                                Ingresos Totales Operativos
+                            </span>
+                            <span id="pnl-total-revenue" style="font-weight: 800; color: #10b981; font-size: 1rem;">$0</span>
+                        </div>
+
+                        <!-- Line 4: Cost of Sales -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                            <span style="color: #d1d5db; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="arrow-down-right" style="width: 14px; height: 14px; color: #ef4444;"></i>
+                                (-) Costo de Venta de Productos (COGS)
+                            </span>
+                            <span id="pnl-cost-of-sales" style="font-weight: 600; color: #ef4444;">$0</span>
+                        </div>
+
+                        <!-- Line 5: Gross Profit -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(197, 168, 128, 0.12); border: 1px solid rgba(197, 168, 128, 0.3); border-radius: 6px; margin-top: 6px;">
+                            <span style="color: #fff; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="award" style="width: 18px; height: 18px; color: #c5a880;"></i>
+                                Utilidad Bruta Consolidada
+                            </span>
+                            <span id="pnl-gross-profit" style="font-weight: 800; color: #c5a880; font-size: 1.15rem;">$0</span>
+                        </div>
+
+                        <!-- Line 6: Gross Margin % -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: #9ca3af; margin-top: 4px; padding: 0 4px;">
+                            <span>Margen Bruto Consolidado (Utilidad / Ingresos Totales):</span>
+                            <span id="pnl-gross-margin-pct" style="font-weight: 700; color: #10b981; font-size: 0.9rem;">0.0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Chart Container -->
+                <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 20px; height: 320px; display: flex; flex-direction: column;">
+                    <h4 style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-bronze); margin-bottom: 12px; font-weight: 700;">Estructura del Estado de Resultados</h4>
+                    <div style="flex: 1; position: relative; min-height: 240px;">
+                        <canvas id="incomeStatementChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -2327,6 +2420,21 @@
                 marginTitleEl.innerText = `Margen Utilidad Real (${marginPct.toFixed(1)}%)`;
             }
 
+            // Calculate active machine count and dynamic Machine Rental Income ($6,844 c/u)
+            const selectedMachs = window.SELECTED_MACHINES || [];
+            let activeMachineCount = selectedMachs.length;
+            if (activeMachineCount === 0) {
+                activeMachineCount = data.machines ? Object.keys(data.machines).length : 2;
+            }
+            const rentalPerMachine = 6844; // $5,900 + IVA
+            const totalRentalIncome = activeMachineCount * rentalPerMachine;
+
+            const elRental = document.getElementById('kpi-rental');
+            if (elRental) elRental.innerHTML = `$${Math.round(totalRentalIncome).toLocaleString('es-MX')}`;
+
+            const elRentalDetail = document.getElementById('kpi-rental-detail');
+            if (elRentalDetail) elRentalDetail.innerHTML = `${activeMachineCount} máquina${activeMachineCount > 1 ? 's' : ''} activa${activeMachineCount > 1 ? 's' : ''} ($${rentalPerMachine.toLocaleString('es-MX')} c/u)`;
+
             const avgTicket = data.summary.totalSales / data.summary.totalUnits;
             document.getElementById('kpi-ticket').innerHTML = `$${avgTicket.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
@@ -2437,6 +2545,113 @@
 
             // 7. Initialize All Products Catalog
             renderCatalogSection(data);
+
+            // 8. Initialize Income Statement (Estado de Resultados)
+            renderIncomeStatement(data);
+        }
+
+        // Render Income Statement (Estado de Resultados: Ventas, Costos, Renta de Máquinas y Utilidad Bruta)
+        let incomeStatementChartInst = null;
+
+        function renderIncomeStatement(data) {
+            // Calculate active machine count based on filters or total discovered machines
+            const selectedMachs = window.SELECTED_MACHINES || [];
+            let activeMachineCount = selectedMachs.length;
+            if (activeMachineCount === 0) {
+                activeMachineCount = data.machines ? Object.keys(data.machines).length : 2;
+            }
+            const rentalPerMachine = 6844; // $5,900 + IVA ($6,844.00)
+            const rentalIncome = activeMachineCount * rentalPerMachine;
+
+            const prodSales = Math.round(data.summary.totalSales);
+            const totalRevenue = prodSales + rentalIncome;
+            const costOfSales = Math.round(data.summary.totalCost !== undefined ? data.summary.totalCost : (prodSales - (data.summary.totalProfit || 0)));
+            const grossProfit = totalRevenue - costOfSales;
+            const grossMarginPct = totalRevenue > 0 ? (grossProfit / totalRevenue * 100) : 0;
+
+            // Populate P&L breakdown elements
+            const elProdSales = document.getElementById('pnl-prod-sales');
+            const elRental = document.getElementById('pnl-rental-income');
+            const elTotRev = document.getElementById('pnl-total-revenue');
+            const elCost = document.getElementById('pnl-cost-of-sales');
+            const elGrossProfit = document.getElementById('pnl-gross-profit');
+            const elGrossMargin = document.getElementById('pnl-gross-margin-pct');
+
+            if (elProdSales) elProdSales.innerHTML = `$${prodSales.toLocaleString('es-MX')}`;
+            if (elRental) elRental.innerHTML = `$${Math.round(rentalIncome).toLocaleString('es-MX')} <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">(${activeMachineCount} maq. @ $6,844)</span>`;
+            if (elTotRev) elTotRev.innerHTML = `$${Math.round(totalRevenue).toLocaleString('es-MX')}`;
+            if (elCost) elCost.innerHTML = `$${costOfSales.toLocaleString('es-MX')}`;
+            if (elGrossProfit) elGrossProfit.innerHTML = `$${Math.round(grossProfit).toLocaleString('es-MX')}`;
+            if (elGrossMargin) elGrossMargin.innerHTML = `${grossMarginPct.toFixed(1)}%`;
+
+            // Render Income Statement Chart
+            const canvas = document.getElementById('incomeStatementChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            if (incomeStatementChartInst) {
+                incomeStatementChartInst.destroy();
+            }
+
+            incomeStatementChartInst = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Ventas Productos', 'Renta Máquinas', 'Ingresos Totales', 'Costo de Ventas', 'Utilidad Bruta'],
+                    datasets: [{
+                        label: 'Monto ($ MXN)',
+                        data: [prodSales, rentalIncome, totalRevenue, costOfSales, grossProfit],
+                        backgroundColor: [
+                            '#c5a880', // Ventas Productos (Bronze)
+                            '#3b82f6', // Renta Máquinas (Blue)
+                            '#10b981', // Ingresos Totales (Emerald)
+                            '#ef4444', // Costo de Ventas (Red)
+                            '#8b5cf6'  // Utilidad Bruta (Violet)
+                        ],
+                        borderRadius: 6,
+                        borderWidth: 1,
+                        borderColor: 'rgba(255, 255, 255, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const val = context.raw || 0;
+                                    const pct = totalRevenue > 0 ? ((val / totalRevenue) * 100).toFixed(1) : 0;
+                                    return ` Monto: $${Math.round(val).toLocaleString('es-MX')} (${pct}% de Ingresos Totales)`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: '#9ca3af',
+                                font: { family: 'Inter', size: 10 }
+                            }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: {
+                                color: '#9ca3af',
+                                font: { family: 'Inter', size: 10 },
+                                callback: function(value) {
+                                    return '$' + (value / 1000).toFixed(0) + 'k';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
         }
 
         // Render Dynamic Strategic Narratives based on live sheet data
