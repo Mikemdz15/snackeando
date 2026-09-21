@@ -1198,13 +1198,13 @@
             <!-- Card 2: Profit -->
             <div class="metric-card">
                 <div class="metric-header">
-                    <span class="metric-title">Margen Utilidad (12%)</span>
+                    <span class="metric-title" id="kpi-profit-margin-title">Margen Utilidad Real (10.1%)</span>
                     <i data-lucide="percent" class="w-4 h-4 metric-icon"></i>
                 </div>
                 <div>
-                    <div class="metric-value" id="kpi-profit">$1,907</div>
+                    <div class="metric-value" id="kpi-profit">$14,490</div>
                     <div class="metric-footer">
-                        <span id="kpi-cost">Costo de venta: $13,983</span>
+                        <span id="kpi-cost">Costo de venta: $128,390</span>
                     </div>
                 </div>
             </div>
@@ -2009,33 +2009,58 @@
                 return dateStr && dateStr.startsWith(monthYear);
             });
 
-            // Recalculate Products stats
+            // Recalculate Products stats including Cost of Sales & Net Profit
             const productUnits = {};
             const productRevenue = {};
+            const productCost = {};
             const productSKU = {};
 
             filteredProds.forEach(row => {
+                if (row.length < 7 || !row[0]) return;
                 const sku = row[3];
                 const prodName = row[4];
                 const units = parseInt(row[5]) || 0;
                 const amount = parseFloat(row[6].replace(/[$,]/g, '')) || 0.0;
+                const unitCost = row.length > 7 ? (parseFloat(row[7].replace(/[$,]/g, '')) || 0.0) : 0.0;
+                const totalCost = row.length > 8 ? (parseFloat(row[8].replace(/[$,]/g, '')) || (units * unitCost)) : (units * unitCost);
 
                 if (!prodName || prodName === "None" || prodName === "null" || prodName === "") return;
 
                 productUnits[prodName] = (productUnits[prodName] || 0) + units;
                 productRevenue[prodName] = (productRevenue[prodName] || 0.0) + amount;
+                productCost[prodName] = (productCost[prodName] || 0.0) + totalCost;
                 productSKU[prodName] = sku;
             });
 
             const prodList = [];
+            let totalProdRevSum = 0;
+            let totalProdCostSum = 0;
+
             for (const name in productUnits) {
+                const u = productUnits[name];
+                const rev = productRevenue[name];
+                const cst = productCost[name];
+                const pft = rev - cst;
+                const margin = rev > 0 ? (pft / rev) : 0.0;
+                const uCost = u > 0 ? (cst / u) : 0.0;
+
+                totalProdRevSum += rev;
+                totalProdCostSum += cst;
+
                 prodList.push({
                     sku: productSKU[name],
                     name: name,
-                    units: productUnits[name],
-                    revenue: productRevenue[name]
+                    units: u,
+                    revenue: rev,
+                    cost: cst,
+                    unitCost: uCost,
+                    profit: pft,
+                    profitMargin: margin
                 });
             }
+
+            const totalProdProfit = totalProdRevSum - totalProdCostSum;
+            const overallProfitMargin = totalProdRevSum > 0 ? (totalProdProfit / totalProdRevSum) : 0.0;
 
             const topProducts = [...prodList].sort((a, b) => b.revenue - a.revenue).slice(0, 10);
             const bottomProducts = prodList.filter(x => x.units > 0).sort((a, b) => a.units - b.units).slice(0, 5);
@@ -2143,8 +2168,10 @@
                     totalUnits: totalUnits,
                     cashSales: cashSales,
                     cardSales: cardSales,
-                    profitMargin: 0.12,
-                    estimatedProfit: totalSales * 0.12
+                    totalCost: totalProdCostSum,
+                    totalProfit: totalProdProfit,
+                    profitMargin: overallProfitMargin,
+                    estimatedProfit: totalProdProfit
                 },
                 machines: machines,
                 dailySales: dailySalesList,
@@ -2227,16 +2254,14 @@
                 return newDay;
             });
 
-            // For static fallback, combine top and bottom lists if any to form allProducts
-            const staticProds = [...(SNACKEANDO_RAW_DATA.topProducts || [])];
-            const seen = new Set();
-            const allStaticProds = [];
-            staticProds.forEach(p => {
-                if (!seen.has(p.name)) {
-                    seen.add(p.name);
-                    allStaticProds.push(p);
-                }
-            });
+            const staticSummary = SNACKEANDO_RAW_DATA.summary || {};
+            const marginPct = staticSummary.profitMargin !== undefined ? staticSummary.profitMargin : 0.1014;
+            const totProfit = staticSummary.totalProfit !== undefined ? staticSummary.totalProfit : (totalSales * marginPct);
+            const totCost = staticSummary.totalCost !== undefined ? staticSummary.totalCost : (totalSales - totProfit);
+
+            const allStaticProds = (SNACKEANDO_RAW_DATA.allProducts && SNACKEANDO_RAW_DATA.allProducts.length > 0)
+                ? SNACKEANDO_RAW_DATA.allProducts
+                : [...(SNACKEANDO_RAW_DATA.topProducts || [])];
 
             const finalData = {
                 dateRange: {
@@ -2248,8 +2273,10 @@
                     totalUnits: totalUnits,
                     cashSales: cashSales,
                     cardSales: cardSales,
-                    profitMargin: 0.12,
-                    estimatedProfit: totalSales * 0.12
+                    totalCost: totCost,
+                    totalProfit: totProfit,
+                    profitMargin: marginPct,
+                    estimatedProfit: totProfit
                 },
                 machines: machines,
                 dailySales: adjustedDaily,
@@ -2286,12 +2313,19 @@
             }
 
             // 1. Load KPI cards
-            document.getElementById('kpi-sales').innerHTML = `$${Math.round(data.summary.totalSales).toLocaleString('es-MX')}`;
-            document.getElementById('kpi-profit').innerHTML = `$${Math.round(data.summary.estimatedProfit).toLocaleString('es-MX')}`;
+            const totalSales = Math.round(data.summary.totalSales);
+            const totalProfit = Math.round(data.summary.totalProfit !== undefined ? data.summary.totalProfit : (data.summary.estimatedProfit || 0));
+            const totalCost = Math.round(data.summary.totalCost !== undefined ? data.summary.totalCost : (totalSales - totalProfit));
+            const marginPct = data.summary.profitMargin !== undefined ? (data.summary.profitMargin * 100) : (totalSales > 0 ? (totalProfit / totalSales * 100) : 0);
+
+            document.getElementById('kpi-sales').innerHTML = `$${totalSales.toLocaleString('es-MX')}`;
+            document.getElementById('kpi-profit').innerHTML = `$${totalProfit.toLocaleString('es-MX')}`;
             document.getElementById('kpi-units').innerHTML = data.summary.totalUnits.toLocaleString('es-MX');
-            
-            const costVal = data.summary.totalSales - data.summary.estimatedProfit;
-            document.getElementById('kpi-cost').innerHTML = `Costo de venta: $${Math.round(costVal).toLocaleString('es-MX')}`;
+            document.getElementById('kpi-cost').innerHTML = `Costo de venta: $${totalCost.toLocaleString('es-MX')}`;
+            const marginTitleEl = document.getElementById('kpi-profit-margin-title');
+            if (marginTitleEl) {
+                marginTitleEl.innerText = `Margen Utilidad Real (${marginPct.toFixed(1)}%)`;
+            }
 
             const avgTicket = data.summary.totalSales / data.summary.totalUnits;
             document.getElementById('kpi-ticket').innerHTML = `$${avgTicket.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
@@ -2409,11 +2443,12 @@
         function renderNarrative(data) {
             const numDays = data.dailySales.length || 12;
             const totalSales = Math.round(data.summary.totalSales);
-            const profit = Math.round(data.summary.estimatedProfit);
-            const cost = totalSales - profit;
+            const profit = Math.round(data.summary.totalProfit !== undefined ? data.summary.totalProfit : (data.summary.estimatedProfit || 0));
+            const cost = Math.round(data.summary.totalCost !== undefined ? data.summary.totalCost : (totalSales - profit));
+            const marginPctText = (data.summary.profitMargin !== undefined ? (data.summary.profitMargin * 100) : (totalSales > 0 ? profit / totalSales * 100 : 0)).toFixed(1);
 
-            const ib09Sales = Math.round(data.machines.IB0009.totalSales);
-            const ib10Sales = Math.round(data.machines.IB0010.totalSales);
+            const ib09Sales = Math.round(data.machines.IB0009 ? data.machines.IB0009.totalSales : 0);
+            const ib10Sales = Math.round(data.machines.IB0010 ? data.machines.IB0010.totalSales : 0);
             const ib09Pct = totalSales > 0 ? ((ib09Sales / totalSales) * 100).toFixed(1) : "0.0";
             const ib10Pct = totalSales > 0 ? ((ib10Sales / totalSales) * 100).toFixed(1) : "0.0";
 
@@ -2448,8 +2483,7 @@
             // Render Financial Behavior
             const financialText = `
                 El análisis de los primeros <strong>${numDays} días</strong> de operaciones de Snackeando demuestra un arranque con facturación total de <strong>$${totalSales.toLocaleString('es-MX')} MXN</strong>. 
-                Alineando las ventas con un margen del <strong>12%</strong>, el negocio genera una utilidad neta estimada de <strong>$${profit.toLocaleString('es-MX')} MXN</strong> sobre costos unitarios 
-                de adquisición y logística acumulados por <strong>$${cost.toLocaleString('es-MX')} MXN</strong>. 
+                Con un costo de venta real acumulado de <strong>$${cost.toLocaleString('es-MX')} MXN</strong>, el negocio genera una utilidad neta real de <strong>$${profit.toLocaleString('es-MX')} MXN</strong>, lo que representa un margen de utilidad real del <strong>${marginPctText}%</strong>. 
                 <br><br>
                 La máquina de mayor facturación en el período es la <strong>${topMachine}</strong>, que genera <strong>$${topMachineSales.toLocaleString('es-MX')} MXN</strong> (${topMachinePct}% de la facturación global) en comparación 
                 con los <strong>$${bottomMachineSales.toLocaleString('es-MX')} MXN</strong> (${bottomMachinePct}%) de la máquina <strong>${bottomMachine}</strong>. Esta diferencia en volumen es impulsada por la mayor densidad de usuarios y 
@@ -2466,8 +2500,8 @@
             const selectedMachs = window.SELECTED_MACHINES || [];
             const machineCount = selectedMachs.length || 1;
             
-            const validProds = data.allProducts.filter(p => {
-                const capPerMachine = window.SKU_CAPACITY[p.sku] || 0;
+            const validProds = (data.allProducts || []).filter(p => {
+                const capPerMachine = getSkuCapacity(p.sku, p.name);
                 return capPerMachine > 0;
             });
             
@@ -2476,7 +2510,7 @@
             
             if (validProds.length > 0) {
                 const sortedByRotation = [...validProds].map(p => {
-                    const capPerMachine = window.SKU_CAPACITY[p.sku] || 0;
+                    const capPerMachine = getSkuCapacity(p.sku, p.name);
                     const capTotal = capPerMachine * machineCount;
                     const avgDaily = p.units / numDays;
                     const rotPct = capTotal > 0 ? (avgDaily / capTotal) * 100 : 0;
@@ -2948,36 +2982,65 @@
         // CATALOGO COMPLETO DE PRODUCTOS LOGIC
         // ==========================================
         window.SKU_CAPACITY = {
-            "VCOCAORI600": 48,
-            "VCOCAORI335": 48,
-            "DUF00093": 24,
-            "5000000402": 24,
-            "5000000182": 24,
-            "VDORNACH61": 10,
-            "AB00009": 12,
-            "VCONM&M37.5": 24,
-            "VGALTRIKI51": 18,
-            "VCHETOS46": 10,
-            "DUC00032": 18,
-            "VGALPRIN42": 18,
-            "DUR00053": 24,
-            "VSABADOB57": 10,
-            "VRANCHER40": 10,
-            "VSABORIG42": 10,
-            "DUC00080": 18,
-            "VGALROCK44": 15,
-            "DUM00039": 24,
-            "VOREOVAI63": 18,
-            "DUH00038": 24,
-            "AB00010": 8,
-            "VMAMUT30": 24,
-            "DUM00046": 24,
-            "VGALOREO63": 18,
-            "VGALPRIRE42": 18,
-            "DUM00051": 24,
-            "DURP0078": 15,
-            "DUM00034": 18
+            "VSABORIG42": 10, "SABORIG42": 10,
+            "VSABADOB57": 10, "SABADOB57": 10,
+            "VRANCHER40": 10, "RANCHER40": 10,
+            "VDORNACH61": 10, "DORNACH61": 10,
+            "VCHETOS46": 10,  "CHETOS46": 10,
+            "VAB00009": 12,   "AB00009": 12,
+            "VAB00010": 8,    "AB00010": 8,
+            "VDURP0078": 15,  "DURP0078": 15,
+            "VGALOREO63": 18, "GALOREO63": 18,
+            "VGALPRIRE42": 18, "GALPRIRE42": 18,
+            "VGALPRIN42": 18, "GALPRIN42": 18,
+            "VGALTRIKI51": 18, "GALTRIKI51": 18,
+            "VDUC00080": 18,  "DUC00080": 18,
+            "VDUC00081": 18,  "DUC00081": 18,
+            "VDUM00034": 18,  "DUM00034": 18,
+            "VOREOVAI63": 18, "OREOVAI63": 18, "VGALOREVAI63": 18,
+            "VGALROCK44": 15, "GALROCK44": 15,
+            "VDUM00046": 24,  "DUM00046": 24,
+            "VDUF00093": 24,  "DUF00093": 24,
+            "VDUF00092": 24,  "DUF00092": 24,
+            "VCONM&M37.5": 24, "CONM&M37.5": 24,
+            "VDUR00053": 24,  "DUR00053": 24,
+            "VDUH00038": 24,  "DUH00038": 24,
+            "VDUM00051": 24,  "DUM00051": 24,
+            "VDUM00039": 24,  "DUM00039": 24,
+            "V5000000182": 24, "5000000182": 24,
+            "V5000000402": 24, "5000000402": 24,
+            "VCOCAORI335": 48, "COCAORI335": 48,
+            "VCOCAORI600": 48, "COCAORI600": 48,
+            "VMAMUT30": 24,   "MAMUT30": 24,
+            "VDUC00032": 18,  "DUC00032": 18
         };
+
+        function getSkuCapacity(sku, name) {
+            if (!sku && !name) return 18;
+            const cleanSku = sku ? String(sku).trim().toUpperCase() : "";
+            if (cleanSku && window.SKU_CAPACITY[cleanSku] !== undefined) {
+                return window.SKU_CAPACITY[cleanSku];
+            }
+            if (cleanSku.startsWith('V') && window.SKU_CAPACITY[cleanSku.substring(1)] !== undefined) {
+                return window.SKU_CAPACITY[cleanSku.substring(1)];
+            }
+            if (cleanSku && !cleanSku.startsWith('V') && window.SKU_CAPACITY['V' + cleanSku] !== undefined) {
+                return window.SKU_CAPACITY['V' + cleanSku];
+            }
+            if (name) {
+                const lower = String(name).toLowerCase();
+                if (lower.includes('coca')) return 48;
+                if (lower.includes('boing')) return 24;
+                if (lower.includes('sabritas') || lower.includes('doritos') || lower.includes('rancheritos') || lower.includes('cheetos')) return 10;
+                if (lower.includes('maruchan')) {
+                    if (lower.includes('picante')) return 8;
+                    return 12;
+                }
+                if (lower.includes('paleta payaso') || lower.includes('rocko')) return 15;
+            }
+            return 18;
+        }
+
         window.CATALOG_SELECTED_PRODUCTS = null;
         window.CATALOG_SORT_COLUMN = "revenue";
         window.CATALOG_SORT_DIRECTION = "desc";
@@ -2996,6 +3059,9 @@
             { key: "pvp", label: "Precio de Venta<br/>Público Promedio", align: "right" },
             { key: "revenue", label: "Ingresos Totales<br/>($ MXN)", align: "right" },
             { key: "pctRevenue", label: "Participación de<br/>Ventas (%)", align: "right" },
+            { key: "cost", label: "Costo de Venta<br/>($ MXN)", align: "right" },
+            { key: "profit", label: "Utilidad Real<br/>($ MXN)", align: "right" },
+            { key: "profitMarginPct", label: "Margen Utilidad<br/>(%)", align: "right" },
             { key: "abcClass", label: "Clasificación ABC", align: "center" }
         ];
 
@@ -3164,7 +3230,7 @@
 
             const activeData = window.CURRENT_ACTIVE_DASHBOARD_DATA;
             if (!activeData || !activeData.allProducts || activeData.allProducts.length === 0) {
-                body.innerHTML = `<tr><td colspan="14" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">No hay productos con ventas en este periodo.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="17" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">No hay productos con ventas en este periodo.</td></tr>`;
                 return;
             }
 
@@ -3197,13 +3263,16 @@
 
             // Map and calculate all stats first to enable sorting on calculated columns
             const enriched = filtered.map(item => {
-                const capPerMachine = window.SKU_CAPACITY[item.sku] || 0;
+                const capPerMachine = getSkuCapacity(item.sku, item.name);
                 const capTotal = capPerMachine * machineCount;
                 const avgDaily = item.units / numDays;
                 const pvp = item.units > 0 ? (item.revenue / item.units) : 0;
                 const pctRevenue = activeData.summary.totalSales > 0 ? (item.revenue / activeData.summary.totalSales * 100) : 0;
                 const rotationDailyPct = capTotal > 0 ? (avgDaily / capTotal * 100) : 0;
-                const daysOfRotation = avgDaily > 0 ? (capTotal / avgDaily) : 0; // use 0 as fallback to prevent Infinity issues in sorting
+                const daysOfRotation = avgDaily > 0 ? (capTotal / avgDaily) : 0;
+                const cost = item.cost !== undefined ? item.cost : (item.units * (item.unitCost || 0));
+                const profit = item.profit !== undefined ? item.profit : (item.revenue - cost);
+                const profitMarginPct = item.revenue > 0 ? (profit / item.revenue * 100) : 0;
 
                 return {
                     ...item,
@@ -3213,7 +3282,10 @@
                     pvp,
                     pctRevenue,
                     rotationDailyPct,
-                    daysOfRotation
+                    daysOfRotation,
+                    cost,
+                    profit,
+                    profitMarginPct
                 };
             });
 
@@ -3262,7 +3334,7 @@
             });
 
             if (enriched.length === 0) {
-                body.innerHTML = `<tr><td colspan="14" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">Ningún producto coincide con los filtros.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="17" style="text-align: center; color: #4b5563; padding: 20px; font-style: italic;">Ningún producto coincide con los filtros.</td></tr>`;
                 return;
             }
 
@@ -3280,14 +3352,15 @@
                 }
 
                 const daysLabel = item.avgDaily > 0 ? `${item.daysOfRotation.toFixed(1)} d` : "N/A";
+                const marginColor = item.profitMarginPct >= 10 ? '#10b981' : (item.profitMarginPct >= 5 ? '#f59e0b' : '#ef4444');
 
                 tr.innerHTML = `
                     <td style="padding: 10px 12px; color: #9ca3af; font-weight: 500;">#${item.revenueRank}</td>
                     <td style="padding: 10px 12px; color: #9ca3af; font-family: monospace; font-size: 0.8rem;">${item.sku || 'N/A'}</td>
                     <td style="padding: 10px 12px; color: #fff; font-weight: 500; text-align: left;">${item.name}</td>
-                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">${item.capPerMachine || 'N/A'}</td>
+                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">${item.capPerMachine}</td>
                     <td style="padding: 10px 12px; color: #9ca3af; text-align: right;">${machineCount}</td>
-                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">${item.capTotal || 'N/A'}</td>
+                    <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">${item.capTotal}</td>
                     <td style="padding: 10px 12px; color: #fff; font-weight: 600; text-align: right;">${item.units.toLocaleString('es-MX')}</td>
                     <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 600;">${item.avgDaily.toFixed(2)}</td>
                     <td style="padding: 10px 12px; color: #c5a880; text-align: right; font-weight: 600;">${Math.round(item.rotationDailyPct)}%</td>
@@ -3295,6 +3368,9 @@
                     <td style="padding: 10px 12px; color: #fff; text-align: right; font-weight: 500;">$${item.pvp.toFixed(2)}</td>
                     <td style="padding: 10px 12px; color: #c5a880; font-weight: 600; text-align: right;">$${Math.round(item.revenue).toLocaleString('es-MX')}</td>
                     <td style="padding: 10px 12px; color: #9ca3af; text-align: right; font-weight: 500;">${item.pctRevenue.toFixed(1)}%</td>
+                    <td style="padding: 10px 12px; color: #ef4444; font-weight: 500; text-align: right;">$${Math.round(item.cost).toLocaleString('es-MX')}</td>
+                    <td style="padding: 10px 12px; color: #10b981; font-weight: 600; text-align: right;">$${Math.round(item.profit).toLocaleString('es-MX')}</td>
+                    <td style="padding: 10px 12px; color: ${marginColor}; font-weight: 600; text-align: right;">${item.profitMarginPct.toFixed(1)}%</td>
                     <td style="padding: 10px 12px; text-align: center;">${abcBadge}</td>
                 `;
                 body.appendChild(tr);
@@ -3325,13 +3401,16 @@
 
             // Enriched list for sorting
             const enriched = filtered.map(item => {
-                const capPerMachine = window.SKU_CAPACITY[item.sku] || 0;
+                const capPerMachine = getSkuCapacity(item.sku, item.name);
                 const capTotal = capPerMachine * machineCount;
                 const avgDaily = item.units / numDays;
                 const pvp = item.units > 0 ? (item.revenue / item.units) : 0;
                 const pctRevenue = activeData.summary.totalSales > 0 ? (item.revenue / activeData.summary.totalSales * 100) : 0;
                 const rotationDailyPct = capTotal > 0 ? (avgDaily / capTotal * 100) : 0;
                 const daysOfRotation = avgDaily > 0 ? (capTotal / avgDaily) : 0;
+                const cost = item.cost !== undefined ? item.cost : (item.units * (item.unitCost || 0));
+                const profit = item.profit !== undefined ? item.profit : (item.revenue - cost);
+                const profitMarginPct = item.revenue > 0 ? (profit / item.revenue * 100) : 0;
 
                 return {
                     ...item,
@@ -3341,7 +3420,10 @@
                     pvp,
                     pctRevenue,
                     rotationDailyPct,
-                    daysOfRotation
+                    daysOfRotation,
+                    cost,
+                    profit,
+                    profitMarginPct
                 };
             });
 
@@ -3385,12 +3467,12 @@
             });
 
             // Build CSV rows with clarified descriptive headers
-            let csvContent = "Rango,SKU,Descripcion de Producto,Capacidad Almacenamiento por Maquina,Maquinas Activas,Capacidad Total Almacenamiento,Unidades Vendidas Totales,Promedio Diario Unidades de Venta,Rotacion Diaria (%),Dias de Rotacion del Inventario,Precio de Venta Publico Promedio,Ingresos Totales (MXN),Participacion de Ventas (%),Clasificacion ABC\n";
+            let csvContent = "Rango,SKU,Descripcion de Producto,Capacidad Almacenamiento por Maquina,Maquinas Activas,Capacidad Total Almacenamiento,Unidades Vendidas Totales,Promedio Diario Unidades de Venta,Rotacion Diaria (%),Dias de Rotacion del Inventario,Precio de Venta Publico Promedio,Ingresos Totales (MXN),Participacion de Ventas (%),Costo de Venta (MXN),Utilidad Real (MXN),Margen Utilidad (%),Clasificacion ABC\n";
 
             enriched.forEach(item => {
                 const daysVal = item.avgDaily > 0 ? item.daysOfRotation.toFixed(1) : "N/A";
                 const cleanName = item.name.replace(/"/g, '""');
-                csvContent += `${item.revenueRank},"${item.sku || 'N/A'}","${cleanName}",${item.capPerMachine},${machineCount},${item.capTotal},${item.units},${item.avgDaily.toFixed(2)},${Math.round(item.rotationDailyPct)}%,${daysVal},${item.pvp.toFixed(2)},${Math.round(item.revenue)},${item.pctRevenue.toFixed(2)}%,${item.abcClass}\n`;
+                csvContent += `${item.revenueRank},"${item.sku || 'N/A'}","${cleanName}",${item.capPerMachine},${machineCount},${item.capTotal},${item.units},${item.avgDaily.toFixed(2)},${Math.round(item.rotationDailyPct)}%,${daysVal},${item.pvp.toFixed(2)},${Math.round(item.revenue)},${item.pctRevenue.toFixed(2)}%,${Math.round(item.cost)},${Math.round(item.profit)},${item.profitMarginPct.toFixed(2)}%,${item.abcClass}\n`;
             });
 
             // Trigger download with UTF-8 BOM to prevent Excel accent display issues in Spanish

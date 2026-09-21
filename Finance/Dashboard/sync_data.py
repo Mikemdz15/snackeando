@@ -54,6 +54,7 @@ def main():
         
         product_units = {}
         product_revenue = {}
+        product_cost = {}
         product_sku = {}
         
         for row in data_prod:
@@ -63,21 +64,39 @@ def main():
             prod_name = row[4]
             units = int(row[5] or 0)
             amount = parse_float(row[6])
+            unit_cost = parse_float(row[7]) if len(row) > 7 else 0.0
+            total_cost = parse_float(row[8]) if len(row) > 8 else (units * unit_cost)
             
             if not prod_name or prod_name == "None" or prod_name == "null" or prod_name == "":
                 continue
                 
             product_units[prod_name] = product_units.get(prod_name, 0) + units
             product_revenue[prod_name] = product_revenue.get(prod_name, 0.0) + amount
+            product_cost[prod_name] = product_cost.get(prod_name, 0.0) + total_cost
             product_sku[prod_name] = sku
             
         prod_list = []
+        tot_prod_rev = sum(product_revenue.values())
+        tot_prod_cost = sum(product_cost.values())
+        tot_prod_profit = tot_prod_rev - tot_prod_cost
+        overall_profit_margin = (tot_prod_profit / tot_prod_rev) if tot_prod_rev > 0 else 0.0
+
         for name in product_units:
+            rev = product_revenue[name]
+            cst = product_cost[name]
+            pft = rev - cst
+            margin = (pft / rev) if rev > 0 else 0.0
+            u = product_units[name]
+            u_cost = (cst / u) if u > 0 else 0.0
             prod_list.append({
                 "sku": product_sku[name],
                 "name": name,
-                "units": product_units[name],
-                "revenue": product_revenue[name]
+                "units": u,
+                "revenue": rev,
+                "cost": cst,
+                "unitCost": u_cost,
+                "profit": pft,
+                "profitMargin": margin
             })
             
         # Sort top 10 and bottom 5
@@ -184,13 +203,16 @@ def main():
                 "totalUnits": total_units,
                 "cashSales": cash_sales,
                 "cardSales": card_sales,
-                "profitMargin": 0.12,
-                "estimatedProfit": total_sales * 0.12
+                "totalCost": tot_prod_cost,
+                "totalProfit": tot_prod_profit,
+                "profitMargin": overall_profit_margin,
+                "estimatedProfit": tot_prod_profit
             },
             "machines": machines,
             "dailySales": daily_sales_list,
             "topProducts": top_products,
-            "bottomProducts": bottom_products
+            "bottomProducts": bottom_products,
+            "allProducts": prod_list
         }
         
         output_js = f"""// Base de datos estática consolidada (DEX y Efectivo - Snackeando)
