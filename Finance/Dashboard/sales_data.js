@@ -663,12 +663,22 @@ const SNACKEANDO_RAW_DATA = {
         {
             "sku": "V5000000402",
             "name": "Boing Lata Mango 1/24/340",
-            "units": 711,
-            "revenue": 7335.0,
-            "cost": 9228.779999999997,
-            "unitCost": 12.979999999999995,
-            "profit": -1893.779999999997,
-            "profitMargin": -0.2581840490797542
+            "units": 923,
+            "revenue": 9679.0,
+            "cost": 11980.539999999997,
+            "unitCost": 12.979999999999997,
+            "profit": -2301.5399999999972,
+            "profitMargin": -0.23778696146296077
+        },
+        {
+            "sku": "V5000000182",
+            "name": "Boing Lata Guayaba 1/24/340",
+            "units": 642,
+            "revenue": 6726.0,
+            "cost": 8294.640000000007,
+            "unitCost": 12.92000000000001,
+            "profit": -1568.6400000000067,
+            "profitMargin": -0.23322033898305183
         },
         {
             "sku": "VDORNACH61",
@@ -681,16 +691,6 @@ const SNACKEANDO_RAW_DATA = {
             "profitMargin": 0.14148788927335537
         },
         {
-            "sku": "V5000000182",
-            "name": "Boing Lata Guayaba 1/24/340",
-            "units": 499,
-            "revenue": 5153.0,
-            "cost": 6447.080000000003,
-            "unitCost": 12.920000000000005,
-            "profit": -1294.0800000000027,
-            "profitMargin": -0.25113137977877015
-        },
-        {
             "sku": "VGALTRIKI51",
             "name": "Caja Triki Trakes 1/26/51g",
             "units": 410,
@@ -699,6 +699,16 @@ const SNACKEANDO_RAW_DATA = {
             "unitCost": 8.68804878048781,
             "profit": 537.8999999999978,
             "profitMargin": 0.131195121951219
+        },
+        {
+            "sku": "VSABADOB57",
+            "name": "Papas fritas Sabritas adobadas 57 g",
+            "units": 314,
+            "revenue": 3994.0,
+            "cost": 2696.82,
+            "unitCost": 8.58859872611465,
+            "profit": 1297.1799999999998,
+            "profitMargin": 0.3247821732598898
         },
         {
             "sku": "VGALPRIN42",
@@ -711,47 +721,17 @@ const SNACKEANDO_RAW_DATA = {
             "profitMargin": 0.09470824949698177
         },
         {
-            "sku": "VCHETOS46",
-            "name": "Botana Cheetos Torciditos Chico 46g",
-            "units": 258,
-            "revenue": 3870.0,
-            "cost": 2314.590000000001,
-            "unitCost": 8.971279069767446,
-            "profit": 1555.409999999999,
-            "profitMargin": 0.40191472868217026
-        },
-        {
-            "sku": "VAB00009",
-            "name": "SOPA INSTANTANEA MARUCHAN CAMARON HABANERO 64 GR",
-            "units": 264,
-            "revenue": 3698.0,
-            "cost": 3286.8299999999936,
-            "unitCost": 12.450113636363612,
-            "profit": 411.17000000000644,
-            "profitMargin": 0.11118712817739493
+            "sku": "VSABORIG42",
+            "name": "Pack Sabritas 1/5/10/40g",
+            "units": 246,
+            "revenue": 3936.0,
+            "cost": 3714.5999999999976,
+            "unitCost": 15.09999999999999,
+            "profit": 221.40000000000236,
+            "profitMargin": 0.0562500000000006
         }
     ],
     "bottomProducts": [
-        {
-            "sku": "VSABORIG42",
-            "name": "PACK SABRITAS 1/5/10/40G",
-            "units": 64,
-            "revenue": 1024.0,
-            "cost": 966.4000000000001,
-            "unitCost": 15.100000000000001,
-            "profit": 57.59999999999991,
-            "profitMargin": 0.05624999999999991
-        },
-        {
-            "sku": "VSABADOB57",
-            "name": "PAPAS FRITAS SABRITAS ADOBADAS 57 G",
-            "units": 65,
-            "revenue": 810.0,
-            "cost": 558.27,
-            "unitCost": 8.58876923076923,
-            "profit": 251.73000000000002,
-            "profitMargin": 0.3107777777777778
-        },
         {
             "sku": "VDURP0078",
             "name": "PALETA PAYASO CJ 10P 43.5G (NUEVO)",
@@ -763,46 +743,66 @@ const SNACKEANDO_RAW_DATA = {
             "profitMargin": 0.15299999999999947
         },
         {
-            "sku": "VDUC00081",
-            "name": "GOMITAS OSITOS 12X100G (NUEVO)",
-            "units": 90,
-            "revenue": 900.0,
-            "cost": 676.7399999999999,
-            "unitCost": 7.519333333333332,
-            "profit": 223.2600000000001,
-            "profitMargin": 0.2480666666666668
+            "sku": "VDUM00034",
+            "name": "SKW SSGT SAN GDA 20/12/24G MX",
+            "units": 110,
+            "revenue": 770.0,
+            "cost": 680.9000000000001,
+            "unitCost": 6.19,
+            "profit": 89.09999999999991,
+            "profitMargin": 0.1157142857142856
         },
         {
-            "sku": "VDUC00080",
-            "name": "GOMITAS MANGUITOS 12X96G (NUEVO)",
-            "units": 97,
-            "revenue": 970.0,
-            "cost": 729.15,
-            "unitCost": 7.5170103092783505,
-            "profit": 240.85000000000002,
-            "profitMargin": 0.24829896907216498
+            "sku": "VMAMUT30",
+            "name": "GMSMAMUT 30 GRS",
+            "units": 141,
+            "revenue": 856.0,
+            "cost": 705.0,
+            "unitCost": 5.0,
+            "profit": 151.0,
+            "profitMargin": 0.1764018691588785
+        },
+        {
+            "sku": "VGALPRIRE42",
+            "name": "Prrincipe/ Reese 1/12/9/42g",
+            "units": 146,
+            "revenue": 1022.0,
+            "cost": 871.6200000000007,
+            "unitCost": 5.970000000000005,
+            "profit": 150.3799999999993,
+            "profitMargin": 0.14714285714285646
+        },
+        {
+            "sku": "VAB00010",
+            "name": "SOPA INSTANTANEA MARUCHAN CAMARON PIQUIN 64 GR",
+            "units": 151,
+            "revenue": 2114.0,
+            "cost": 1873.9100000000021,
+            "unitCost": 12.410000000000014,
+            "profit": 240.08999999999787,
+            "profitMargin": 0.11357142857142756
         }
     ],
     "allProducts": [
         {
             "sku": "VSABORIG42",
             "name": "Pack Sabritas 1/5/10/40g",
-            "units": 182,
-            "revenue": 2912.0,
-            "cost": 2748.199999999999,
-            "unitCost": 15.099999999999994,
-            "profit": 163.8000000000011,
-            "profitMargin": 0.056250000000000376
+            "units": 246,
+            "revenue": 3936.0,
+            "cost": 3714.5999999999976,
+            "unitCost": 15.09999999999999,
+            "profit": 221.40000000000236,
+            "profitMargin": 0.0562500000000006
         },
         {
             "sku": "VSABADOB57",
             "name": "Papas fritas Sabritas adobadas 57 g",
-            "units": 249,
-            "revenue": 3184.0,
-            "cost": 2138.5499999999993,
-            "unitCost": 8.588554216867466,
-            "profit": 1045.4500000000007,
-            "profitMargin": 0.32834484924623136
+            "units": 314,
+            "revenue": 3994.0,
+            "cost": 2696.82,
+            "unitCost": 8.58859872611465,
+            "profit": 1297.1799999999998,
+            "profitMargin": 0.3247821732598898
         },
         {
             "sku": "VRANCHER40",
@@ -907,22 +907,22 @@ const SNACKEANDO_RAW_DATA = {
         {
             "sku": "VDUC00080",
             "name": "GOMITAS MANGUITOS 12x96g (NUEVO)",
-            "units": 264,
-            "revenue": 2640.0,
-            "cost": 1984.4099999999999,
-            "unitCost": 7.5167045454545445,
-            "profit": 655.5900000000001,
-            "profitMargin": 0.2483295454545455
+            "units": 361,
+            "revenue": 3610.0,
+            "cost": 2713.5599999999995,
+            "unitCost": 7.516786703601107,
+            "profit": 896.4400000000005,
+            "profitMargin": 0.24832132963988934
         },
         {
             "sku": "VDUC00081",
             "name": "GOMITAS OSITOS 12x100g (NUEVO)",
-            "units": 292,
-            "revenue": 2926.0,
-            "cost": 2195.659999999999,
-            "unitCost": 7.519383561643832,
-            "profit": 730.340000000001,
-            "profitMargin": 0.2496035543403968
+            "units": 382,
+            "revenue": 3826.0,
+            "cost": 2872.3999999999987,
+            "unitCost": 7.519371727748688,
+            "profit": 953.6000000000013,
+            "profitMargin": 0.2492420282279146
         },
         {
             "sku": "VDUM00034",
@@ -1037,22 +1037,22 @@ const SNACKEANDO_RAW_DATA = {
         {
             "sku": "V5000000182",
             "name": "Boing Lata Guayaba 1/24/340",
-            "units": 499,
-            "revenue": 5153.0,
-            "cost": 6447.080000000003,
-            "unitCost": 12.920000000000005,
-            "profit": -1294.0800000000027,
-            "profitMargin": -0.25113137977877015
+            "units": 642,
+            "revenue": 6726.0,
+            "cost": 8294.640000000007,
+            "unitCost": 12.92000000000001,
+            "profit": -1568.6400000000067,
+            "profitMargin": -0.23322033898305183
         },
         {
             "sku": "V5000000402",
             "name": "Boing Lata Mango 1/24/340",
-            "units": 711,
-            "revenue": 7335.0,
-            "cost": 9228.779999999997,
-            "unitCost": 12.979999999999995,
-            "profit": -1893.779999999997,
-            "profitMargin": -0.2581840490797542
+            "units": 923,
+            "revenue": 9679.0,
+            "cost": 11980.539999999997,
+            "unitCost": 12.979999999999997,
+            "profit": -2301.5399999999972,
+            "profitMargin": -0.23778696146296077
         },
         {
             "sku": "VCOCAORI335",
@@ -1083,66 +1083,6 @@ const SNACKEANDO_RAW_DATA = {
             "unitCost": 9.889011406844109,
             "profit": 555.1899999999996,
             "profitMargin": 0.17591571609632434
-        },
-        {
-            "sku": "VSABORIG42",
-            "name": "PACK SABRITAS 1/5/10/40G",
-            "units": 64,
-            "revenue": 1024.0,
-            "cost": 966.4000000000001,
-            "unitCost": 15.100000000000001,
-            "profit": 57.59999999999991,
-            "profitMargin": 0.05624999999999991
-        },
-        {
-            "sku": "VSABADOB57",
-            "name": "PAPAS FRITAS SABRITAS ADOBADAS 57 G",
-            "units": 65,
-            "revenue": 810.0,
-            "cost": 558.27,
-            "unitCost": 8.58876923076923,
-            "profit": 251.73000000000002,
-            "profitMargin": 0.3107777777777778
-        },
-        {
-            "sku": "VDUC00080",
-            "name": "GOMITAS MANGUITOS 12X96G (NUEVO)",
-            "units": 97,
-            "revenue": 970.0,
-            "cost": 729.15,
-            "unitCost": 7.5170103092783505,
-            "profit": 240.85000000000002,
-            "profitMargin": 0.24829896907216498
-        },
-        {
-            "sku": "VDUC00081",
-            "name": "GOMITAS OSITOS 12X100G (NUEVO)",
-            "units": 90,
-            "revenue": 900.0,
-            "cost": 676.7399999999999,
-            "unitCost": 7.519333333333332,
-            "profit": 223.2600000000001,
-            "profitMargin": 0.2480666666666668
-        },
-        {
-            "sku": "V5000000182",
-            "name": "BOING LATA GUAYABA 1/24/340",
-            "units": 143,
-            "revenue": 1573.0,
-            "cost": 1847.56,
-            "unitCost": 12.92,
-            "profit": -274.55999999999995,
-            "profitMargin": -0.1745454545454545
-        },
-        {
-            "sku": "V5000000402",
-            "name": "BOING LATA MANGO 1/24/340",
-            "units": 212,
-            "revenue": 2344.0,
-            "cost": 2751.76,
-            "unitCost": 12.98,
-            "profit": -407.7600000000002,
-            "profitMargin": -0.17395904436860077
         }
     ]
 };

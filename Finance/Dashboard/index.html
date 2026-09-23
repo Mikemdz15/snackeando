@@ -2064,6 +2064,65 @@
             }
         });
 
+        // Canonical SKU Aliases & Clean Display Names Mapping
+        window.SKU_ALIAS = {
+            'VOREOVAI63': 'VGALOREVAI63',
+            'OREOVAI63': 'VGALOREVAI63',
+            'GALOREVAI63': 'VGALOREVAI63'
+        };
+
+        window.CANONICAL_NAMES = {
+            'VDUC00080': 'GOMITAS MANGUITOS 12x96g (NUEVO)',
+            'VDUC00081': 'GOMITAS OSITOS 12x100g (NUEVO)',
+            'V5000000182': 'Boing Lata Guayaba 1/24/340',
+            'V5000000402': 'Boing Lata Mango 1/24/340',
+            'VSABADOB57': 'Papas fritas Sabritas adobadas 57 g',
+            'VSABORIG42': 'Pack Sabritas 1/5/10/40g',
+            'VGALOREVAI63': 'OREO CHOCOVAINILLA 1/12/4 63 grs',
+            'VCOCAORI600': 'Coca Cola 1/24/600 ml',
+            'VCOCAORI335': 'Coca Cola 1/12/355 ml',
+            'VDUF00093': 'KINDER DELICE 10 X 14 X 40G',
+            'VDUF00092': 'B-READY NUTELLA 10 X 4 X 22G',
+            'VDORNACH61': 'Pack Doritos 1/5/10/54g',
+            'VAB00009': 'SOPA INSTANTANEA MARUCHAN CAMARON HABANERO 64 GR',
+            'VAB00010': 'SOPA INSTANTANEA MARUCHAN CAMARON PIQUIN 64 GR',
+            'VCONM&M37.5': 'MMS Cacahuate 37gpz/ cj.1/32/6/37.5g',
+            'VGALTRIKI51': 'Caja Triki Trakes 1/26/51g',
+            'VCHETOS46': 'Botana Cheetos Torciditos Chico 46g',
+            'VGALPRIN42': 'PRINCIPE 1/16/63 GRS',
+            'VDUR00053': 'BUBULUBU CAJA 12P 35G MAY RIC',
+            'VRANCHER40': 'Pack Rancheritos 1/5/10/40g',
+            'VGALROCK44': 'Rocko 4/44g',
+            'VDUM00039': 'MEGA BUBBALOO FRESA 39 GRS',
+            'VDUH00038': 'PELONETES TMRND DSPL 8/18/30G',
+            'VMAMUT30': 'GMSMAMUT 30 GRS',
+            'VDUM00046': 'TRIDENT XTRACARE MENTA 13.6GR',
+            'VGALPRIRE42': 'Prrincipe/ Reese 1/12/9/42g',
+            'VDUM00051': 'HALLS MENTA FOP 30X12X25.2G',
+            'VDURP0078': 'PALETA PAYASO CJ 10P 43.5G (NUEVO)',
+            'VDUM00034': 'SKW SSGT SAN GDA 20/12/24G MX'
+        };
+
+        function getCanonicalSku(rawSku) {
+            if (!rawSku) return '';
+            let s = String(rawSku).trim().toUpperCase();
+            if (!s.startsWith('V') && window.CANONICAL_NAMES['V' + s]) {
+                s = 'V' + s;
+            }
+            if (window.SKU_ALIAS[s]) {
+                s = window.SKU_ALIAS[s];
+            }
+            return s;
+        }
+
+        function getCanonicalName(rawSku, rawName) {
+            const canonicalSku = getCanonicalSku(rawSku);
+            if (window.CANONICAL_NAMES[canonicalSku]) {
+                return window.CANONICAL_NAMES[canonicalSku];
+            }
+            return rawName ? String(rawName).trim() : 'N/A';
+        }
+
         // Apply filters on dataset and recalculate dashboard summaries
         function applyGeneralFilterAndRender() {
             const select = document.getElementById('general-month-filter');
@@ -2102,37 +2161,47 @@
                 return dateStr && dateStr.startsWith(monthYear);
             });
 
-            // Recalculate Products stats including Cost of Sales & Net Profit
-            const productUnits = {};
-            const productRevenue = {};
-            const productCost = {};
-            const productSKU = {};
+            // Recalculate Products stats grouped by Canonical SKU to prevent duplicates from name casing/SKU changes
+            const productsMap = {};
 
             filteredProds.forEach(row => {
                 if (row.length < 7 || !row[0]) return;
-                const sku = row[3];
-                const prodName = row[4];
+                const rawSku = row[3];
+                const rawName = row[4];
                 const units = parseInt(row[5]) || 0;
                 const amount = parseFloat(row[6].replace(/[$,]/g, '')) || 0.0;
                 const unitCost = row.length > 7 ? (parseFloat(row[7].replace(/[$,]/g, '')) || 0.0) : 0.0;
                 const totalCost = row.length > 8 ? (parseFloat(row[8].replace(/[$,]/g, '')) || (units * unitCost)) : (units * unitCost);
 
-                if (!prodName || prodName === "None" || prodName === "null" || prodName === "") return;
+                if (!rawName || rawName === "None" || rawName === "null" || rawName === "") return;
 
-                productUnits[prodName] = (productUnits[prodName] || 0) + units;
-                productRevenue[prodName] = (productRevenue[prodName] || 0.0) + amount;
-                productCost[prodName] = (productCost[prodName] || 0.0) + totalCost;
-                productSKU[prodName] = sku;
+                const canonicalSku = getCanonicalSku(rawSku);
+                const canonicalName = getCanonicalName(rawSku, rawName);
+
+                if (!productsMap[canonicalSku]) {
+                    productsMap[canonicalSku] = {
+                        sku: canonicalSku,
+                        name: canonicalName,
+                        units: 0,
+                        revenue: 0.0,
+                        cost: 0.0
+                    };
+                }
+
+                productsMap[canonicalSku].units += units;
+                productsMap[canonicalSku].revenue += amount;
+                productsMap[canonicalSku].cost += totalCost;
             });
 
             const prodList = [];
             let totalProdRevSum = 0;
             let totalProdCostSum = 0;
 
-            for (const name in productUnits) {
-                const u = productUnits[name];
-                const rev = productRevenue[name];
-                const cst = productCost[name];
+            for (const sku in productsMap) {
+                const item = productsMap[sku];
+                const u = item.units;
+                const rev = item.revenue;
+                const cst = item.cost;
                 const pft = rev - cst;
                 const margin = rev > 0 ? (pft / rev) : 0.0;
                 const uCost = u > 0 ? (cst / u) : 0.0;
@@ -2141,8 +2210,8 @@
                 totalProdCostSum += cst;
 
                 prodList.push({
-                    sku: productSKU[name],
-                    name: name,
+                    sku: sku,
+                    name: item.name,
                     units: u,
                     revenue: rev,
                     cost: cst,

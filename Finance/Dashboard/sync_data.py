@@ -39,6 +39,54 @@ def fetch_csv(url):
         content = response.read().decode('utf-8')
     return content
 
+SKU_ALIAS = {
+    'VOREOVAI63': 'VGALOREVAI63',
+    'OREOVAI63': 'VGALOREVAI63',
+    'GALOREVAI63': 'VGALOREVAI63'
+}
+
+CANONICAL_NAMES = {
+    'VDUC00080': 'GOMITAS MANGUITOS 12x96g (NUEVO)',
+    'VDUC00081': 'GOMITAS OSITOS 12x100g (NUEVO)',
+    'V5000000182': 'Boing Lata Guayaba 1/24/340',
+    'V5000000402': 'Boing Lata Mango 1/24/340',
+    'VSABADOB57': 'Papas fritas Sabritas adobadas 57 g',
+    'VSABORIG42': 'Pack Sabritas 1/5/10/40g',
+    'VGALOREVAI63': 'OREO CHOCOVAINILLA 1/12/4 63 grs',
+    'VCOCAORI600': 'Coca Cola 1/24/600 ml',
+    'VCOCAORI335': 'Coca Cola 1/12/355 ml',
+    'VDUF00093': 'KINDER DELICE 10 X 14 X 40G',
+    'VDUF00092': 'B-READY NUTELLA 10 X 4 X 22G',
+    'VDORNACH61': 'Pack Doritos 1/5/10/54g',
+    'VAB00009': 'SOPA INSTANTANEA MARUCHAN CAMARON HABANERO 64 GR',
+    'VAB00010': 'SOPA INSTANTANEA MARUCHAN CAMARON PIQUIN 64 GR',
+    'VCONM&M37.5': 'MMS Cacahuate 37gpz/ cj.1/32/6/37.5g',
+    'VGALTRIKI51': 'Caja Triki Trakes 1/26/51g',
+    'VCHETOS46': 'Botana Cheetos Torciditos Chico 46g',
+    'VGALPRIN42': 'PRINCIPE 1/16/63 GRS',
+    'VDUR00053': 'BUBULUBU CAJA 12P 35G MAY RIC',
+    'VRANCHER40': 'Pack Rancheritos 1/5/10/40g',
+    'VGALROCK44': 'Rocko 4/44g',
+    'VDUM00039': 'MEGA BUBBALOO FRESA 39 GRS',
+    'VDUH00038': 'PELONETES TMRND DSPL 8/18/30G',
+    'VMAMUT30': 'GMSMAMUT 30 GRS',
+    'VDUM00046': 'TRIDENT XTRACARE MENTA 13.6GR',
+    'VGALPRIRE42': 'Prrincipe/ Reese 1/12/9/42g',
+    'VDUM00051': 'HALLS MENTA FOP 30X12X25.2G',
+    'VDURP0078': 'PALETA PAYASO CJ 10P 43.5G (NUEVO)',
+    'VDUM00034': 'SKW SSGT SAN GDA 20/12/24G MX'
+}
+
+def get_canonical_sku(raw_sku):
+    if not raw_sku:
+        return ''
+    s = str(raw_sku).strip().upper()
+    if not s.startswith('V') and ('V' + s) in CANONICAL_NAMES:
+        s = 'V' + s
+    if s in SKU_ALIAS:
+        s = SKU_ALIAS[s]
+    return s
+
 def main():
     print("Sincronizando datos del Dashboard desde Google Sheets...")
     
@@ -52,45 +100,55 @@ def main():
         header_prod = next(prod_reader)
         data_prod = list(prod_reader)
         
-        product_units = {}
-        product_revenue = {}
-        product_cost = {}
-        product_sku = {}
+        products_map = {}
         
         for row in data_prod:
             if len(row) < 7 or not row[0]:
                 continue
-            sku = row[3]
-            prod_name = row[4]
+            raw_sku = row[3]
+            raw_name = row[4]
             units = int(row[5] or 0)
             amount = parse_float(row[6])
             unit_cost = parse_float(row[7]) if len(row) > 7 else 0.0
             total_cost = parse_float(row[8]) if len(row) > 8 else (units * unit_cost)
             
-            if not prod_name or prod_name == "None" or prod_name == "null" or prod_name == "":
+            if not raw_name or raw_name == "None" or raw_name == "null" or raw_name == "":
                 continue
                 
-            product_units[prod_name] = product_units.get(prod_name, 0) + units
-            product_revenue[prod_name] = product_revenue.get(prod_name, 0.0) + amount
-            product_cost[prod_name] = product_cost.get(prod_name, 0.0) + total_cost
-            product_sku[prod_name] = sku
+            canonical_sku = get_canonical_sku(raw_sku)
+            if not canonical_sku:
+                canonical_sku = raw_sku.strip().upper()
+            canonical_name = CANONICAL_NAMES.get(canonical_sku, raw_name.strip())
+
+            if canonical_sku not in products_map:
+                products_map[canonical_sku] = {
+                    "sku": canonical_sku,
+                    "name": canonical_name,
+                    "units": 0,
+                    "revenue": 0.0,
+                    "cost": 0.0
+                }
+
+            products_map[canonical_sku]["units"] += units
+            products_map[canonical_sku]["revenue"] += amount
+            products_map[canonical_sku]["cost"] += total_cost
             
         prod_list = []
-        tot_prod_rev = sum(product_revenue.values())
-        tot_prod_cost = sum(product_cost.values())
+        tot_prod_rev = sum(p["revenue"] for p in products_map.values())
+        tot_prod_cost = sum(p["cost"] for p in products_map.values())
         tot_prod_profit = tot_prod_rev - tot_prod_cost
         overall_profit_margin = (tot_prod_profit / tot_prod_rev) if tot_prod_rev > 0 else 0.0
 
-        for name in product_units:
-            rev = product_revenue[name]
-            cst = product_cost[name]
+        for sku, p in products_map.items():
+            rev = p["revenue"]
+            cst = p["cost"]
             pft = rev - cst
             margin = (pft / rev) if rev > 0 else 0.0
-            u = product_units[name]
+            u = p["units"]
             u_cost = (cst / u) if u > 0 else 0.0
             prod_list.append({
-                "sku": product_sku[name],
-                "name": name,
+                "sku": sku,
+                "name": p["name"],
                 "units": u,
                 "revenue": rev,
                 "cost": cst,
