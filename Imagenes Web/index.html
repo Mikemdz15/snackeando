@@ -1224,7 +1224,7 @@
 
                         <div class="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-900 border border-slate-800">
                             <div class="text-[11px] sm:text-xs text-slate-400">¿Prefieres respuesta inmediata?</div>
-                            <a href="https://wa.me/5215500000000?text=Hola%20Snackeando,%20quiero%20solicitar%20una%20máquina%20vending" target="_blank" rel="noopener noreferrer" class="mt-1.5 inline-flex items-center gap-2 text-emerald-400 font-bold text-xs sm:text-sm hover:underline">
+                            <a href="https://wa.me/525576107392?text=Hola%20Snackeando,%20quiero%20solicitar%20una%20máquina%20vending" target="_blank" rel="noopener noreferrer" class="mt-1.5 inline-flex items-center gap-2 text-emerald-400 font-bold text-xs sm:text-sm hover:underline">
                                 <i data-lucide="message-circle" class="w-4 h-4"></i>
                                 <span>Chatear directamente por WhatsApp &rarr;</span>
                             </a>
@@ -1233,7 +1233,10 @@
 
                     <!-- Actual Form -->
                     <div class="lg:col-span-7">
-                        <form id="leadForm" onsubmit="handleFormSubmit(event)" class="space-y-3.5 sm:space-y-4">
+                        <form id="leadForm" action="https://formsubmit.co/mmendez@induwell.com" method="POST" onsubmit="handleFormSubmit(event)" class="space-y-3.5 sm:space-y-4">
+                            <input type="hidden" name="_captcha" value="false">
+                            <input type="hidden" name="_template" value="table">
+                            <input type="hidden" name="_next" value="https://snackeandov.vercel.app/#contacto">
                             
                             <!-- Profile Toggle (Responsive Grid) -->
                             <div>
@@ -1253,28 +1256,28 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                 <div>
                                     <label for="formNombre" class="block text-xs font-bold text-slate-300 mb-1">Nombre Completo *</label>
-                                    <input type="text" id="formNombre" required placeholder="Ej. Carlos Martínez" class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-brand-orange">
+                                    <input type="text" id="formNombre" name="Nombre_Completo" required placeholder="Ej. Carlos Martínez" class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-brand-orange">
                                 </div>
                                 <div>
                                     <label for="formTelefono" class="block text-xs font-bold text-slate-300 mb-1">Teléfono / WhatsApp *</label>
-                                    <input type="tel" id="formTelefono" required placeholder="Ej. 55 1234 5678" class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-brand-orange">
+                                    <input type="tel" id="formTelefono" name="Telefono_WhatsApp" required placeholder="Ej. 55 1234 5678" class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-brand-orange">
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                 <div>
                                     <label for="formEmail" class="block text-xs font-bold text-slate-300 mb-1">Correo Electrónico *</label>
-                                    <input type="email" id="formEmail" required placeholder="correo@empresa.com" class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-brand-orange">
+                                    <input type="email" id="formEmail" name="Correo_Electronico" required placeholder="correo@empresa.com" class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-brand-orange">
                                 </div>
                                 <div>
                                     <label for="formCiudad" class="block text-xs font-bold text-slate-300 mb-1">Ciudad / Estado *</label>
-                                    <input type="text" id="formCiudad" required placeholder="Ej. CDMX / Guadalajara" class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-brand-orange">
+                                    <input type="text" id="formCiudad" name="Ciudad_Estado" required placeholder="Ej. CDMX / Guadalajara" class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-brand-orange">
                                 </div>
                             </div>
 
                             <div>
                                 <label for="formDetalle" class="block text-xs font-bold text-slate-300 mb-1">Detalles (Número de empleados o lugar de instalación)</label>
-                                <textarea id="formDetalle" rows="3" placeholder="Cuéntanos cuántas personas transitan en tu espacio o qué dudas tienes..." class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-brand-orange"></textarea>
+                                <textarea id="formDetalle" name="Detalles" rows="3" placeholder="Cuéntanos cuántas personas transitan en tu espacio o qué dudas tienes..." class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-brand-orange"></textarea>
                             </div>
 
                             <button type="submit" class="w-full py-3.5 sm:py-4 rounded-xl bg-gradient-to-r from-brand-orange via-brand-orangeDark to-brand-gold hover:opacity-95 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-brand-orange/30 transition-all flex items-center justify-center gap-2">
@@ -1322,10 +1325,10 @@
 
                 <!-- Socials / Direct Link -->
                 <div class="flex items-center gap-4">
-                    <a href="https://wa.me/5215500000000" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400 hover:bg-slate-800 transition-colors">
+                    <a href="https://wa.me/525576107392" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400 hover:bg-slate-800 transition-colors">
                         <i data-lucide="message-circle" class="w-4 h-4"></i>
                     </a>
-                    <a href="mailto:contacto@snackeando.mx" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-brand-orange hover:bg-slate-800 transition-colors">
+                    <a href="mailto:mmendez@induwell.com" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-brand-orange hover:bg-slate-800 transition-colors">
                         <i data-lucide="mail" class="w-4 h-4"></i>
                     </a>
                 </div>
@@ -1343,7 +1346,7 @@
     </footer>
 
     <!-- FLOATING WHATSAPP BUTTON -->
-    <a href="https://wa.me/5215500000000?text=Hola%20Snackeando,%20vi%20la%20página%20web%20y%20quiero%20más%20información" target="_blank" rel="noopener noreferrer" 
+    <a href="https://wa.me/525576107392?text=Hola%20Snackeando,%20vi%20la%20página%20web%20y%20quiero%20más%20información" target="_blank" rel="noopener noreferrer" 
        class="fixed bottom-6 right-6 z-50 p-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold shadow-2xl shadow-emerald-500/40 hover:scale-110 transition-all flex items-center gap-2.5 group"
        title="Chatea con un asesor por WhatsApp">
         <i data-lucide="message-circle" class="w-6 h-6"></i>
@@ -1477,7 +1480,7 @@
             document.getElementById('formSuccess').classList.remove('hidden');
 
             setTimeout(() => {
-                window.open(`https://wa.me/5215500000000?text=${msg}`, '_blank');
+                window.open(`https://wa.me/525576107392?text=${msg}`, '_blank');
             }, 800);
         }
 
