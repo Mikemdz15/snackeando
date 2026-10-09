@@ -1512,10 +1512,112 @@
 
         // Initial Calculation
         calculateROI();
+
+        // WhatsApp Lead Capture Modal Functions
+        function openWhatsAppModal(e) {
+            if (e) e.preventDefault();
+            const modal = document.getElementById('waModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        function closeWhatsAppModal() {
+            const modal = document.getElementById('waModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function handleWaModalSubmit(e) {
+            e.preventDefault();
+            const leadType = document.querySelector('input[name="modalLeadType"]:checked')?.value || 'Modelo Empresas ($5,900 + IVA)';
+            const nombre = document.getElementById('waModalNombre').value;
+            const telefono = document.getElementById('waModalTelefono').value;
+            const email = document.getElementById('waModalEmail').value;
+            const ciudad = document.getElementById('waModalCiudad').value;
+
+            // 1. Send lead data to mmendez@induwell.com via FormSubmit AJAX
+            const formData = new FormData();
+            formData.append('_subject', `🔥 Nuevo Lead WhatsApp Web: ${nombre} (${leadType})`);
+            formData.append('_template', 'table');
+            formData.append('_captcha', 'false');
+            formData.append('Origen', 'Boton Flotante WhatsApp');
+            formData.append('Interes', leadType);
+            formData.append('Nombre_Completo', nombre);
+            formData.append('Telefono_WhatsApp', telefono);
+            formData.append('Correo_Electronico', email);
+            formData.append('Ciudad_Estado', ciudad);
+
+            fetch('https://formsubmit.co/ajax/mmendez@induwell.com', {
+                method: 'POST',
+                body: formData
+            }).then(res => res.json())
+              .then(data => console.log('WhatsApp Modal Email Sent:', data))
+              .catch(err => console.error('WhatsApp Modal Email Error:', err));
+
+            // 2. Format WhatsApp message for +52 55 7610 7392
+            const msg = `¡Hola Snackeando! Vengo de la página web.%0A%0A*Tipo de Interés:* ${encodeURIComponent(leadType)}%0A*Nombre:* ${encodeURIComponent(nombre)}%0A*Teléfono:* ${encodeURIComponent(telefono)}%0A*Email:* ${encodeURIComponent(email)}%0A*Ciudad/Estado:* ${encodeURIComponent(ciudad)}`;
+
+            closeWhatsAppModal();
+
+            // 3. Open WhatsApp chat directly
+            window.open(`https://wa.me/525576107392?text=${msg}`, '_blank');
+        }
+
     </script>
 
+    
+
+            <!-- Form -->
+            <form id="waModalForm" onsubmit="handleWaModalSubmit(event)" class="space-y-3 pt-2">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Me interesa para:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-brand-orange has-[:checked]:border-brand-orange has-[:checked]:bg-brand-orange/10 text-xs text-slate-200">
+                            <input type="radio" name="modalLeadType" value="Modelo Empresas ($5,900 + IVA)" checked class="accent-brand-orange">
+                            <span>Empresas ($5,900)</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-brand-gold has-[:checked]:border-brand-gold has-[:checked]:bg-brand-gold/10 text-xs text-slate-200">
+                            <input type="radio" name="modalLeadType" value="Modelo Emprendedor ($2,000)" class="accent-brand-gold">
+                            <span>Emprendedor</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="waModalNombre" class="block text-xs font-bold text-slate-300 mb-1">Tu Nombre Completo *</label>
+                    <input type="text" id="waModalNombre" required placeholder="Ej. Miguel Méndez" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="waModalTelefono" class="block text-xs font-bold text-slate-300 mb-1">Teléfono / WhatsApp *</label>
+                        <input type="tel" id="waModalTelefono" required placeholder="Ej. 55 7610 7392" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label for="waModalCiudad" class="block text-xs font-bold text-slate-300 mb-1">Ciudad / Estado *</label>
+                        <input type="text" id="waModalCiudad" required placeholder="Ej. CDMX" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="waModalEmail" class="block text-xs font-bold text-slate-300 mb-1">Correo Electrónico *</label>
+                    <input type="email" id="waModalEmail" required placeholder="correo@empresa.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm shadow-xl shadow-emerald-500/30 transition-all flex items-center justify-center gap-2 mt-2">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                    <span>Iniciar Chat por WhatsApp</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
     <!-- QUICK WHATSAPP LEAD CAPTURE MODAL -->
-    <div id="waModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300">
+    <div id="waModal" style="display: none;" onclick="if(event.target === this) closeWhatsAppModal()" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300">
         <div class="relative w-full max-w-md rounded-2xl sm:rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl p-5 sm:p-7 text-left space-y-4">
             <!-- Close Button -->
             <button onclick="closeWhatsAppModal()" type="button" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors">
