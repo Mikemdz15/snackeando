@@ -1345,15 +1345,15 @@
         </div>
     </footer>
 
-    <!-- FLOATING WHATSAPP BUTTON -->
-    <a href="https://wa.me/525576107392?text=Hola%20Snackeando,%20vi%20la%20página%20web%20y%20quiero%20más%20información" target="_blank" rel="noopener noreferrer" 
+        <!-- FLOATING WHATSAPP BUTTON (TRIGGERS QUICK LEAD CAPTURE MODAL) -->
+    <button onclick="openWhatsAppModal(event)" type="button"
        class="fixed bottom-6 right-6 z-50 p-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold shadow-2xl shadow-emerald-500/40 hover:scale-110 transition-all flex items-center gap-2.5 group"
        title="Chatea con un asesor por WhatsApp">
         <i data-lucide="message-circle" class="w-6 h-6"></i>
         <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out text-xs font-extrabold text-slate-950">
             ¡Cotiza por WhatsApp!
         </span>
-    </a>
+    </button>
 
     <!-- SCRIPTS -->
     <script>
@@ -1513,5 +1513,70 @@
         // Initial Calculation
         calculateROI();
     </script>
+
+    <!-- QUICK WHATSAPP LEAD CAPTURE MODAL -->
+    <div id="waModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300">
+        <div class="relative w-full max-w-md rounded-2xl sm:rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl p-5 sm:p-7 text-left space-y-4">
+            <!-- Close Button -->
+            <button onclick="closeWhatsAppModal()" type="button" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Header -->
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+                    <i data-lucide="message-circle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-outfit font-bold text-lg sm:text-xl text-white">Chatea por WhatsApp</h3>
+                    <p class="text-xs text-slate-400">Ingresa tus datos para conectarte con un asesor de Snackeando.</p>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form id="waModalForm" onsubmit="handleWaModalSubmit(event)" class="space-y-3 pt-2">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Me interesa para:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-brand-orange has-[:checked]:border-brand-orange has-[:checked]:bg-brand-orange/10 text-xs text-slate-200">
+                            <input type="radio" name="modalLeadType" value="Modelo Empresas ($5,900 + IVA)" checked class="accent-brand-orange">
+                            <span>Empresas ($5,900)</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-brand-gold has-[:checked]:border-brand-gold has-[:checked]:bg-brand-gold/10 text-xs text-slate-200">
+                            <input type="radio" name="modalLeadType" value="Modelo Emprendedor ($2,000)" class="accent-brand-gold">
+                            <span>Emprendedor</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="waModalNombre" class="block text-xs font-bold text-slate-300 mb-1">Tu Nombre Completo *</label>
+                    <input type="text" id="waModalNombre" required placeholder="Ej. Miguel Méndez" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="waModalTelefono" class="block text-xs font-bold text-slate-300 mb-1">Teléfono / WhatsApp *</label>
+                        <input type="tel" id="waModalTelefono" required placeholder="Ej. 55 7610 7392" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label for="waModalCiudad" class="block text-xs font-bold text-slate-300 mb-1">Ciudad / Estado *</label>
+                        <input type="text" id="waModalCiudad" required placeholder="Ej. CDMX" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="waModalEmail" class="block text-xs font-bold text-slate-300 mb-1">Correo Electrónico *</label>
+                    <input type="email" id="waModalEmail" required placeholder="correo@empresa.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm shadow-xl shadow-emerald-500/30 transition-all flex items-center justify-center gap-2 mt-2">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                    <span>Iniciar Chat por WhatsApp</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
 </body>
 </html>
