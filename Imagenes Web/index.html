@@ -1345,7 +1345,8 @@
         </div>
     </footer>
 
-        <!-- FLOATING WHATSAPP BUTTON (TRIGGERS QUICK LEAD CAPTURE MODAL) -->
+
+    <!-- FLOATING WHATSAPP BUTTON -->
     <button onclick="openWhatsAppModal(event)" type="button"
        class="fixed bottom-6 right-6 z-50 p-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold shadow-2xl shadow-emerald-500/40 hover:scale-110 transition-all flex items-center gap-2.5 group"
        title="Chatea con un asesor por WhatsApp">
@@ -1361,102 +1362,41 @@
         lucide.createIcons();
 
         // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        document.querySelectorAll('.mobile-link').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        if (menuBtn && mobileNav) {
+            menuBtn.addEventListener('click', () => {
+                mobileNav.classList.toggle('hidden');
             });
-        });
-
-        // Tabs Logic
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('active', 'bg-gradient-to-r', 'from-brand-orange', 'to-brand-gold', 'text-white', 'shadow-md');
-                b.classList.add('text-slate-300');
-            });
-
-            const activeTab = document.getElementById(tabId);
-            if (activeTab) {
-                activeTab.classList.add('active');
-            }
-
-            btn.classList.add('active', 'bg-gradient-to-r', 'from-brand-orange', 'to-brand-gold', 'text-white', 'shadow-md');
-            btn.classList.remove('text-slate-300');
-            lucide.createIcons();
         }
 
-        // Gallery Image Changer
-        function changeGalleryImage(src, btn) {
-            const mainImg = document.getElementById('mainGalleryImg');
-            
-            mainImg.style.opacity = '0';
-            setTimeout(() => {
-                mainImg.src = src;
-                mainImg.style.opacity = '1';
-            }, 150);
-
-            document.querySelectorAll('.gallery-thumb').forEach(t => {
-                t.classList.remove('border-brand-orange');
-                t.classList.add('border-slate-200');
-            });
-            btn.classList.remove('border-slate-200');
-            btn.classList.add('border-brand-orange');
-        }
-
-        // FAQ Toggle
-        function toggleFaq(btn) {
-            const body = btn.nextElementSibling;
-            const icon = btn.querySelector('svg');
-            const isHidden = body.classList.contains('hidden');
-
-            // Close all
-            document.querySelectorAll('.faq-body').forEach(b => b.classList.add('hidden'));
-            document.querySelectorAll('#faq svg').forEach(i => i.style.transform = 'rotate(0deg)');
-
-            if (isHidden) {
-                body.classList.remove('hidden');
+        // Accordion FAQ Toggle
+        function toggleFaq(id) {
+            const el = document.getElementById('faq-' + id);
+            const icon = document.getElementById('icon-' + id);
+            if (el.classList.contains('hidden')) {
+                document.querySelectorAll('#faq [id^="faq-"]').forEach(item => item.classList.add('hidden'));
+                document.querySelectorAll('#faq svg').forEach(i => i.style.transform = 'rotate(0deg)');
+                el.classList.remove('hidden');
                 if (icon) icon.style.transform = 'rotate(180deg)';
+            } else {
+                el.classList.add('hidden');
+                if (icon) icon.style.transform = 'rotate(0deg)';
             }
         }
 
-        // ROI Calculator Logic (Modelo Emprendedor con 25%-30% de margen y $12 PVP promedio)
+        // ROI Calculator Logic
         function calculateROI() {
-            const machines = parseInt(document.getElementById('rangeMachines').value) || 2;
-            const dailySales = parseInt(document.getElementById('rangeDailySales').value) || 80;
-            const ticket = parseFloat(document.getElementById('rangeTicket').value) || 12;
-            const marginPct = (parseFloat(document.getElementById('rangeMargin').value) || 28) / 100;
+            const machines = parseInt(document.getElementById('calcMachines').value) || 1;
+            const salesLevel = parseFloat(document.getElementById('calcSalesLevel').value) || 50000;
 
-            // Labels
-            document.getElementById('valMachines').textContent = machines + (machines === 1 ? ' Máquina' : ' Máquinas');
-            document.getElementById('valDailySales').textContent = dailySales + ' unidades / día';
-            document.getElementById('valTicket').textContent = '$' + ticket.toFixed(2) + ' MXN';
-            document.getElementById('valMargin').textContent = (marginPct * 100).toFixed(0) + '% de margen';
-
-            // Calculations for 30 days
-            const totalMonthlyUnits = machines * dailySales * 30;
-            const monthlyRevenue = totalMonthlyUnits * ticket;
-            
-            // Gross margin amount generated (25% to 30%)
-            const grossMarginAmount = monthlyRevenue * marginPct;
-            
-            // Product cost (70% to 75%)
-            const productCost = monthlyRevenue * (1 - marginPct);
-            
-            // Machine rental fee: $2,000 MXN per machine per month
+            const totalMonthlyUnits = Math.round(salesLevel / 18);
+            const monthlyRevenue = salesLevel;
+            const productCost = Math.round(monthlyRevenue * 0.45);
+            const grossMarginAmount = monthlyRevenue - productCost;
             const machineRent = machines * 2000;
-            
-            // Net profit
             const netProfit = grossMarginAmount - machineRent;
 
-            // Update UI
             document.getElementById('resTotalUnidades').textContent = totalMonthlyUnits.toLocaleString('es-MX') + ' piezas / mes';
             document.getElementById('resVentaBruta').textContent = '$' + monthlyRevenue.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' MXN';
             document.getElementById('resCostoProd').textContent = '-$' + productCost.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' MXN';
@@ -1475,7 +1415,6 @@
             const ciudad = document.getElementById('formCiudad').value;
             const detalle = document.getElementById('formDetalle').value;
 
-            // 1. Send form submission directly to mmendez@induwell.com via FormSubmit AJAX FormData
             const formData = new FormData();
             formData.append('_subject', `🔥 Nuevo Lead Snackeando Web: ${nombre} (${leadType})`);
             formData.append('_template', 'table');
@@ -1494,24 +1433,18 @@
               .then(data => console.log('FormSubmit AJAX Success:', data))
               .catch(err => console.error('FormSubmit AJAX Error:', err));
 
-            // 2. Format WhatsApp notification for +52 55 7610 7392
             const msg = `¡Hola Snackeando! Vengo de la página web.%0A%0A*Tipo de Interés:* ${encodeURIComponent(leadType)}%0A*Nombre:* ${encodeURIComponent(nombre)}%0A*Teléfono:* ${encodeURIComponent(telefono)}%0A*Email:* ${encodeURIComponent(email)}%0A*Ciudad/Estado:* ${encodeURIComponent(ciudad)}%0A*Detalles:* ${encodeURIComponent(detalle || 'Ninguno')}`;
 
-            // 3. Show Success UI notification
             const successEl = document.getElementById('formSuccess');
             if (successEl) {
                 successEl.innerHTML = `✅ <strong>¡Solicitud enviada con éxito!</strong> La información de <strong>${nombre}</strong> ha sido enviada a <strong>mmendez@induwell.com</strong> y a nuestro WhatsApp.`;
                 successEl.classList.remove('hidden');
             }
 
-            // 4. Open WhatsApp connection
             setTimeout(() => {
                 window.open(`https://wa.me/525576107392?text=${msg}`, '_blank');
             }, 600);
         }
-
-        // Initial Calculation
-        calculateROI();
 
         // WhatsApp Lead Capture Modal Functions
         function openWhatsAppModal(e) {
@@ -1538,7 +1471,6 @@
             const email = document.getElementById('waModalEmail').value;
             const ciudad = document.getElementById('waModalCiudad').value;
 
-            // 1. Send lead data to mmendez@induwell.com via FormSubmit AJAX
             const formData = new FormData();
             formData.append('_subject', `🔥 Nuevo Lead WhatsApp Web: ${nombre} (${leadType})`);
             formData.append('_template', 'table');
@@ -1557,64 +1489,16 @@
               .then(data => console.log('WhatsApp Modal Email Sent:', data))
               .catch(err => console.error('WhatsApp Modal Email Error:', err));
 
-            // 2. Format WhatsApp message for +52 55 7610 7392
             const msg = `¡Hola Snackeando! Vengo de la página web.%0A%0A*Tipo de Interés:* ${encodeURIComponent(leadType)}%0A*Nombre:* ${encodeURIComponent(nombre)}%0A*Teléfono:* ${encodeURIComponent(telefono)}%0A*Email:* ${encodeURIComponent(email)}%0A*Ciudad/Estado:* ${encodeURIComponent(ciudad)}`;
 
             closeWhatsAppModal();
 
-            // 3. Open WhatsApp chat directly
             window.open(`https://wa.me/525576107392?text=${msg}`, '_blank');
         }
 
+        // Initial Calculation
+        calculateROI();
     </script>
-
-    
-
-            <!-- Form -->
-            <form id="waModalForm" onsubmit="handleWaModalSubmit(event)" class="space-y-3 pt-2">
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">Me interesa para:</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-brand-orange has-[:checked]:border-brand-orange has-[:checked]:bg-brand-orange/10 text-xs text-slate-200">
-                            <input type="radio" name="modalLeadType" value="Modelo Empresas ($5,900 + IVA)" checked class="accent-brand-orange">
-                            <span>Empresas ($5,900)</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-brand-gold has-[:checked]:border-brand-gold has-[:checked]:bg-brand-gold/10 text-xs text-slate-200">
-                            <input type="radio" name="modalLeadType" value="Modelo Emprendedor ($2,000)" class="accent-brand-gold">
-                            <span>Emprendedor</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="waModalNombre" class="block text-xs font-bold text-slate-300 mb-1">Tu Nombre Completo *</label>
-                    <input type="text" id="waModalNombre" required placeholder="Ej. Miguel Méndez" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label for="waModalTelefono" class="block text-xs font-bold text-slate-300 mb-1">Teléfono / WhatsApp *</label>
-                        <input type="tel" id="waModalTelefono" required placeholder="Ej. 55 7610 7392" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label for="waModalCiudad" class="block text-xs font-bold text-slate-300 mb-1">Ciudad / Estado *</label>
-                        <input type="text" id="waModalCiudad" required placeholder="Ej. CDMX" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="waModalEmail" class="block text-xs font-bold text-slate-300 mb-1">Correo Electrónico *</label>
-                    <input type="email" id="waModalEmail" required placeholder="correo@empresa.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
-                </div>
-
-                <button type="submit" class="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm shadow-xl shadow-emerald-500/30 transition-all flex items-center justify-center gap-2 mt-2">
-                    <i data-lucide="message-circle" class="w-5 h-5"></i>
-                    <span>Iniciar Chat por WhatsApp</span>
-                </button>
-            </form>
-        </div>
-    </div>
-
 
     <!-- QUICK WHATSAPP LEAD CAPTURE MODAL -->
     <div id="waModal" style="display: none;" onclick="if(event.target === this) closeWhatsAppModal()" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300">
@@ -1679,6 +1563,5 @@
             </form>
         </div>
     </div>
-
 </body>
 </html>
