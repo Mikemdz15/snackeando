@@ -1465,23 +1465,49 @@
             document.getElementById('resGananciaNeta').textContent = '$' + (netProfit > 0 ? netProfit : 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' MXN';
         }
 
-        // Lead Form to WhatsApp Redirect
+        // Lead Form to Email (mmendez@induwell.com) & WhatsApp (+52 55 7610 7392)
         function handleFormSubmit(e) {
             e.preventDefault();
-            const leadType = document.querySelector('input[name="leadType"]:checked')?.value || 'General';
+            const leadType = document.querySelector('input[name="leadType"]:checked')?.value || 'Empresas ($5,900 + IVA)';
             const nombre = document.getElementById('formNombre').value;
             const telefono = document.getElementById('formTelefono').value;
             const email = document.getElementById('formEmail').value;
             const ciudad = document.getElementById('formCiudad').value;
             const detalle = document.getElementById('formDetalle').value;
 
-            const msg = `¡Hola Snackeando! Vengo de la página web.%0A%0A*Tipo de Interés:* ${encodeURIComponent(leadType)}%0A*Nombre:* ${encodeURIComponent(nombre)}%0A*Teléfono:* ${encodeURIComponent(telefono)}%0A*Email:* ${encodeURIComponent(email)}%0A*Ciudad:* ${encodeURIComponent(ciudad)}%0A*Detalles:* ${encodeURIComponent(detalle || 'Ninguno')}`;
+            // 1. Send form submission directly to mmendez@induwell.com via FormSubmit AJAX FormData
+            const formData = new FormData();
+            formData.append('_subject', `🔥 Nuevo Lead Snackeando Web: ${nombre} (${leadType})`);
+            formData.append('_template', 'table');
+            formData.append('_captcha', 'false');
+            formData.append('Interes', leadType);
+            formData.append('Nombre_Completo', nombre);
+            formData.append('Telefono_WhatsApp', telefono);
+            formData.append('Correo_Electronico', email);
+            formData.append('Ciudad_Estado', ciudad);
+            formData.append('Detalles', detalle || 'Sin detalles adicionales');
 
-            document.getElementById('formSuccess').classList.remove('hidden');
+            fetch('https://formsubmit.co/ajax/mmendez@induwell.com', {
+                method: 'POST',
+                body: formData
+            }).then(res => res.json())
+              .then(data => console.log('FormSubmit AJAX Success:', data))
+              .catch(err => console.error('FormSubmit AJAX Error:', err));
 
+            // 2. Format WhatsApp notification for +52 55 7610 7392
+            const msg = `¡Hola Snackeando! Vengo de la página web.%0A%0A*Tipo de Interés:* ${encodeURIComponent(leadType)}%0A*Nombre:* ${encodeURIComponent(nombre)}%0A*Teléfono:* ${encodeURIComponent(telefono)}%0A*Email:* ${encodeURIComponent(email)}%0A*Ciudad/Estado:* ${encodeURIComponent(ciudad)}%0A*Detalles:* ${encodeURIComponent(detalle || 'Ninguno')}`;
+
+            // 3. Show Success UI notification
+            const successEl = document.getElementById('formSuccess');
+            if (successEl) {
+                successEl.innerHTML = `✅ <strong>¡Solicitud enviada con éxito!</strong> La información de <strong>${nombre}</strong> ha sido enviada a <strong>mmendez@induwell.com</strong> y a nuestro WhatsApp.`;
+                successEl.classList.remove('hidden');
+            }
+
+            // 4. Open WhatsApp connection
             setTimeout(() => {
                 window.open(`https://wa.me/525576107392?text=${msg}`, '_blank');
-            }, 800);
+            }, 600);
         }
 
         // Initial Calculation
