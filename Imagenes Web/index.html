@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snackeando | La Revolución del Vending Inteligente en México</title>
-    <meta name="description" content="Snackeando: Vending inteligente para empresas y emprendedores en México. Máquinas automáticas de snacks y bebidas con los mejores costos y subsidio publicitario real.">
+    <meta name="description" content="Snackeando: Vending inteligente para empresas ($0 MXN sin costo de cuota ni instalación) y emprendedores en México. Precios un 30% menores que las tiendas de conveniencia gracias a nuestro subsidio publicitario real.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -189,7 +189,7 @@
     <!-- TOP ANNOUNCEMENT BAR (RESPONSIVE) -->
     <aside aria-label="Anuncio promocional" class="bg-gradient-to-r from-brand-orangeDark via-brand-orange to-brand-gold text-white text-[11px] sm:text-xs md:text-sm font-semibold py-2 px-3 sm:px-4 text-center tracking-wide flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 shadow-md relative z-50">
         <span class="inline-flex items-center justify-center bg-white text-brand-orangeDark text-[10px] sm:text-[11px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">Novedad</span>
-        <span>¡Revolucionamos el Vending! <strong>Precios Subsidiados con Publicidad</strong> y <strong>$5,900</strong> para Empresas.</span>
+        <span>¡Revolucionamos el Vending! <strong>$0 Pesos de Cuota para Empresas</strong> y <strong>Precios 30% Menores que Tiendas de Conveniencia</strong>.</span>
         <a href="#receta-magica" class="underline hover:text-amber-100 transition-colors hidden md:inline ml-1 font-bold">Descubre la Receta Mágica &rarr;</a>
     </aside>
 
@@ -232,7 +232,7 @@
         <!-- MOBILE DROPDOWN (RESPONSIVE) -->
         <div id="mobileMenu" class="hidden lg:hidden bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 px-5 py-5 space-y-3 shadow-2xl">
             <a href="#modelos" class="block text-slate-200 hover:text-brand-orange text-sm font-semibold mobile-link py-1.5 border-b border-slate-900">Modelos de Negocio</a>
-            <a href="#empresas" class="block text-slate-200 hover:text-brand-orange text-sm font-semibold mobile-link py-1.5 border-b border-slate-900">Para Empresas ($5,900 + IVA)</a>
+            <a href="#empresas" class="block text-slate-200 hover:text-brand-orange text-sm font-semibold mobile-link py-1.5 border-b border-slate-900">Para Empresas ($0 Pesos • Sin Costo)</a>
             <a href="#emprendedores" class="block text-slate-200 hover:text-brand-orange text-sm font-semibold mobile-link py-1.5 border-b border-slate-900">Para Emprendedores ($2,000)</a>
             <a href="#receta-magica" class="block text-brand-goldLight font-bold text-sm mobile-link py-1.5 border-b border-slate-900 flex items-center gap-2">
                 <i data-lucide="sparkles" class="w-4 h-4 text-brand-gold"></i>
@@ -241,7 +241,11 @@
             <a href="#maquinas" class="block text-slate-200 hover:text-brand-orange text-sm font-semibold mobile-link py-1.5 border-b border-slate-900">Nuestras Máquinas</a>
             <a href="#calculadora" class="block text-slate-200 hover:text-brand-orange text-sm font-semibold mobile-link py-1.5 border-b border-slate-900">Calculadora ROI</a>
             <a href="#faq" class="block text-slate-200 hover:text-brand-orange text-sm font-semibold mobile-link py-1.5 border-b border-slate-900">Preguntas Frecuentes</a>
-            <div class="pt-3">
+            <div class="pt-3 flex flex-col gap-2.5">
+                <a href="#" onclick="openWhatsAppModal(event)" class="w-full text-center py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm mobile-link shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    <span>Contáctanos por WhatsApp</span>
+                </a>
                 <a href="#contacto" class="w-full text-center py-3 rounded-xl bg-gradient-to-r from-brand-orange to-brand-gold text-white font-extrabold text-sm block mobile-link shadow-lg shadow-brand-orange/30">Solicitar Máquina</a>
             </div>
         </div>
@@ -275,11 +279,11 @@
                     <div class="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
                         <span class="inline-flex items-center gap-1.5 text-brand-gold font-bold text-[11px] sm:text-xs tracking-wider uppercase">
                             <i data-lucide="award" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-gold"></i>
-                            IMPULSO PARA EMPRESAS MEXICANAS
+                            $0 PESOS DE CUOTA PARA EMPRESAS
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3.5 sm:py-1 rounded-full bg-slate-900/90 border border-slate-700 text-slate-200 text-[10px] sm:text-xs font-semibold backdrop-blur-md">
                             <i data-lucide="check-circle-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-orange"></i>
-                            LOS MEJORES PRECIOS EN TODO MÉXICO
+                            30% MÁS BARATO QUE TIENDAS DE CONVENIENCIA
                         </span>
                     </div>
 
@@ -411,19 +415,19 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-8 sm:mt-12 max-w-5xl mx-auto text-center">
                 <div class="glass-panel p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border-slate-800">
                     <div class="text-2xl sm:text-3xl lg:text-4xl font-black text-brand-orange font-outfit">$0 MXN</div>
-                    <div class="text-[11px] sm:text-xs md:text-sm text-slate-300 font-medium mt-0.5 sm:mt-1">Costo de Instalación</div>
+                    <div class="text-[11px] sm:text-xs md:text-sm text-slate-300 font-medium mt-0.5 sm:mt-1">Cuota e Instalación Empresas</div>
                 </div>
                 <div class="glass-panel p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border-slate-800">
-                    <div class="text-2xl sm:text-3xl lg:text-4xl font-black text-brand-gold font-outfit">24/7</div>
-                    <div class="text-[11px] sm:text-xs md:text-sm text-slate-300 font-medium mt-0.5 sm:mt-1">Disponibilidad 24 Horas</div>
+                    <div class="text-2xl sm:text-3xl lg:text-4xl font-black text-brand-gold font-outfit">-30%</div>
+                    <div class="text-[11px] sm:text-xs md:text-sm text-slate-300 font-medium mt-0.5 sm:mt-1">Vs Tiendas de Conveniencia</div>
                 </div>
                 <div class="glass-panel p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border-slate-800">
                     <div class="text-2xl sm:text-3xl lg:text-4xl font-black text-emerald-400 font-outfit">100%</div>
                     <div class="text-[11px] sm:text-xs md:text-sm text-slate-300 font-medium mt-0.5 sm:mt-1">Gestión Llave en Mano</div>
                 </div>
                 <div class="glass-panel p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border-slate-800">
-                    <div class="text-2xl sm:text-3xl lg:text-4xl font-black text-white font-outfit">&lt; 48 hrs</div>
-                    <div class="text-[11px] sm:text-xs md:text-sm text-slate-300 font-medium mt-0.5 sm:mt-1">Puesta en Marcha</div>
+                    <div class="text-2xl sm:text-3xl lg:text-4xl font-black text-white font-outfit">24/7</div>
+                    <div class="text-[11px] sm:text-xs md:text-sm text-slate-300 font-medium mt-0.5 sm:mt-1">Disponibilidad 24 Horas</div>
                 </div>
             </div>
 
@@ -449,7 +453,7 @@
                     <span class="gradient-text-gold">PUBLICIDAD = SUBSIDIO REAL DE PRECIOS</span>
                 </h2>
                 <p class="text-slate-300 text-sm sm:text-base lg:text-lg mt-3 sm:mt-4 leading-relaxed">
-                    ¿Cómo logramos ofrecer los precios más accesibles del mercado sin sacrificar calidad ni rentabilidad? Aquí te explicamos el motor detrás de Snackeando.
+                    ¿Cómo logramos instalar máquinas a <strong class="text-white">$0 pesos de cuota para empresas</strong> y ofrecer precios un <strong class="text-brand-goldLight">30% más bajos que las tiendas de conveniencia en México</strong>? Aquí te explicamos el motor detrás de Snackeando.
                 </p>
             </div>
 
@@ -476,7 +480,7 @@
                     <div class="text-[11px] sm:text-xs font-bold text-brand-gold uppercase tracking-wider mb-1.5 sm:mb-2">Paso 2: Subsidio Directo</div>
                     <h3 class="font-outfit text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3">Nuestro Negocio es la Publicidad, No Venderte Caro</h3>
                     <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                        Esa inversión publicitaria se transfiere como un descuento directo en el precio de venta al público. ¡Snacks de marca favorita a precios que no existen en ningún otro lado!
+                        Esa inversión publicitaria se transfiere como un descuento directo en el precio de venta al público: <strong class="text-brand-goldLight">precios un 30% menores que en las tiendas de conveniencia en México</strong>. ¡Snacks de tus marcas favoritas a precios que no existen en ningún otro lado!
                     </p>
                 </div>
 
@@ -488,7 +492,7 @@
                     <div class="text-[11px] sm:text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1.5 sm:mb-2">Paso 3: Ganancia Segura</div>
                     <h3 class="font-outfit text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3">Emprendimiento o Bienestar para tus Colaboradores</h3>
                     <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                        Elige el modelo que se adapte a lo que buscas: una prestación con precios subsidiados para tu empresa, o tu propio negocio de vending con alta rotación y rentabilidad garantizada.
+                        Elige el modelo que se adapte a lo que buscas: una prestación <strong class="text-emerald-400">100% sin costo ($0 pesos de cuota)</strong> para tu empresa con precios <strong class="text-white">30% menores que tiendas de conveniencia</strong>, o tu propio negocio de vending con alta rotación y rentabilidad garantizada.
                     </p>
                 </div>
 
@@ -546,18 +550,18 @@
                 <div id="empresas" class="scroll-mt-28 grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-center">
                     
                     <div class="lg:col-span-6 space-y-4 sm:space-y-6">
-                        <div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1 rounded-full bg-brand-orange/15 border border-brand-orange/30 text-brand-goldLight text-[11px] sm:text-xs font-bold uppercase">
+                        <div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 text-[11px] sm:text-xs font-bold uppercase">
                             <i data-lucide="shield-check" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
-                            <span>Renta Mensual: $5,900 MXN + IVA • Todo Incluido</span>
+                            <span>Cuota Mensual: $0 Pesos (Sin Costo) • Precios 30% Menores • Todo Incluido</span>
                         </div>
 
                         <h3 class="font-outfit text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight">
-                            PRESTACIÓN REAL Y BIENESTAR <br class="hidden sm:inline">
-                            <span class="text-brand-orange">CON PRECIOS SUBSIDIADOS PARA TUS EMPLEADOS</span>
+                            PRESTACIÓN REAL A $0 PESOS DE COSTO <br class="hidden sm:inline">
+                            <span class="text-brand-orange">CON PRECIOS 30% MENORES QUE TIENDAS DE CONVENIENCIA</span>
                         </h3>
 
                         <p class="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed">
-                            Una inversión directa en el clima laboral y sentido de pertenencia de tu equipo. Mientras las máquinas vending tradicionales en México ofrecen productos costosos, Snackeando subsidia los precios con publicidad para que tus colaboradores disfruten de tarifas que nadie ve en tiendas de conveniencia.
+                            Un beneficio directo en el clima laboral y sentido de pertenencia de tu equipo <strong class="text-white">sin que a tu empresa le cueste un solo peso ($0 MXN de cuota mensual y $0 MXN de instalación)</strong>. Mientras las máquinas vending tradicionales y tiendas de conveniencia en México ofrecen productos caros, Snackeando subsidia los precios con publicidad para que tus colaboradores disfruten de <strong class="text-brand-goldLight">precios un 30% más bajos que en cualquier tienda de conveniencia</strong>.
                         </p>
 
                         <div class="space-y-3">
@@ -566,8 +570,8 @@
                                     <i data-lucide="refresh-cw" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-white text-xs sm:text-sm">Refill Ilimitado Garantizado</h4>
-                                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Surtimos la máquina las veces que sean necesarias al mes para asegurar que siempre haya producto disponible.</p>
+                                    <h4 class="font-bold text-white text-xs sm:text-sm">$0 Pesos de Cuota y Refill Ilimitado Garantizado</h4>
+                                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">No cobramos renta ni instalación. Surtimos la máquina las veces que sean necesarias al mes para asegurar que siempre haya producto disponible a $0 costo para tu empresa.</p>
                                 </div>
                             </div>
 
@@ -576,8 +580,8 @@
                                     <i data-lucide="package" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-white text-xs sm:text-sm">Logística, Almacenamiento y Producto a Nuestro Cargo</h4>
-                                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Nosotros ponemos los productos a precios inigualables y nos encargamos de todo el abasto. Cero trabajo operativo para ti.</p>
+                                    <h4 class="font-bold text-white text-xs sm:text-sm">Precios 30% Menores que en Tiendas de Conveniencia</h4>
+                                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Nosotros ponemos los productos un 30% más baratos que en las tiendas de conveniencia en México y nos encargamos de toda la logística y abasto. Cero trabajo operativo para ti.</p>
                                 </div>
                             </div>
 
@@ -596,15 +600,15 @@
                                     <i data-lucide="plug" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-white text-xs sm:text-sm">Instalación Fácil (Sin Obra Ni Modificaciones)</h4>
-                                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Solo requerimos un espacio de 1m² y un enchufe estándar de 110V. Conectamos y empieza a funcionar de inmediato.</p>
+                                    <h4 class="font-bold text-white text-xs sm:text-sm">Instalación Gratuita (Sin Obra Ni Modificaciones)</h4>
+                                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Solo requerimos un espacio de 1m² y un enchufe estándar de 110V. Conectamos y empieza a funcionar de inmediato a $0 pesos.</p>
                                 </div>
                             </div>
                         </div>
 
                         <div class="pt-2">
                             <a href="#contacto" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 sm:gap-3 px-6 py-3.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-brand-orange to-brand-gold text-white font-bold text-sm sm:text-base shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40 hover:-translate-y-0.5 transition-all text-center">
-                                <span>Contratar Plan Empresas ($5,900 + IVA)</span>
+                                <span>Solicitar Plan Empresas ($0 Pesos • Sin Costo)</span>
                                 <i data-lucide="arrow-right" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                             </a>
                         </div>
@@ -616,11 +620,11 @@
                             
                             <div class="flex items-center justify-between border-b border-slate-800 pb-3 sm:pb-4 mb-4 sm:mb-5">
                                 <div>
-                                    <span class="text-[10px] sm:text-xs text-brand-goldLight font-bold uppercase tracking-wider">Plan Corporativo</span>
+                                    <span class="text-[10px] sm:text-xs text-brand-goldLight font-bold uppercase tracking-wider">Plan Corporativo • $0 Pesos de Cuota</span>
                                     <h4 class="font-outfit text-base sm:text-xl font-bold text-white">Beneficios Empresariales en Vivo</h4>
                                 </div>
                                 <span class="bg-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-extrabold px-2.5 py-1 rounded-full border border-emerald-500/30 whitespace-nowrap">
-                                    Recomendado +50 empleados
+                                    $0 MXN Costo • +50 empleados
                                 </span>
                             </div>
 
@@ -632,9 +636,9 @@
                                 <div class="absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-3 flex items-center justify-between bg-slate-950/85 backdrop-blur-md px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl border border-brand-orange/40 text-[10px] sm:text-xs shadow-lg">
                                     <div class="flex items-center gap-1.5 sm:gap-2">
                                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                                        <span class="font-bold text-white">Precios Subsidiados con Publicidad</span>
+                                        <span class="font-bold text-white">Cuota $0 MXN • Precios Subsidiados</span>
                                     </div>
-                                    <span class="text-brand-gold font-extrabold text-[10px] sm:text-[11px] hidden xs:inline">¡Hasta 35% menos que tiendas!</span>
+                                    <span class="text-brand-gold font-extrabold text-[10px] sm:text-[11px]">¡30% menos que tiendas de conveniencia!</span>
                                 </div>
                             </div>
 
@@ -642,16 +646,16 @@
                                 <div class="p-3 sm:p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-brand-orange/40 transition-colors">
                                     <div class="text-brand-orange font-bold text-xs sm:text-sm flex items-center gap-1.5">
                                         <i data-lucide="smile" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-orange"></i>
-                                        <span>Colaboradores Felices</span>
+                                        <span>30% Más Barato</span>
                                     </div>
-                                    <div class="text-[11px] sm:text-xs text-slate-400 mt-1">Precios accesibles y botanas frescas en su centro de trabajo.</div>
+                                    <div class="text-[11px] sm:text-xs text-slate-400 mt-1">Precios un 30% menores que las tiendas de conveniencia en México.</div>
                                 </div>
                                 <div class="p-3 sm:p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-brand-gold/40 transition-colors">
                                     <div class="text-brand-gold font-bold text-xs sm:text-sm flex items-center gap-1.5">
                                         <i data-lucide="zap" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-gold"></i>
-                                        <span>Cero Tiempos Muertos</span>
+                                        <span>$0 Pesos para tu Empresa</span>
                                     </div>
-                                    <div class="text-[11px] sm:text-xs text-slate-400 mt-1">Disponibilidad inmediata 24/7 sin salir a la calle.</div>
+                                    <div class="text-[11px] sm:text-xs text-slate-400 mt-1">Sin costo de renta ni instalación y disponibilidad 24/7 sin salir a la calle.</div>
                                 </div>
                             </div>
                         </div>
@@ -698,7 +702,7 @@
                                 </div>
                                 <div>
                                     <h4 class="font-bold text-white text-xs sm:text-sm">2) Acceso a Precios de Mayoreo Inigualables</h4>
-                                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Compras desde una sola pieza al mismo precio como si estuvieras comprando 50 camiones. ¿Te preguntas por qué? Gracias a nuestra <strong class="text-brand-goldLight">Receta Mágica: Publicidad = Precios de Locura Inigualables</strong> en México. ¡Vamos de la mano contigo para asegurar tu rentabilidad!</p>
+                                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Compras desde una sola pieza al mismo precio como si estuvieras comprando 50 camiones. ¿Te preguntas por qué? Gracias a nuestra <strong class="text-brand-goldLight">Receta Mágica: Publicidad = Precios 30% menores que las tiendas de conveniencia en México</strong>. ¡Vamos de la mano contigo para asegurar tu rentabilidad!</p>
                                 </div>
                             </div>
 
@@ -1132,18 +1136,18 @@
                         <i data-lucide="chevron-down" class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 transition-transform duration-300"></i>
                     </button>
                     <div class="faq-body hidden px-4 sm:px-6 pb-4 sm:pb-5 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60 pt-2.5 sm:pt-3">
-                        El Plan Corporativo cuenta con una renta mensual fija de $5,900 MXN + IVA todo incluido, la cual cubre la instalación, todos los refills ilimitados que requieras al mes, abasto de producto a precios inigualables, logística y reportes para Recursos Humanos.
+                        ¡No tiene ningún costo! El Plan Corporativo para Empresas es de <strong class="text-emerald-400">$0 pesos ($0 MXN de cuota mensual y $0 MXN de instalación)</strong>. Nosotros cubrimos la máquina, instalación, mantenimiento, todos los refills ilimitados que requieras al mes, logística y reportes para Recursos Humanos, con el gran beneficio de que los precios para tus colaboradores están un <strong class="text-brand-goldLight">30% por debajo de las tiendas de conveniencia en México</strong>.
                     </div>
                 </div>
 
                 <!-- FAQ Item 2 -->
                 <div class="glass-panel rounded-xl sm:rounded-2xl border-slate-800 overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-4 sm:px-6 py-3.5 sm:py-5 text-left font-bold text-white text-sm sm:text-base flex justify-between items-center gap-3 sm:gap-4 hover:text-brand-orange transition-colors">
-                        <span>¿Cómo funciona el subsidio publicitario en los precios?</span>
+                        <span>¿Cómo logran ofrecer servicio a $0 pesos y precios 30% menores que tiendas de conveniencia?</span>
                         <i data-lucide="chevron-down" class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 transition-transform duration-300"></i>
                     </button>
                     <div class="faq-body hidden px-4 sm:px-6 pb-4 sm:pb-5 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/60 pt-2.5 sm:pt-3">
-                        Comercializamos pautas publicitarias en los viniles y pantallas de nuestras máquinas con marcas nacionales. Esos ingresos nos permiten reducir el precio de venta final de las botanas y bebidas, ofreciendo precios por debajo de cualquier tienda de conveniencia sin sacrificar ganancias para el operador.
+                        Comercializamos pautas publicitarias en los viniles y pantallas de nuestras máquinas con marcas líderes. Esos ingresos nos permiten eliminar la cuota mensual para empresas ($0 pesos) y reducir el precio de venta final de las botanas y bebidas, ofreciendo precios un <strong class="text-brand-goldLight">30% más bajos que cualquier tienda de conveniencia en México</strong>.
                     </div>
                 </div>
 
@@ -1228,7 +1232,7 @@
 
                         <div class="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-900 border border-slate-800">
                             <div class="text-[11px] sm:text-xs text-slate-400">¿Prefieres respuesta inmediata?</div>
-                            <a href="https://wa.me/525576107392?text=Hola%20Snackeando,%20quiero%20solicitar%20una%20máquina%20vending" target="_blank" rel="noopener noreferrer" class="mt-1.5 inline-flex items-center gap-2 text-emerald-400 font-bold text-xs sm:text-sm hover:underline">
+                            <a href="#" onclick="openWhatsAppModal(event)" class="mt-1.5 inline-flex items-center gap-2 text-emerald-400 font-bold text-xs sm:text-sm hover:underline">
                                 <i data-lucide="message-circle" class="w-4 h-4"></i>
                                 <span>Chatear directamente por WhatsApp &rarr;</span>
                             </a>
@@ -1247,8 +1251,8 @@
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Me interesa para:</label>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                                     <label class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-brand-orange has-[:checked]:border-brand-orange has-[:checked]:bg-brand-orange/10 transition-colors">
-                                        <input type="radio" name="leadType" value="Empresa / Oficinas" checked class="accent-brand-orange">
-                                        <span class="text-xs font-bold text-slate-200">Modelo Empresas ($5,900 + IVA)</span>
+                                        <input type="radio" name="leadType" value="Modelo Empresas ($0 Pesos - Sin Costo)" checked class="accent-brand-orange">
+                                        <span class="text-xs font-bold text-slate-200">Modelo Empresas ($0 Pesos • Sin Costo)</span>
                                     </label>
                                     <label class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-brand-gold has-[:checked]:border-brand-gold has-[:checked]:bg-brand-gold/10 transition-colors">
                                         <input type="radio" name="leadType" value="Emprendedor / Inversionista" class="accent-brand-gold">
@@ -1329,7 +1333,7 @@
 
                 <!-- Socials / Direct Link -->
                 <div class="flex items-center gap-4">
-                    <a href="https://wa.me/525576107392" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400 hover:bg-slate-800 transition-colors">
+                    <a href="#" onclick="openWhatsAppModal(event)" title="Chatear por WhatsApp" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400 hover:bg-slate-800 transition-colors">
                         <i data-lucide="message-circle" class="w-4 h-4"></i>
                     </a>
                     <a href="mailto:mmendez@induwell.com" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-brand-orange hover:bg-slate-800 transition-colors">
@@ -1360,44 +1364,186 @@
         </span>
     </button>
 
+    <!-- QUICK WHATSAPP LEAD CAPTURE MODAL -->
+    <div id="waModal" style="display: none;" onclick="if(event.target === this) closeWhatsAppModal()" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300">
+        <div class="relative w-full max-w-md rounded-2xl sm:rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl p-5 sm:p-7 text-left space-y-4">
+            <!-- Close Button -->
+            <button onclick="closeWhatsAppModal()" type="button" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Header -->
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+                    <i data-lucide="message-circle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-outfit font-bold text-lg sm:text-xl text-white">Chatea por WhatsApp</h3>
+                    <p class="text-xs text-slate-400">Ingresa tus datos para conectarte con un asesor de Snackeando.</p>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form id="waModalForm" onsubmit="handleWaModalSubmit(event)" class="space-y-3 pt-2">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Me interesa para:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-brand-orange has-[:checked]:border-brand-orange has-[:checked]:bg-brand-orange/10 text-xs text-slate-200">
+                            <input type="radio" name="modalLeadType" value="Modelo Empresas ($0 Pesos - Sin Costo)" checked class="accent-brand-orange">
+                            <span>Empresas ($0 MXN)</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-brand-gold has-[:checked]:border-brand-gold has-[:checked]:bg-brand-gold/10 text-xs text-slate-200">
+                            <input type="radio" name="modalLeadType" value="Modelo Emprendedor ($2,000)" class="accent-brand-gold">
+                            <span>Emprendedor</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="waModalNombre" class="block text-xs font-bold text-slate-300 mb-1">Tu Nombre Completo *</label>
+                    <input type="text" id="waModalNombre" required placeholder="Ej. Carlos Martínez" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="waModalTelefono" class="block text-xs font-bold text-slate-300 mb-1">Teléfono / WhatsApp *</label>
+                        <input type="tel" id="waModalTelefono" required placeholder="Ej. 55 1234 5678" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label for="waModalCiudad" class="block text-xs font-bold text-slate-300 mb-1">Ciudad / Estado *</label>
+                        <input type="text" id="waModalCiudad" required placeholder="Ej. CDMX" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="waModalEmail" class="block text-xs font-bold text-slate-300 mb-1">Correo Electrónico *</label>
+                    <input type="email" id="waModalEmail" required placeholder="correo@empresa.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm shadow-xl shadow-emerald-500/30 transition-all flex items-center justify-center gap-2 mt-2">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                    <span>Iniciar Chat por WhatsApp</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- SCRIPTS -->
     <script>
         // Initialize Lucide Icons
         lucide.createIcons();
 
         // Mobile Menu Toggle
-        const menuBtn = document.getElementById('mobileMenuBtn');
-        const mobileNav = document.getElementById('mobileNav');
-        if (menuBtn && mobileNav) {
-            menuBtn.addEventListener('click', () => {
-                mobileNav.classList.toggle('hidden');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
             });
         }
 
-        // Accordion FAQ Toggle
-        function toggleFaq(id) {
-            const el = document.getElementById('faq-' + id);
-            const icon = document.getElementById('icon-' + id);
-            if (el.classList.contains('hidden')) {
-                document.querySelectorAll('#faq [id^="faq-"]').forEach(item => item.classList.add('hidden'));
-                document.querySelectorAll('#faq svg').forEach(i => i.style.transform = 'rotate(0deg)');
-                el.classList.remove('hidden');
-                if (icon) icon.style.transform = 'rotate(180deg)';
-            } else {
-                el.classList.add('hidden');
-                if (icon) icon.style.transform = 'rotate(0deg)';
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (mobileMenu) mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Tabs Logic (Para Empresas / Para Emprendedores)
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active', 'bg-gradient-to-r', 'from-brand-orange', 'to-brand-gold', 'text-white', 'shadow-md');
+                b.classList.add('text-slate-300');
+            });
+
+            const activeTab = document.getElementById(tabId);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+
+            if (btn) {
+                btn.classList.add('active', 'bg-gradient-to-r', 'from-brand-orange', 'to-brand-gold', 'text-white', 'shadow-md');
+                btn.classList.remove('text-slate-300');
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Automatically activate the corresponding tab when clicking #empresas or #emprendedores links
+        document.querySelectorAll('a[href="#empresas"]').forEach(link => {
+            link.addEventListener('click', () => {
+                const btn = document.querySelector('button[onclick*="tab-empresas"]');
+                switchTab('tab-empresas', btn);
+            });
+        });
+        document.querySelectorAll('a[href="#emprendedores"]').forEach(link => {
+            link.addEventListener('click', () => {
+                const btn = document.querySelector('button[onclick*="tab-emprendedores"]');
+                switchTab('tab-emprendedores', btn);
+            });
+        });
+
+        // Gallery Image Changer
+        function changeGalleryImage(src, btn) {
+            const mainImg = document.getElementById('mainGalleryImg');
+            if (!mainImg) return;
+
+            mainImg.style.opacity = '0';
+            setTimeout(() => {
+                mainImg.src = src;
+                mainImg.style.opacity = '1';
+            }, 150);
+
+            document.querySelectorAll('.gallery-thumb').forEach(t => {
+                t.classList.remove('border-brand-orange');
+                t.classList.add('border-slate-200');
+            });
+            if (btn) {
+                btn.classList.remove('border-slate-200');
+                btn.classList.add('border-brand-orange');
             }
         }
 
-        // ROI Calculator Logic
-        function calculateROI() {
-            const machines = parseInt(document.getElementById('calcMachines').value) || 1;
-            const salesLevel = parseFloat(document.getElementById('calcSalesLevel').value) || 50000;
+        // Accordion FAQ Toggle
+        function toggleFaq(btn) {
+            if (!btn) return;
+            const body = btn.nextElementSibling;
+            const icon = btn.querySelector('svg') || btn.querySelector('[data-lucide="chevron-down"]');
+            if (!body) return;
+            const isHidden = body.classList.contains('hidden');
 
-            const totalMonthlyUnits = Math.round(salesLevel / 18);
-            const monthlyRevenue = salesLevel;
-            const productCost = Math.round(monthlyRevenue * 0.45);
-            const grossMarginAmount = monthlyRevenue - productCost;
+            document.querySelectorAll('.faq-body').forEach(b => b.classList.add('hidden'));
+            document.querySelectorAll('#faq svg').forEach(i => i.style.transform = 'rotate(0deg)');
+
+            if (isHidden) {
+                body.classList.remove('hidden');
+                if (icon) icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // ROI Calculator Logic (Modelo Emprendedor con 25%-30% de margen y $12 PVP promedio)
+        function calculateROI() {
+            const elMachines = document.getElementById('rangeMachines');
+            const elDailySales = document.getElementById('rangeDailySales');
+            const elTicket = document.getElementById('rangeTicket');
+            const elMargin = document.getElementById('rangeMargin');
+            if (!elMachines || !elDailySales || !elTicket || !elMargin) return;
+
+            const machines = parseInt(elMachines.value) || 2;
+            const dailySales = parseInt(elDailySales.value) || 80;
+            const ticket = parseFloat(elTicket.value) || 12;
+            const marginPct = (parseFloat(elMargin.value) || 28) / 100;
+
+            document.getElementById('valMachines').textContent = machines + (machines === 1 ? ' Máquina' : ' Máquinas');
+            document.getElementById('valDailySales').textContent = dailySales + ' unidades / día';
+            document.getElementById('valTicket').textContent = '$' + ticket.toFixed(2) + ' MXN';
+            document.getElementById('valMargin').textContent = (marginPct * 100).toFixed(0) + '% de margen';
+
+            const totalMonthlyUnits = machines * dailySales * 30;
+            const monthlyRevenue = totalMonthlyUnits * ticket;
+            const grossMarginAmount = monthlyRevenue * marginPct;
+            const productCost = monthlyRevenue * (1 - marginPct);
             const machineRent = machines * 2000;
             const netProfit = grossMarginAmount - machineRent;
 
@@ -1412,7 +1558,7 @@
         // Lead Form to Email (mmendez@induwell.com) & WhatsApp (+52 55 7610 7392)
         function handleFormSubmit(e) {
             e.preventDefault();
-            const leadType = document.querySelector('input[name="leadType"]:checked')?.value || 'Empresas ($5,900 + IVA)';
+            const leadType = document.querySelector('input[name="leadType"]:checked')?.value || 'Modelo Empresas ($0 Pesos - Sin Costo)';
             const nombre = document.getElementById('formNombre').value;
             const telefono = document.getElementById('formTelefono').value;
             const email = document.getElementById('formEmail').value;
@@ -1469,7 +1615,7 @@
 
         function handleWaModalSubmit(e) {
             e.preventDefault();
-            const leadType = document.querySelector('input[name="modalLeadType"]:checked')?.value || 'Modelo Empresas ($5,900 + IVA)';
+            const leadType = document.querySelector('input[name="modalLeadType"]:checked')?.value || 'Modelo Empresas ($0 Pesos - Sin Costo)';
             const nombre = document.getElementById('waModalNombre').value;
             const telefono = document.getElementById('waModalTelefono').value;
             const email = document.getElementById('waModalEmail').value;
@@ -1503,69 +1649,5 @@
         // Initial Calculation
         calculateROI();
     </script>
-
-    <!-- QUICK WHATSAPP LEAD CAPTURE MODAL -->
-    <div id="waModal" style="display: none;" onclick="if(event.target === this) closeWhatsAppModal()" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300">
-        <div class="relative w-full max-w-md rounded-2xl sm:rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl p-5 sm:p-7 text-left space-y-4">
-            <!-- Close Button -->
-            <button onclick="closeWhatsAppModal()" type="button" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-
-            <!-- Header -->
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
-                    <i data-lucide="message-circle" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <h3 class="font-outfit font-bold text-lg sm:text-xl text-white">Chatea por WhatsApp</h3>
-                    <p class="text-xs text-slate-400">Ingresa tus datos para conectarte con un asesor de Snackeando.</p>
-                </div>
-            </div>
-
-            <!-- Form -->
-            <form id="waModalForm" onsubmit="handleWaModalSubmit(event)" class="space-y-3 pt-2">
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">Me interesa para:</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-brand-orange has-[:checked]:border-brand-orange has-[:checked]:bg-brand-orange/10 text-xs text-slate-200">
-                            <input type="radio" name="modalLeadType" value="Modelo Empresas ($5,900 + IVA)" checked class="accent-brand-orange">
-                            <span>Empresas ($5,900)</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-brand-gold has-[:checked]:border-brand-gold has-[:checked]:bg-brand-gold/10 text-xs text-slate-200">
-                            <input type="radio" name="modalLeadType" value="Modelo Emprendedor ($2,000)" class="accent-brand-gold">
-                            <span>Emprendedor</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="waModalNombre" class="block text-xs font-bold text-slate-300 mb-1">Tu Nombre Completo *</label>
-                    <input type="text" id="waModalNombre" required placeholder="Ej. Carlos Martínez" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label for="waModalTelefono" class="block text-xs font-bold text-slate-300 mb-1">Teléfono / WhatsApp *</label>
-                        <input type="tel" id="waModalTelefono" required placeholder="Ej. 55 1234 5678" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label for="waModalCiudad" class="block text-xs font-bold text-slate-300 mb-1">Ciudad / Estado *</label>
-                        <input type="text" id="waModalCiudad" required placeholder="Ej. CDMX" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="waModalEmail" class="block text-xs font-bold text-slate-300 mb-1">Correo Electrónico *</label>
-                    <input type="email" id="waModalEmail" required placeholder="correo@empresa.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500">
-                </div>
-
-                <button type="submit" class="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm shadow-xl shadow-emerald-500/30 transition-all flex items-center justify-center gap-2 mt-2">
-                    <i data-lucide="message-circle" class="w-5 h-5"></i>
-                    <span>Iniciar Chat por WhatsApp</span>
-                </button>
-            </form>
-        </div>
-    </div>
 </body>
 </html>
