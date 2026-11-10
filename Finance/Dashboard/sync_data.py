@@ -42,7 +42,10 @@ def fetch_csv(url):
 SKU_ALIAS = {
     'VOREOVAI63': 'VGALOREVAI63',
     'OREOVAI63': 'VGALOREVAI63',
-    'GALOREVAI63': 'VGALOREVAI63'
+    'GALOREVAI63': 'VGALOREVAI63',
+    'VCONM&M375': 'VCONM&M37.5',
+    'CONM&M375': 'VCONM&M37.5',
+    'CONM&M37.5': 'VCONM&M37.5'
 }
 
 CANONICAL_NAMES = {
@@ -74,7 +77,25 @@ CANONICAL_NAMES = {
     'VGALPRIRE42': 'Prrincipe/ Reese 1/12/9/42g',
     'VDUM00051': 'HALLS MENTA FOP 30X12X25.2G',
     'VDURP0078': 'PALETA PAYASO CJ 10P 43.5G (NUEVO)',
-    'VDUM00034': 'SKW SSGT SAN GDA 20/12/24G MX'
+    'VDUM00034': 'SKW SSGT SAN GDA 20/12/24G MX',
+    'VDUM00071': 'KRANKY 60PX65G',
+    'VDUM00075': 'OREO CAJA 12X4X63G',
+    'VDUM00118': 'OREO CAJA GOLDEN 12X4X63G',
+    'VDUM00119': 'OREO CAJA CHOCOLATE 12X4X63G',
+    'VDUM00122': 'SKITTLES SNK ORIGINAL CS 1/24/10/22G',
+    'VDUM00123': 'CHOCOLATE MILKY WAY PLUS 40 GR',
+    'VDUM00124': 'CHOCOLATE SNICKERS PLUS 40 GR',
+    'VDUH00084': 'HERSHEY BARRA CNC PLEG 12/12/20GR',
+    'VPTCAENC25': 'CACAHUATE ENCHILADO 60 GRS',
+    'VPTCALIM25': 'CACAHUATE LIMON Y SAL 60 GRS',
+    'VPTCAESP25': 'CACAHUATE ESPAÑOL 60 GRS',
+    'VPTCAJAP25': 'CACAHUATE JAPONES 60 GRS',
+    'VPTCAHTN25': 'CACAHUATE HOT NUTS 60 GRS',
+    'VPTCAHTQ25': 'CACAHUATE HOT NUTS QUESO 60 GRS',
+    'VPTGARBA25': 'GARBANZO 60 GRS',
+    'VPTEPTUR25': 'PEPITA TURCA 46 GRS',
+    'VPTEPIFR25': 'PEPITA FRITA 46 GRS',
+    'VPTCGARJ25': 'CACAHUATE GARAPIÑADO 60 GRS'
 }
 
 def get_canonical_sku(raw_sku):
@@ -111,6 +132,7 @@ def main():
             amount = parse_float(row[6])
             unit_cost = parse_float(row[7]) if len(row) > 7 else 0.0
             total_cost = parse_float(row[8]) if len(row) > 8 else (units * unit_cost)
+            raw_status = row[9].strip() if len(row) > 9 and row[9].strip() else "Activos"
             
             if not raw_name or raw_name == "None" or raw_name == "null" or raw_name == "":
                 continue
@@ -126,8 +148,11 @@ def main():
                     "name": canonical_name,
                     "units": 0,
                     "revenue": 0.0,
-                    "cost": 0.0
+                    "cost": 0.0,
+                    "status": raw_status
                 }
+            elif raw_status and raw_status.lower().startswith('act'):
+                products_map[canonical_sku]["status"] = "Activos"
 
             products_map[canonical_sku]["units"] += units
             products_map[canonical_sku]["revenue"] += amount
@@ -154,7 +179,8 @@ def main():
                 "cost": cst,
                 "unitCost": u_cost,
                 "profit": pft,
-                "profitMargin": margin
+                "profitMargin": margin,
+                "status": p.get("status", "Activos")
             })
             
         # Sort top 10 and bottom 5
