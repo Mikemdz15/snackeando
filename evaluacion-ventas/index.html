@@ -458,10 +458,6 @@
                     <span id="exam-timer-text">20:00</span>
                 </div>
             </div>
-            <button id="btn-switch-admin" class="btn btn-outline btn-sm" onclick="toggleLoginMode('admin')">
-                <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i>
-                Acceso RH / Admin
-            </button>
             <button id="btn-logout" class="btn btn-outline btn-sm hidden" onclick="logout()">
                 <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
                 Cerrar Sesión
@@ -513,11 +509,8 @@
                 </button>
             </form>
 
-            <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-muted);">
+            <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: center; align-items: center; font-size: 0.78rem; color: var(--text-muted);">
                 <span id="db-connection-pill">Conectando con servidor...</span>
-                <a href="#" id="toggle-login-link" onclick="event.preventDefault(); toggleLoginMode();" style="color: var(--accent-bronze); text-decoration: none; font-weight: 600;">
-                    Soy Administrador RH
-                </a>
             </div>
         </div>
     </section>
@@ -539,6 +532,17 @@
                     <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Duración Asignada</div>
                     <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-bronze);"><span id="briefing-duration">20</span> min</div>
                 </div>
+            </div>
+
+            <!-- Breve Introducción de la Empresa -->
+            <div style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 18px; margin-bottom: 18px;">
+                <h4 style="font-size: 0.9rem; color: var(--accent-emerald); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="building-2" style="width: 16px; height: 16px;"></i>
+                    ¿Quiénes Somos? · Conoce a Snackeando
+                </h4>
+                <p style="font-size: 0.86rem; color: #e5e7eb; line-height: 1.65;">
+                    <strong>Snackeando</strong> (marca comercial de <strong>INDW Trading, S.A. de C.V.</strong>) es una empresa mexicana enfocada en <strong>soluciones inteligentes de vending corporativo y bienestar laboral</strong>. Instalamos y operamos máquinas expendedoras de última generación dentro de empresas, plantas industriales, corporativos e instituciones, brindando acceso inmediato a botanas, bebidas y alimentos con tecnología de telemetría en tiempo real y cobro multiformato (efectivo, tarjeta y pagos digitales).
+                </p>
             </div>
 
             <div style="background: rgba(197, 168, 128, 0.08); border: 1px solid rgba(197, 168, 128, 0.25); border-radius: 12px; padding: 18px; margin-bottom: 22px;">
@@ -1298,42 +1302,14 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
 
             const isExam = viewId === 'view-exam';
             document.getElementById('exam-timer-container').classList.toggle('hidden', !isExam);
-            document.getElementById('btn-switch-admin').classList.toggle('hidden', viewId !== 'view-login');
             document.getElementById('btn-logout').classList.toggle('hidden', viewId === 'view-login' || isExam);
 
             if (window.lucide) lucide.createIcons();
         }
 
         // ============================================================
-        // 3. LOGIN & ACCESS VALIDATION (CANDIDATE + ADMIN)
+        // 3. UNIFIED LOGIN & ACCESS VALIDATION (ADMIN + CANDIDATES)
         // ============================================================
-        function toggleLoginMode(forceMode) {
-            loginMode = forceMode ? forceMode : (loginMode === 'candidate' ? 'admin' : 'candidate');
-            const badge = document.getElementById('login-mode-badge');
-            const title = document.getElementById('login-title');
-            const sub = document.getElementById('login-subtitle');
-            const link = document.getElementById('toggle-login-link');
-            const userInp = document.getElementById('login-username');
-
-            document.getElementById('login-error').classList.add('hidden');
-            if (loginMode === 'admin') {
-                badge.className = 'badge badge-blue';
-                badge.innerHTML = '<i data-lucide="shield" style="width:12px;height:12px;"></i> Acceso Directivo RH / Admin';
-                title.innerText = 'Panel de Administración';
-                sub.innerText = 'Ingresa con tu usuario Administrador de Snackeando para gestionar accesos, subir CVs y auditar candidatos.';
-                link.innerText = 'Volver a acceso de Candidatos';
-                userInp.placeholder = 'Ej. Miguel Mendez';
-            } else {
-                badge.className = 'badge badge-amber';
-                badge.innerHTML = '<i data-lucide="key-round" style="width:12px;height:12px;"></i> Acceso Temporal para Candidatos';
-                title.innerText = 'Evaluación Comercial B2B';
-                sub.innerText = 'Ingresa el usuario y contraseña temporal proporcionados por el equipo de Recursos Humanos de Snackeando.';
-                link.innerText = 'Soy Administrador RH';
-                userInp.placeholder = 'Ej. laura.gomez';
-            }
-            if (window.lucide) lucide.createIcons();
-        }
-
         async function handleLogin(e) {
             e.preventDefault();
             const errBox = document.getElementById('login-error');
@@ -1353,76 +1329,69 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             btn.innerText = 'Verificando acceso...';
 
             try {
-                if (loginMode === 'admin') {
-                    // Authenticate against snackeando_users
-                    const { data, error } = await sb
-                        .from('snackeando_users')
-                        .select('*')
-                        .ilike('username', rawUser)
-                        .eq('password', rawPass);
+                // 1. Check silently if credentials belong to an Administrator in snackeando_users
+                const { data: adminData } = await sb
+                    .from('snackeando_users')
+                    .select('*')
+                    .ilike('username', rawUser)
+                    .eq('password', rawPass)
+                    .eq('role', 'Administrador');
 
-                    if (error) throw error;
-                    if (!data || data.length === 0) {
-                        throw new Error('Credenciales de administrador inválidas.');
-                    }
-                    const user = data[0];
-                    if (user.role !== 'Administrador') {
-                        throw new Error('Solo usuarios con rol Administrador pueden ingresar a este panel.');
-                    }
-                    currentAdmin = user;
+                if (adminData && adminData.length > 0) {
+                    currentAdmin = adminData[0];
                     await loadAdminPanel();
                     showView('view-admin');
-                } else {
-                    // Candidate Login
-                    if (!evalTablesReady) {
-                        throw new Error('La plataforma está en configuración inicial (tablas SQL pendientes en Supabase). Contacta a RH.');
-                    }
-                    const normalizedUser = rawUser.toLowerCase();
-                    const { data, error } = await sb
-                        .from('snackeando_eval_candidates')
-                        .select('*')
-                        .ilike('username', normalizedUser)
-                        .eq('password', rawPass);
-
-                    if (error) throw error;
-                    if (!data || data.length === 0) {
-                        throw new Error('Usuario o contraseña temporal incorrectos. Verifica los datos enviados por RH.');
-                    }
-
-                    const cand = data[0];
-                    currentCandidate = cand;
-
-                    if (cand.status === 'Completado') {
-                        showView('view-complete');
-                        return;
-                    }
-
-                    const now = new Date();
-                    const expires = new Date(cand.expires_at);
-                    if (now > expires && cand.status === 'Pendiente') {
-                        throw new Error('Tu acceso temporal ha expirado. Contacta al departamento de Recursos Humanos de Snackeando.');
-                    }
-
-                    // If already in progress, check if time remains
-                    if (cand.status === 'En Progreso' && cand.started_at) {
-                        const startedMs = new Date(cand.started_at).getTime();
-                        const durationMs = (cand.duration_minutes || 20) * 60 * 1000;
-                        const endMs = startedMs + durationMs;
-                        if (Date.now() >= endMs) {
-                            // Time already ran out — finalize automatically with cached draft
-                            restoreDraftAndResume(cand, endMs, true);
-                            return;
-                        }
-                        restoreDraftAndResume(cand, endMs, false);
-                        return;
-                    }
-
-                    // Show briefing screen
-                    document.getElementById('briefing-name').innerText = cand.full_name;
-                    document.getElementById('briefing-role').innerText = cand.role_applied || 'Ejecutivo Comercial B2B';
-                    document.getElementById('briefing-duration').innerText = cand.duration_minutes || 20;
-                    showView('view-briefing');
+                    return;
                 }
+
+                // 2. Otherwise validate as Candidate in snackeando_eval_candidates
+                if (!evalTablesReady) {
+                    throw new Error('La plataforma está en configuración inicial (tablas SQL pendientes en Supabase). Contacta a RH.');
+                }
+                const normalizedUser = rawUser.toLowerCase();
+                const { data, error } = await sb
+                    .from('snackeando_eval_candidates')
+                    .select('*')
+                    .ilike('username', normalizedUser)
+                    .eq('password', rawPass);
+
+                if (error) throw error;
+                if (!data || data.length === 0) {
+                    throw new Error('Usuario o contraseña temporal incorrectos. Verifica los datos enviados por RH.');
+                }
+
+                const cand = data[0];
+                currentCandidate = cand;
+
+                if (cand.status === 'Completado') {
+                    showView('view-complete');
+                    return;
+                }
+
+                const now = new Date();
+                const expires = new Date(cand.expires_at);
+                if (now > expires && cand.status === 'Pendiente') {
+                    throw new Error('Tu acceso temporal ha expirado. Contacta al departamento de Recursos Humanos de Snackeando.');
+                }
+
+                // If already in progress, check if time remains
+                if (cand.status === 'En Progreso' && cand.started_at) {
+                    const startedMs = new Date(cand.started_at).getTime();
+                    const durationMs = (cand.duration_minutes || 20) * 60 * 1000;
+                    const endMs = startedMs + durationMs;
+                    if (Date.now() >= endMs) {
+                        restoreDraftAndResume(cand, endMs, true);
+                        return;
+                    }
+                    restoreDraftAndResume(cand, endMs, false);
+                    return;
+                }
+
+                // Show briefing screen
+                document.getElementById('briefing-name').innerText = cand.full_name;
+                document.getElementById('briefing-role').innerText = cand.role_applied || 'Ejecutivo Comercial B2B';
+                document.getElementById('briefing-duration').innerText = cand.duration_minutes || 20;
+                showView('view-briefing');
             } catch (err) {
                 errBox.innerText = err.message || 'Error al iniciar sesión.';
                 errBox.classList.remove('hidden');
