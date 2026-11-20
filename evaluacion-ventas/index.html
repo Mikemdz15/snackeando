@@ -1,0 +1,2598 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snackeando | Portal de Evaluación Comercial &amp; Talento B2B</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase JS v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- PDF.js & Mammoth.js for CV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #070a12;
+            --bg-card: rgba(15, 21, 36, 0.85);
+            --bg-card-solid: #0f1524;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-bronze: #c5a880;
+            --accent-bronze-hover: #d8be98;
+            --accent-emerald: #10b981;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+            --accent-blue: #3b82f6;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at 15% 10%, rgba(197, 168, 128, 0.08), transparent 40%),
+                        radial-gradient(circle at 85% 90%, rgba(16, 185, 129, 0.06), transparent 40%),
+                        var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .serif { font-family: 'Playfair Display', Georgia, serif; }
+
+        .hidden { display: none !important; }
+
+        /* Top Header */
+        .topbar {
+            background: rgba(7, 10, 18, 0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand img {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid rgba(197, 168, 128, 0.4);
+        }
+
+        .brand-title {
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+
+        .brand-sub {
+            font-size: 0.72rem;
+            color: var(--accent-bronze);
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            font-weight: 600;
+        }
+
+        /* Cards & Containers */
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 32px 20px 64px;
+        }
+
+        .container-narrow {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 32px 20px 64px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-bronze), #a6885e);
+            color: #090d16;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--accent-bronze-hover), #b8986c);
+            transform: translateY(-1px);
+        }
+
+        .btn-emerald {
+            background: var(--accent-emerald);
+            color: #052e16;
+        }
+
+        .btn-emerald:hover:not(:disabled) {
+            background: #34d399;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.14);
+            color: #e5e7eb;
+        }
+
+        .btn-outline:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.14);
+            border-color: rgba(239, 68, 68, 0.35);
+            color: #fca5a5;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: rgba(239, 68, 68, 0.25);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.78rem;
+            border-radius: 8px;
+        }
+
+        /* Form Controls */
+        label.field-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-bronze);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="number"],
+        input[type="datetime-local"],
+        select,
+        textarea {
+            width: 100%;
+            background: rgba(5, 8, 15, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.92rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-bronze);
+            box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 130px;
+            line-height: 1.6;
+        }
+
+        /* Anti-copy protection for exam zone */
+        .no-select-prompt {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Radio Option Cards */
+        .option-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .option-card:hover {
+            background: rgba(197, 168, 128, 0.06);
+            border-color: rgba(197, 168, 128, 0.35);
+        }
+
+        .option-card.selected {
+            background: rgba(197, 168, 128, 0.12);
+            border-color: var(--accent-bronze);
+            box-shadow: 0 0 0 1px rgba(197, 168, 128, 0.4);
+        }
+
+        .option-card input[type="radio"] {
+            margin-top: 3px;
+            accent-color: var(--accent-bronze);
+            width: 17px;
+            height: 17px;
+            flex-shrink: 0;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        .badge-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
+        .badge-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+        .badge-red { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); }
+        .badge-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.35); }
+        .badge-gray { background: rgba(156, 163, 175, 0.15); color: #d1d5db; border: 1px solid rgba(156, 163, 175, 0.3); }
+
+        /* Timer Pill */
+        .timer-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #34d399;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            font-size: 0.95rem;
+        }
+        .timer-pill.warning {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.45);
+            color: #fbbf24;
+        }
+        .timer-pill.danger {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+            color: #f87171;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.65; }
+        }
+
+        /* Toast Alert */
+        #toast-banner {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            max-width: 420px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: #111827;
+            border: 1px solid var(--accent-bronze);
+            color: #fff;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+        }
+
+        /* Step Progress Bar */
+        .step-dots {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 22px;
+        }
+        .step-dot {
+            flex: 1;
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: background 0.3s;
+        }
+        .step-dot.done { background: var(--accent-emerald); }
+        .step-dot.active { background: var(--accent-bronze); }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .data-table th {
+            text-align: left;
+            padding: 12px 14px;
+            color: var(--accent-bronze);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .data-table td {
+            padding: 13px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+        .data-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Grid helpers */
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .topbar { padding: 12px 16px; }
+            .card { padding: 20px; }
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-box {
+            background: #0f1524;
+            border: 1px solid rgba(197, 168, 128, 0.35);
+            border-radius: 16px;
+            max-width: 680px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 28px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
+            padding: 10px 16px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            color: var(--accent-bronze);
+            border-bottom-color: var(--accent-bronze);
+        }
+
+        /* Print Styles for Clinical Dossier */
+        @media print {
+            body { background: #fff !important; color: #111 !important; }
+            .topbar, .no-print { display: none !important; }
+            .card { background: #fff !important; border: 1px solid #ddd !important; box-shadow: none !important; color: #111 !important; break-inside: avoid; }
+            .text-white, h1, h2, h3, h4 { color: #111 !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="topbar">
+        <div class="brand">
+            <img src="../Imagenes Web/Logo_Snackeando.jpeg" alt="Snackeando Logo" onerror="this.style.display='none'">
+            <div>
+                <div class="brand-title">SNACKEANDO</div>
+                <div class="brand-sub">Evaluación de Talento Comercial</div>
+            </div>
+        </div>
+
+        <div id="topbar-right" style="display: flex; align-items: center; gap: 12px;">
+            <div id="exam-timer-container" class="hidden">
+                <div id="exam-timer-pill" class="timer-pill">
+                    <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+                    <span id="exam-timer-text">20:00</span>
+                </div>
+            </div>
+            <button id="btn-switch-admin" class="btn btn-outline btn-sm" onclick="toggleLoginMode('admin')">
+                <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i>
+                Acceso RH / Admin
+            </button>
+            <button id="btn-logout" class="btn btn-outline btn-sm hidden" onclick="logout()">
+                <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
+                Cerrar Sesión
+            </button>
+        </div>
+    </header>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast-banner">
+        <i data-lucide="alert-triangle" style="width: 20px; height: 20px; color: var(--accent-amber); flex-shrink: 0;"></i>
+        <span id="toast-message"></span>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 1: LOGIN (CANDIDATE & ADMIN)                         -->
+    <!-- ========================================================= -->
+    <section id="view-login" class="container-narrow" style="padding-top: 56px;">
+        <div class="card" style="max-width: 480px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 26px;">
+                <span class="badge badge-amber" id="login-mode-badge" style="margin-bottom: 12px;">
+                    <i data-lucide="key-round" style="width: 12px; height: 12px;"></i>
+                    Acceso Temporal para Candidatos
+                </span>
+                <h1 class="serif" id="login-title" style="font-size: 1.85rem; color: #fff; margin-bottom: 8px;">
+                    Evaluación Comercial B2B
+                </h1>
+                <p id="login-subtitle" style="font-size: 0.88rem; color: var(--text-muted);">
+                    Ingresa el usuario y contraseña temporal proporcionados por el equipo de Recursos Humanos de Snackeando.
+                </p>
+            </div>
+
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div style="margin-bottom: 16px;">
+                    <label class="field-label" for="login-username">Usuario</label>
+                    <input type="text" id="login-username" autocomplete="username" placeholder="Ej. laura.gomez" required>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label class="field-label" for="login-password">Contraseña Temporal</label>
+                    <input type="password" id="login-password" autocomplete="current-password" placeholder="Ingresa tu clave de acceso" required>
+                </div>
+
+                <div id="login-error" class="hidden" style="background: rgba(239, 68, 68, 0.14); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 11px 14px; border-radius: 10px; font-size: 0.84rem; margin-bottom: 16px;">
+                </div>
+
+                <button type="submit" id="btn-login-submit" class="btn btn-primary" style="width: 100%; padding: 13px;">
+                    <i data-lucide="log-in" style="width: 16px; height: 16px;"></i>
+                    Ingresar a la Plataforma
+                </button>
+            </form>
+
+            <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-muted);">
+                <span id="db-connection-pill">Conectando con servidor...</span>
+                <a href="#" id="toggle-login-link" onclick="event.preventDefault(); toggleLoginMode();" style="color: var(--accent-bronze); text-decoration: none; font-weight: 600;">
+                    Soy Administrador RH
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 2: CANDIDATE PRE-START BRIEFING                      -->
+    <!-- ========================================================= -->
+    <section id="view-briefing" class="container-narrow hidden">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
+                <div>
+                    <span class="badge badge-green" style="margin-bottom: 8px;">Acceso Verificado</span>
+                    <h2 class="serif" style="font-size: 1.75rem; color: #fff;">Hola, <span id="briefing-name">Candidato</span></h2>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">
+                        Posición: <strong id="briefing-role" style="color: #fff;">Ejecutivo Comercial B2B</strong>
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Duración Asignada</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-bronze);"><span id="briefing-duration">20</span> min</div>
+                </div>
+            </div>
+
+            <div style="background: rgba(197, 168, 128, 0.08); border: 1px solid rgba(197, 168, 128, 0.25); border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+                <h4 style="font-size: 0.9rem; color: var(--accent-bronze); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="info" style="width: 16px; height: 16px;"></i>
+                    Instrucciones y Reglas Importantes Antes de Iniciar
+                </h4>
+                <ul style="font-size: 0.86rem; color: #e5e7eb; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
+                    <li><strong>Tiempo Límite Continuo:</strong> En cuanto presiones <em>"Comenzar Evaluación"</em> iniciará el cronómetro. Si el tiempo llega a 00:00, tu prueba se enviará automáticamente.</li>
+                    <li><strong>Un Solo Intento:</strong> No podrás reiniciar ni volver a presentar el examen una vez enviado.</li>
+                    <li><strong>Redacción Directa con Teclado:</strong> Por integridad del proceso, <strong>está deshabilitado copiar o pegar texto</strong> en las zonas de respuesta. Queremos conocer tu criterio genuino y redacción propia.</li>
+                    <li><strong>Foco en la Pantalla:</strong> Evita cambiar de pestaña o ventana durante la prueba; el sistema registra la integridad de la sesión.</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="btn btn-outline" onclick="logout()">Salir</button>
+                <button class="btn btn-primary" onclick="startExam()">
+                    <i data-lucide="play" style="width: 16px; height: 16px;"></i>
+                    Comenzar Evaluación Ahora
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 3: CANDIDATE ACTIVE EXAM                             -->
+    <!-- ========================================================= -->
+    <section id="view-exam" class="container-narrow hidden">
+        <div class="card">
+            <!-- Step Progress -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span id="exam-step-label" style="font-size: 0.78rem; font-weight: 700; color: var(--accent-bronze); text-transform: uppercase; letter-spacing: 1px;">
+                    Bloque 1 de 5
+                </span>
+                <span style="font-size: 0.76rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
+                    <i data-lucide="keyboard" style="width: 13px; height: 13px;"></i>
+                    Pegado deshabilitado · Responde con tu teclado
+                </span>
+            </div>
+            <div class="step-dots" id="exam-step-dots">
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+            </div>
+
+            <!-- Step 1: Q1 SJT Conmutador -->
+            <div class="exam-step" data-step="1">
+                <div class="no-select-prompt" style="margin-bottom: 20px;">
+                    <span class="badge badge-blue" style="margin-bottom: 10px;">Bloque A · Juicio Situacional Comercial</span>
+                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">1. Superando al Filtro de Conmutador</h3>
+                    <p style="font-size: 0.94rem; color: #e5e7eb; line-height: 1.65;">
+                        Llamas al conmutador de una planta industrial de 400 empleados. La recepcionista te dice tajantemente: <em>"No recibimos vendedores y no transferimos con Recursos Humanos"</em>. ¿Qué haces?
+                    </p>
+                </div>
+                <div id="q1-options">
+                    <label class="option-card" onclick="selectRadio('q1', 'a', this)">
+                        <input type="radio" name="q1" value="a">
+                        <span><strong>a)</strong> Pides su correo institucional para mandar un brochure corporativo.</span>
+                    </label>
+                    <label class="option-card" onclick="selectRadio('q1', 'b', this)">
+                        <input type="radio" name="q1" value="b">
+                        <span><strong>b)</strong> Preguntas el nombre del responsable de Seguridad e Higiene o Relaciones Laborales y buscas conectar por LinkedIn con un mensaje personalizado de bienestar laboral.</span>
+                    </label>
+                    <label class="option-card" onclick="selectRadio('q1', 'c', this)">
+                        <input type="radio" name="q1" value="c">
+                        <span><strong>c)</strong> Insistes diciendo que tienes una llamada pactada con el Director.</span>
+                    </label>
+                    <label class="option-card" onclick="selectRadio('q1', 'd', this)">
+                        <input type="radio" name="q1" value="d">
+                        <span><strong>d)</strong> Dejas tu número telefónico y pides que te devuelvan la llamada.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Step 2: Q2 SJT Oxxo / Comedor -->
+            <div class="exam-step hidden" data-step="2">
+                <div class="no-select-prompt" style="margin-bottom: 20px;">
+                    <span class="badge badge-blue" style="margin-bottom: 10px;">Bloque A · Juicio Situacional Comercial</span>
+                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">2. Manejo de Objeción Directa</h3>
+                    <p style="font-size: 0.94rem; color: #e5e7eb; line-height: 1.65;">
+                        Un Gerente de Recursos Humanos te dice: <em>"Aquí ya tenemos comedor industrial y un Oxxo enfrente a 30 metros; no necesitamos máquinas vending"</em>. ¿Cuál es tu mejor respuesta?
+                    </p>
+                </div>
+                <div id="q2-options">
+                    <label class="option-card" onclick="selectRadio('q2', 'a', this)">
+                        <input type="radio" name="q2" value="a">
+                        <span><strong>a)</strong> "Pero nuestras máquinas son más modernas y aceptan tarjeta de crédito."</span>
+                    </label>
+                    <label class="option-card" onclick="selectRadio('q2', 'b', this)">
+                        <input type="radio" name="q2" value="b">
+                        <span><strong>b)</strong> "Entiendo, Licenciado. Sin embargo, ¿ha medido cuánto tiempo pierden sus operadores saliendo a la calle en turnos vespertinos y nocturnos? Con Snackeando, les damos los mismos productos 20% a 25% más baratos dentro de la planta, a costo cero para ustedes."</span>
+                    </label>
+                    <label class="option-card" onclick="selectRadio('q2', 'c', this)">
+                        <input type="radio" name="q2" value="c">
+                        <span><strong>c)</strong> "El Oxxo es carísimo, nosotros somos mucho mejores."</span>
+                    </label>
+                    <label class="option-card" onclick="selectRadio('q2', 'd', this)">
+                        <input type="radio" name="q2" value="d">
+                        <span><strong>d)</strong> "Podemos dejarle la máquina a prueba y si no le gusta nos la llevamos."</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Step 3: Q3 Numerical & Executive Logic -->
+            <div class="exam-step hidden" data-step="3">
+                <div class="no-select-prompt" style="margin-bottom: 18px;">
+                    <span class="badge badge-amber" style="margin-bottom: 10px;">Bloque B · Agilidad Numérica y Lógica de Negocio</span>
+                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">3. Cálculo de Impacto Económico para el Cliente</h3>
+                    <div style="background: rgba(255,255,255,0.03); border-left: 3px solid var(--accent-bronze); padding: 14px; border-radius: 0 10px 10px 0; font-size: 0.92rem; color: #e5e7eb;">
+                        Una empresa tiene 250 empleados. En promedio, <strong>100 colaboradores</strong> compran 1 producto al día en una tienda de conveniencia a <strong>$22 MXN</strong> durante <strong>22 días laborales al mes</strong>.<br>
+                        Si con Snackeando el mismo producto cuesta <strong>$17 MXN</strong> (ahorro de $5 MXN por compra):
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label class="field-label" for="ans-q3a">3A. ¿Cuánto dinero ahorra la plantilla de empleados en conjunto al mes? ($ MXN)</label>
+                    <input type="text" id="ans-q3a" class="protected-input" data-qid="q3a" placeholder="Escribe el monto mensual en MXN (ej. 11000)">
+                </div>
+
+                <div>
+                    <label class="field-label" for="ans-q3b">3B. Si la empresa gasta $0 de renta, ¿por qué para el Director de Finanzas y RH esto equivale a dar un aumento o bono indirecto a sus colaboradores? (3 a 5 líneas)</label>
+                    <textarea id="ans-q3b" class="protected-input" data-qid="q3b" placeholder="Redacta tu argumento ejecutivo directamente con el teclado..."></textarea>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--text-muted); margin-top: 6px;">
+                        <span>Explica el impacto financiero y de clima laboral.</span>
+                        <span id="count-q3b">0 caracteres</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Q4 Cold Outreach WhatsApp -->
+            <div class="exam-step hidden" data-step="4">
+                <div class="no-select-prompt" style="margin-bottom: 18px;">
+                    <span class="badge badge-green" style="margin-bottom: 10px;">Bloque C · Redacción y Prospección en Frío</span>
+                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">4. Mensaje de WhatsApp Ejecutivo (Máx. 60 palabras)</h3>
+                    <p style="font-size: 0.94rem; color: #e5e7eb; line-height: 1.65;">
+                        Redacta un mensaje de WhatsApp de <strong>máximo 60 palabras</strong> para enviarle a un Director de Recursos Humanos que encontraste en LinkedIn.<br>
+                        Tu único objetivo es conseguir una <strong>videollamada de 10 minutos</strong> para presentar el modelo de bienestar laboral Snackeando (renta <strong>$0 pesos</strong>, nosotros abastecemos y precios <strong>20%–25% más baratos que Oxxo</strong>).
+                    </p>
+                </div>
+                <div>
+                    <label class="field-label" for="ans-q4">Tu Mensaje de Prospección en Frío</label>
+                    <textarea id="ans-q4" class="protected-input" data-qid="q4" placeholder="Escribe el mensaje exacto que enviarías por WhatsApp..."></textarea>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 6px;">
+                        <span style="color: var(--text-muted);">Límite recomendado: 60 palabras.</span>
+                        <span id="count-q4" style="font-weight: 700; color: var(--accent-emerald);">0 / 60 palabras</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Q5 Sales Grit -->
+            <div class="exam-step hidden" data-step="5">
+                <div class="no-select-prompt" style="margin-bottom: 18px;">
+                    <span class="badge badge-red" style="margin-bottom: 10px;">Bloque D · Resiliencia Comercial (Sales Grit)</span>
+                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">5. Manejo Real del Rechazo</h3>
+                    <p style="font-size: 0.94rem; color: #e5e7eb; line-height: 1.65;">
+                        De tus últimos 12 meses en ventas, descríbeme <strong>el rechazo más doloroso</strong> que tuviste tras meses de seguimiento y <strong>qué hiciste exactamente las 2 horas siguientes</strong> para sobreponerte.
+                    </p>
+                </div>
+                <div>
+                    <label class="field-label" for="ans-q5">Tu Respuesta Honesta y Detallada</label>
+                    <textarea id="ans-q5" class="protected-input" data-qid="q5" style="min-height: 165px;" placeholder="Describe la situación concreta y tus acciones inmediatas..."></textarea>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--text-muted); margin-top: 6px;">
+                        <span>Sé específico en tus acciones concretas.</span>
+                        <span id="count-q5">0 palabras</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Footer -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--border-color);">
+                <button id="btn-prev-step" class="btn btn-outline hidden" onclick="changeStep(-1)">
+                    <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                    Anterior
+                </button>
+                <div style="flex: 1;"></div>
+                <button id="btn-next-step" class="btn btn-primary" onclick="changeStep(1)">
+                    Siguiente Bloque
+                    <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+                </button>
+                <button id="btn-submit-exam" class="btn btn-emerald hidden" onclick="confirmSubmitExam()">
+                    <i data-lucide="send" style="width: 16px; height: 16px;"></i>
+                    Enviar Evaluación
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 4: CANDIDATE COMPLETION (NO RESULTS SHOWN)           -->
+    <!-- ========================================================= -->
+    <section id="view-complete" class="container-narrow hidden" style="padding-top: 60px;">
+        <div class="card" style="text-align: center; padding: 48px 32px;">
+            <div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); border: 2px solid var(--accent-emerald); display: flex; align-items: center; justify-content: center; margin: 0 auto 22px;">
+                <i data-lucide="check-circle-2" style="width: 38px; height: 38px; color: var(--accent-emerald);"></i>
+            </div>
+            <h2 class="serif" style="font-size: 2rem; color: #fff; margin-bottom: 14px;">
+                ¡Gracias por enviarnos tu test!
+            </h2>
+            <p style="font-size: 1rem; color: #d1d5db; max-width: 520px; margin: 0 auto 28px; line-height: 1.7;">
+                Nuestro departamento de Recursos Humanos está evaluando tus respuestas y te dará los resultados directamente en tu entrevista.
+            </p>
+            <div style="font-size: 0.82rem; color: var(--text-muted); padding-top: 18px; border-top: 1px solid var(--border-color);">
+                Ya puedes cerrar esta ventana de forma segura. · Snackeando Talento
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 5: ADMIN COMMAND CENTER                              -->
+    <!-- ========================================================= -->
+    <section id="view-admin" class="container hidden">
+        <!-- SQL Setup Warning Banner (shown only if tables don't exist yet) -->
+        <div id="sql-warning-banner" class="hidden card" style="margin-bottom: 24px; border-color: rgba(245, 158, 11, 0.5); background: rgba(245, 158, 11, 0.08);">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+                <div>
+                    <h4 style="color: #fbbf24; font-size: 1rem; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="database" style="width: 18px; height: 18px;"></i>
+                        Falta crear las tablas de evaluación en Supabase
+                    </h4>
+                    <p style="font-size: 0.84rem; color: #e5e7eb;">
+                        Para que los candidatos externos puedan ingresar desde cualquier dispositivo, ejecuta el script SQL en el SQL Editor de tu proyecto Supabase.
+                    </p>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="openSqlModal()">
+                    <i data-lucide="code" style="width: 14px; height: 14px;"></i>
+                    Ver y Copiar Script SQL
+                </button>
+            </div>
+        </div>
+
+        <!-- Admin Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
+            <div>
+                <span class="badge badge-amber" style="margin-bottom: 6px;">Panel Directivo · RH &amp; Dirección Comercial</span>
+                <h1 class="serif" style="font-size: 2rem; color: #fff;">Centro de Evaluación y Análisis Clínico</h1>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-outline btn-sm" onclick="refreshAdminData()">
+                    <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i>
+                    Actualizar
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="openCreateCandidateModal()">
+                    <i data-lucide="user-plus" style="width: 14px; height: 14px;"></i>
+                    Nuevo Acceso Temporal
+                </button>
+            </div>
+        </div>
+
+        <!-- Admin KPI Summary -->
+        <div class="grid-4" style="margin-bottom: 24px;">
+            <div class="card" style="padding: 18px;">
+                <div style="font-size: 0.74rem; color: var(--text-muted); text-transform: uppercase;">Candidatos Registrados</div>
+                <div id="adm-kpi-total" style="font-size: 1.8rem; font-weight: 800; color: #fff; margin-top: 4px;">0</div>
+            </div>
+            <div class="card" style="padding: 18px;">
+                <div style="font-size: 0.74rem; color: var(--text-muted); text-transform: uppercase;">Evaluaciones Completadas</div>
+                <div id="adm-kpi-done" style="font-size: 1.8rem; font-weight: 800; color: var(--accent-emerald); margin-top: 4px;">0</div>
+            </div>
+            <div class="card" style="padding: 18px;">
+                <div style="font-size: 0.74rem; color: var(--text-muted); text-transform: uppercase;">Accesos Activos / Pendientes</div>
+                <div id="adm-kpi-pending" style="font-size: 1.8rem; font-weight: 800; color: var(--accent-amber); margin-top: 4px;">0</div>
+            </div>
+            <div class="card" style="padding: 18px;">
+                <div style="font-size: 0.74rem; color: var(--text-muted); text-transform: uppercase;">Promedio Score Global</div>
+                <div id="adm-kpi-avg" style="font-size: 1.8rem; font-weight: 800; color: var(--accent-bronze); margin-top: 4px;">0/100</div>
+            </div>
+        </div>
+
+        <!-- Admin Tabs -->
+        <div class="tabs no-print">
+            <button class="tab-btn active" id="tab-btn-candidates" onclick="switchAdminTab('candidates')">
+                <i data-lucide="users" style="width: 16px; height: 16px;"></i>
+                Candidatos y Vigencias
+            </button>
+            <button class="tab-btn" id="tab-btn-dossier" onclick="switchAdminTab('dossier')">
+                <i data-lucide="stethoscope" style="width: 16px; height: 16px;"></i>
+                Análisis Clínico y Auditoría Pre-Entrevista
+            </button>
+        </div>
+
+        <!-- TAB 1: CANDIDATES TABLE -->
+        <div id="admin-tab-candidates" class="card">
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Candidato</th>
+                            <th>Usuario / Clave</th>
+                            <th>Vigencia</th>
+                            <th>Tiempo</th>
+                            <th>Estatus</th>
+                            <th>Score Test</th>
+                            <th>CV</th>
+                            <th style="text-align: right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-candidates-tbody">
+                        <tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 28px;">Cargando candidatos...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 2: CLINICAL DOSSIER & AUDIT -->
+        <div id="admin-tab-dossier" class="hidden">
+            <div id="dossier-empty" class="card" style="text-align: center; padding: 48px;">
+                <i data-lucide="file-search" style="width: 40px; height: 40px; color: var(--accent-bronze); margin-bottom: 12px;"></i>
+                <h3 class="serif" style="color: #fff; margin-bottom: 6px;">Selecciona un candidato para abrir su Expediente Clínico</h3>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">Haz clic en <strong>"Ver Expediente"</strong> desde la pestaña de Candidatos.</p>
+            </div>
+
+            <div id="dossier-content" class="hidden">
+                <!-- Dossier Top Banner -->
+                <div class="card" style="margin-bottom: 20px; border-color: rgba(197, 168, 128, 0.35);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; flex-wrap: wrap;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap;">
+                                <span id="dos-verdict-badge" class="badge badge-green">VEREDICTO</span>
+                                <span id="dos-integrity-badge" class="badge badge-blue">INTEGRIDAD</span>
+                            </div>
+                            <h2 class="serif" id="dos-name" style="font-size: 1.9rem; color: #fff;">Nombre</h2>
+                            <p id="dos-meta" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;"></p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="text-align: center; background: rgba(0,0,0,0.35); padding: 12px 22px; border-radius: 12px; border: 1px solid rgba(197, 168, 128, 0.3);">
+                                <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted);">Score Evaluación</div>
+                                <div id="dos-total-score" style="font-size: 2rem; font-weight: 800; color: var(--accent-bronze);">0/100</div>
+                            </div>
+                            <button class="btn btn-outline btn-sm no-print" onclick="window.print()">
+                                <i data-lucide="printer" style="width: 15px; height: 15px;"></i>
+                                Imprimir / PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CV UPLOAD & CLINICAL CROSS-ANALYSIS -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+                        <div>
+                            <span class="badge badge-amber" style="margin-bottom: 6px;">Paso Obligatorio Pre-Entrevista</span>
+                            <h3 class="serif" style="font-size: 1.35rem; color: #fff;">Cruce Clínico: CV vs. Desempeño Real en Prueba</h3>
+                        </div>
+                        <div class="no-print">
+                            <input type="file" id="cv-file-input" accept=".pdf,.docx,.txt" class="hidden" onchange="handleCvUpload(event)">
+                            <button class="btn btn-primary btn-sm" onclick="document.getElementById('cv-file-input').click()">
+                                <i data-lucide="upload" style="width: 14px; height: 14px;"></i>
+                                <span id="cv-upload-btn-text">Subir CV (PDF / DOCX / TXT)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="cv-missing-box" style="background: rgba(245, 158, 11, 0.08); border: 1px dashed rgba(245, 158, 11, 0.45); border-radius: 12px; padding: 20px; text-align: center;">
+                        <p style="font-size: 0.88rem; color: #fbbf24; margin-bottom: 10px;">
+                            <strong>Aún no has cargado el CV de este candidato.</strong> Súbelo para cruzar su historial declarado contra sus resultados reales y generar las preguntas de quiebre personalizadas.
+                        </p>
+                        <button class="btn btn-outline btn-sm no-print" onclick="document.getElementById('cv-file-input').click()">
+                            Seleccionar Archivo CV
+                        </button>
+                    </div>
+
+                    <div id="cv-analysis-box" class="hidden">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-size: 0.84rem; color: var(--accent-emerald);">
+                            <i data-lucide="file-check-2" style="width: 16px; height: 16px;"></i>
+                            <span>Archivo analizado: <strong id="dos-cv-filename">cv.pdf</strong></span>
+                        </div>
+                        <div id="dos-clinical-insights" class="grid-2" style="margin-bottom: 14px;"></div>
+                        <div id="dos-cross-alerts" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                    </div>
+                </div>
+
+                <!-- FORENSIC AUDIT & TIME TELEMETRY -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3 class="serif" style="font-size: 1.35rem; color: #fff; margin-bottom: 6px;">
+                        Auditoría Forense de Tiempos, Reescritura e Integridad
+                    </h3>
+                    <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 18px;">
+                        Diagnóstico puntual de cómo resolvió cada bloque: tiempo invertido, pausas iniciales, borrados masivos, salidas de pestaña e intentos de pegado bloqueados.
+                    </p>
+
+                    <!-- Audit Conclusions List -->
+                    <div id="dos-audit-conclusions" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 18px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px;">
+                    </div>
+
+                    <div class="grid-2" style="align-items: start;">
+                        <!-- Per-question telemetry table -->
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Bloque</th>
+                                        <th>Tiempo</th>
+                                        <th>1ª Tecla</th>
+                                        <th>Teclas / Borrados</th>
+                                        <th>Reescrituras</th>
+                                        <th>Salidas / Pegado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dos-telemetry-tbody"></tbody>
+                            </table>
+                        </div>
+                        <!-- Timeline & Chart -->
+                        <div>
+                            <div style="height: 200px; margin-bottom: 14px;">
+                                <canvas id="dos-time-chart"></canvas>
+                            </div>
+                            <div style="max-height: 170px; overflow-y: auto; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 12px; font-size: 0.78rem;">
+                                <div style="color: var(--accent-bronze); font-weight: 700; margin-bottom: 6px;">Bitácora Cronológica de Eventos</div>
+                                <div id="dos-timeline-list" style="display: flex; flex-direction: column; gap: 5px; color: #d1d5db;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ANSWERS & SCORING BREAKDOWN -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3 class="serif" style="font-size: 1.35rem; color: #fff; margin-bottom: 16px;">
+                        Respuestas Exactas y Evaluación por Competencia
+                    </h3>
+                    <div id="dos-answers-breakdown" style="display: flex; flex-direction: column; gap: 16px;"></div>
+                </div>
+
+                <!-- PHASE 2, 3, 4 INTERVIEW GUIDE & LIVE RUBRIC -->
+                <div class="card">
+                    <span class="badge badge-blue" style="margin-bottom: 8px;">Fases 2, 3 y 4 · Guía de Entrevista Disruptiva</span>
+                    <h3 class="serif" style="font-size: 1.4rem; color: #fff; margin-bottom: 14px;">
+                        Plan de Ataque para la Entrevista en Vivo + Rúbrica (1–5)
+                    </h3>
+
+                    <div class="grid-2" style="margin-bottom: 22px;">
+                        <div style="background: rgba(0,0,0,0.28); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.06);">
+                            <h4 style="color: var(--accent-bronze); font-size: 0.88rem; margin-bottom: 10px;">Fase 2: Preguntas de Quiebre Psicológico (Personalizadas)</h4>
+                            <ul id="dos-custom-questions" style="font-size: 0.84rem; color: #e5e7eb; padding-left: 18px; display: flex; flex-direction: column; gap: 8px;"></ul>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.28); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.06);">
+                            <h4 style="color: var(--accent-emerald); font-size: 0.88rem; margin-bottom: 10px;">Fase 3 y 4: Roleplay Modelo $0 + Coachability Test</h4>
+                            <div style="font-size: 0.82rem; color: #d1d5db; display: flex; flex-direction: column; gap: 8px;">
+                                <p><strong>Escenario:</strong> Planta 380 empleados. Director RH escéptico.</p>
+                                <p><strong>Objeción 1 ($0 Renta):</strong> "¿Dónde están las letras chiquitas?" → Debe explicar margen por volumen.</p>
+                                <p><strong>Objeción 2 (Oxxo a 30m):</strong> Debe reencuadrar a tiempos muertos, turnos nocturnos y 20-25% ahorro.</p>
+                                <p><strong>Objeción 3 (Atorones/Fallas):</strong> Debe explicar Sensor Óptico, telemetría y 0 carga para RH.</p>
+                                <p><strong>Fase 4 (Coachability):</strong> Dar feedback duro tras el roleplay y pedirle repetir desde el saludo. Observar si se justifica (DESCARTAR) o aplica al 100% (CONTRATAR).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Interview Rubric -->
+                    <div style="background: rgba(197, 168, 128, 0.06); border: 1px solid rgba(197, 168, 128, 0.25); border-radius: 12px; padding: 18px;">
+                        <h4 style="color: var(--accent-bronze); font-size: 0.9rem; margin-bottom: 14px;">Calificación de Entrevista en Vivo (Escala 1 al 5)</h4>
+                        <div class="grid-4" style="margin-bottom: 16px;">
+                            <div>
+                                <label class="field-label" for="rub-modelo">Comprensión Modelo $0</label>
+                                <select id="rub-modelo">
+                                    <option value="0">Sin calificar</option>
+                                    <option value="1">1 - Deficiente</option>
+                                    <option value="2">2 - Bajo</option>
+                                    <option value="3">3 - Aceptable</option>
+                                    <option value="4">4 - Bueno</option>
+                                    <option value="5">5 - Sobresaliente</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="field-label" for="rub-objeciones">Manejo de Objeciones</label>
+                                <select id="rub-objeciones">
+                                    <option value="0">Sin calificar</option>
+                                    <option value="1">1 - Deficiente</option>
+                                    <option value="2">2 - Bajo</option>
+                                    <option value="3">3 - Aceptable</option>
+                                    <option value="4">4 - Bueno</option>
+                                    <option value="5">5 - Sobresaliente</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="field-label" for="rub-escucha">Escucha Activa</label>
+                                <select id="rub-escucha">
+                                    <option value="0">Sin calificar</option>
+                                    <option value="1">1 - Deficiente</option>
+                                    <option value="2">2 - Bajo</option>
+                                    <option value="3">3 - Aceptable</option>
+                                    <option value="4">4 - Bueno</option>
+                                    <option value="5">5 - Sobresaliente</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="field-label" for="rub-coachability">Coachability (Clave)</label>
+                                <select id="rub-coachability">
+                                    <option value="0">Sin calificar</option>
+                                    <option value="1">1 - Se justifica / Ego</option>
+                                    <option value="2">2 - Bajo</option>
+                                    <option value="3">3 - Aplica a medias</option>
+                                    <option value="4">4 - Bueno</option>
+                                    <option value="5">5 - Aplica al 100%</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 14px;">
+                            <label class="field-label" for="dos-admin-notes">Notas Clínicas del Entrevistador (Miguel / RH)</label>
+                            <textarea id="dos-admin-notes" style="min-height: 90px;" placeholder="Anota impresiones de lenguaje corporal, respuesta al feedback duro y decisión final..."></textarea>
+                        </div>
+                        <div style="display: flex; justify-content: flex-end;" class="no-print">
+                            <button class="btn btn-primary btn-sm" onclick="saveInterviewEvaluation()">
+                                <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+                                Guardar Calificación y Notas en Supabase
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- MODAL: CREATE / EDIT CANDIDATE ACCESS                     -->
+    <!-- ========================================================= -->
+    <div id="modal-create-candidate" class="modal-backdrop hidden">
+        <div class="modal-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                <h3 class="serif" style="font-size: 1.4rem; color: #fff;">Generar Acceso Temporal de Candidato</h3>
+                <button class="btn btn-outline btn-sm" onclick="closeCreateCandidateModal()">✕</button>
+            </div>
+            <form id="create-candidate-form" onsubmit="saveNewCandidate(event)">
+                <div class="grid-2" style="margin-bottom: 14px;">
+                    <div>
+                        <label class="field-label" for="new-cand-name">Nombre Completo *</label>
+                        <input type="text" id="new-cand-name" placeholder="Ej. Laura Gómez Pérez" required oninput="autoSuggestUsername()">
+                    </div>
+                    <div>
+                        <label class="field-label" for="new-cand-role">Puesto</label>
+                        <input type="text" id="new-cand-role" value="Ejecutivo Comercial B2B">
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-bottom: 14px;">
+                    <div>
+                        <label class="field-label" for="new-cand-email">Correo Electrónico</label>
+                        <input type="email" id="new-cand-email" placeholder="laura@correo.com">
+                    </div>
+                    <div>
+                        <label class="field-label" for="new-cand-phone">WhatsApp / Teléfono</label>
+                        <input type="text" id="new-cand-phone" placeholder="55 1234 5678">
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-bottom: 14px;">
+                    <div>
+                        <label class="field-label" for="new-cand-user">Usuario Temporal *</label>
+                        <input type="text" id="new-cand-user" placeholder="laura.gomez" required>
+                    </div>
+                    <div>
+                        <label class="field-label" for="new-cand-pass">Contraseña Temporal *</label>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" id="new-cand-pass" required>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="generateTempPass()">↻</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-bottom: 20px;">
+                    <div>
+                        <label class="field-label" for="new-cand-expires">Vigencia (Fecha y Hora Límite) *</label>
+                        <input type="datetime-local" id="new-cand-expires" required>
+                    </div>
+                    <div>
+                        <label class="field-label" for="new-cand-duration">Tiempo para el Test (Minutos) *</label>
+                        <input type="number" id="new-cand-duration" value="20" min="5" max="90" required>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn btn-outline" onclick="closeCreateCandidateModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Acceso Temporal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL: SQL SETUP HELPER                                   -->
+    <!-- ========================================================= -->
+    <div id="modal-sql-setup" class="modal-backdrop hidden">
+        <div class="modal-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <h3 class="serif" style="font-size: 1.3rem; color: #fff;">Script SQL para Supabase</h3>
+                <button class="btn btn-outline btn-sm" onclick="document.getElementById('modal-sql-setup').classList.add('hidden')">✕</button>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 12px;">
+                Copia este script y ejecútalo en el <strong>SQL Editor</strong> de tu proyecto Supabase (<code>tjoawvfzipnfmgqokdrk</code>):
+            </p>
+            <textarea id="sql-preview-box" readonly style="font-family: monospace; font-size: 0.75rem; min-height: 240px;"></textarea>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px;">
+                <button class="btn btn-primary btn-sm" onclick="copySqlScript()">
+                    <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+                    Copiar SQL
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // 1. SUPABASE CONFIGURATION & STATE
+        // ============================================================
+        const DB_URL = "https://tjoawvfzipnfmgqokdrk.supabase.co";
+        const DB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqb2F3dmZ6aXBuZm1ncW9rZHJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NzMxNTksImV4cCI6MjEwMDI0OTE1OX0.thH5IOqwI6kkBRRNfdHcyvcfD3xGddy96hFSPOCIh9U";
+
+        if (window.pdfjsLib) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+
+        let sb = null;
+        let dbReady = false;
+        let evalTablesReady = false;
+        let loginMode = 'candidate'; // 'candidate' | 'admin'
+
+        let currentCandidate = null;
+        let currentAdmin = null;
+        let examStarted = false;
+        let examSubmitted = false;
+        let currentStep = 1;
+        let timerInterval = null;
+        let examEndTimeMs = null;
+
+        // Admin cached data
+        let allCandidates = [];
+        let allSubmissions = [];
+        let activeDossierCandidateId = null;
+        let dossierChartInst = null;
+
+        // Forensic Behavioral Telemetry State
+        const QUESTIONS = ['q1', 'q2', 'q3', 'q4', 'q5'];
+        const STEP_LABELS = {
+            q1: 'P1 · Filtro Conmutador',
+            q2: 'P2 · Objeción Oxxo',
+            q3: 'P3 · Cálculo y Visión CFO',
+            q4: 'P4 · WhatsApp Cold Outreach',
+            q5: 'P5 · Sales Grit (Rechazo)'
+        };
+
+        let telemetry = {};
+
+        function resetTelemetry() {
+            telemetry = {
+                examStartedAtIso: new Date().toISOString(),
+                perStep: {
+                    1: { timeSec: 0, enteredAtMs: null, firstInputDelaySec: null, keystrokes: 0, backspaces: 0, erasedChars: 0, majorErasures: 0, changesCount: 0, pasteAttempts: 0, tabExits: 0, tabAwaySec: 0 },
+                    2: { timeSec: 0, enteredAtMs: null, firstInputDelaySec: null, keystrokes: 0, backspaces: 0, erasedChars: 0, majorErasures: 0, changesCount: 0, pasteAttempts: 0, tabExits: 0, tabAwaySec: 0 },
+                    3: { timeSec: 0, enteredAtMs: null, firstInputDelaySec: null, keystrokes: 0, backspaces: 0, erasedChars: 0, majorErasures: 0, changesCount: 0, pasteAttempts: 0, tabExits: 0, tabAwaySec: 0 },
+                    4: { timeSec: 0, enteredAtMs: null, firstInputDelaySec: null, keystrokes: 0, backspaces: 0, erasedChars: 0, majorErasures: 0, changesCount: 0, pasteAttempts: 0, tabExits: 0, tabAwaySec: 0 },
+                    5: { timeSec: 0, enteredAtMs: null, firstInputDelaySec: null, keystrokes: 0, backspaces: 0, erasedChars: 0, majorErasures: 0, changesCount: 0, pasteAttempts: 0, tabExits: 0, tabAwaySec: 0 }
+                },
+                timeline: [],
+                autoSubmittedTimeout: false,
+                blurStartMs: null,
+                lastFieldValues: { q3a: '', q3b: '', q4: '', q5: '' },
+                answers: { q1: '', q2: '', q3a: '', q3b: '', q4: '', q5: '' }
+            };
+        }
+
+        const SQL_SCHEMA_TEXT = `-- SCRIPT SQL PARA SUPABASE (Evaluación de Ventas Snackeando)
+create table if not exists public.snackeando_eval_candidates (
+    id uuid default gen_random_uuid() primary key,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    username text unique not null,
+    password text not null,
+    full_name text not null,
+    email text,
+    phone text,
+    role_applied text default 'Ejecutivo Comercial B2B' not null,
+    expires_at timestamp with time zone not null,
+    duration_minutes integer default 20 not null,
+    status text default 'Pendiente' not null,
+    started_at timestamp with time zone,
+    completed_at timestamp with time zone,
+    cv_filename text,
+    cv_text text
+);
+alter table public.snackeando_eval_candidates disable row level security;
+drop policy if exists "Permitir select publica eval_candidates" on public.snackeando_eval_candidates;
+create policy "Permitir select publica eval_candidates" on public.snackeando_eval_candidates for select using (true);
+drop policy if exists "Permitir insert publica eval_candidates" on public.snackeando_eval_candidates;
+create policy "Permitir insert publica eval_candidates" on public.snackeando_eval_candidates for insert with check (true);
+drop policy if exists "Permitir update publica eval_candidates" on public.snackeando_eval_candidates;
+create policy "Permitir update publica eval_candidates" on public.snackeando_eval_candidates for update using (true) with check (true);
+drop policy if exists "Permitir delete publica eval_candidates" on public.snackeando_eval_candidates;
+create policy "Permitir delete publica eval_candidates" on public.snackeando_eval_candidates for delete using (true);
+
+create table if not exists public.snackeando_eval_submissions (
+    id uuid default gen_random_uuid() primary key,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    candidate_id uuid references public.snackeando_eval_candidates(id) on delete cascade,
+    candidate_username text not null,
+    answers jsonb not null default '{}'::jsonb,
+    telemetry jsonb not null default '{}'::jsonb,
+    audit_diagnosis jsonb not null default '{}'::jsonb,
+    scores jsonb not null default '{}'::jsonb,
+    clinical_analysis jsonb default '{}'::jsonb,
+    interview_rubric jsonb default '{}'::jsonb,
+    admin_notes text default ''
+);
+alter table public.snackeando_eval_submissions disable row level security;
+drop policy if exists "Permitir select publica eval_submissions" on public.snackeando_eval_submissions;
+create policy "Permitir select publica eval_submissions" on public.snackeando_eval_submissions for select using (true);
+drop policy if exists "Permitir insert publica eval_submissions" on public.snackeando_eval_submissions;
+create policy "Permitir insert publica eval_submissions" on public.snackeando_eval_submissions for insert with check (true);
+drop policy if exists "Permitir update publica eval_submissions" on public.snackeando_eval_submissions;
+create policy "Permitir update publica eval_submissions" on public.snackeando_eval_submissions for update using (true) with check (true);
+drop policy if exists "Permitir delete publica eval_submissions" on public.snackeando_eval_submissions;
+create policy "Permitir delete publica eval_submissions" on public.snackeando_eval_submissions for delete using (true);`;
+
+        // ============================================================
+        // 2. INITIALIZATION
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.lucide) lucide.createIcons();
+            await initSupabase();
+            setupAntiCopyAndTelemetry();
+        });
+
+        async function initSupabase() {
+            const pill = document.getElementById('db-connection-pill');
+            try {
+                if (typeof supabase === 'undefined') throw new Error("Supabase SDK no cargado");
+                sb = supabase.createClient(DB_URL, DB_KEY);
+                const { error: userErr } = await sb.from('snackeando_users').select('id').limit(1);
+                if (userErr) throw userErr;
+                dbReady = true;
+
+                // Check if evaluation tables exist
+                const { error: evalErr } = await sb.from('snackeando_eval_candidates').select('id').limit(1);
+                evalTablesReady = !evalErr;
+
+                if (pill) {
+                    pill.innerHTML = evalTablesReady
+                        ? '<span style="color: var(--accent-emerald);">● Servidor Supabase Activo</span>'
+                        : '<span style="color: var(--accent-amber);">● Supabase conectado (falta ejecutar SQL)</span>';
+                }
+            } catch (e) {
+                console.warn("Supabase init warning:", e);
+                dbReady = false;
+                evalTablesReady = false;
+                if (pill) pill.innerHTML = '<span style="color: var(--accent-red);">● Error de conexión</span>';
+            }
+        }
+
+        function showToast(msg) {
+            const banner = document.getElementById('toast-banner');
+            document.getElementById('toast-message').innerText = msg;
+            banner.style.display = 'flex';
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => { banner.style.display = 'none'; }, 4000);
+        }
+
+        function showView(viewId) {
+            ['view-login', 'view-briefing', 'view-exam', 'view-complete', 'view-admin'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(viewId).classList.remove('hidden');
+
+            const isExam = viewId === 'view-exam';
+            document.getElementById('exam-timer-container').classList.toggle('hidden', !isExam);
+            document.getElementById('btn-switch-admin').classList.toggle('hidden', viewId !== 'view-login');
+            document.getElementById('btn-logout').classList.toggle('hidden', viewId === 'view-login' || isExam);
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // ============================================================
+        // 3. LOGIN & ACCESS VALIDATION (CANDIDATE + ADMIN)
+        // ============================================================
+        function toggleLoginMode(forceMode) {
+            loginMode = forceMode ? forceMode : (loginMode === 'candidate' ? 'admin' : 'candidate');
+            const badge = document.getElementById('login-mode-badge');
+            const title = document.getElementById('login-title');
+            const sub = document.getElementById('login-subtitle');
+            const link = document.getElementById('toggle-login-link');
+            const userInp = document.getElementById('login-username');
+
+            document.getElementById('login-error').classList.add('hidden');
+            if (loginMode === 'admin') {
+                badge.className = 'badge badge-blue';
+                badge.innerHTML = '<i data-lucide="shield" style="width:12px;height:12px;"></i> Acceso Directivo RH / Admin';
+                title.innerText = 'Panel de Administración';
+                sub.innerText = 'Ingresa con tu usuario Administrador de Snackeando para gestionar accesos, subir CVs y auditar candidatos.';
+                link.innerText = 'Volver a acceso de Candidatos';
+                userInp.placeholder = 'Ej. Miguel Mendez';
+            } else {
+                badge.className = 'badge badge-amber';
+                badge.innerHTML = '<i data-lucide="key-round" style="width:12px;height:12px;"></i> Acceso Temporal para Candidatos';
+                title.innerText = 'Evaluación Comercial B2B';
+                sub.innerText = 'Ingresa el usuario y contraseña temporal proporcionados por el equipo de Recursos Humanos de Snackeando.';
+                link.innerText = 'Soy Administrador RH';
+                userInp.placeholder = 'Ej. laura.gomez';
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const errBox = document.getElementById('login-error');
+            const btn = document.getElementById('btn-login-submit');
+            errBox.classList.add('hidden');
+
+            const rawUser = document.getElementById('login-username').value.trim();
+            const rawPass = document.getElementById('login-password').value.trim();
+
+            if (!rawUser || !rawPass) {
+                errBox.innerText = 'Por favor ingresa usuario y contraseña.';
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = 'Verificando acceso...';
+
+            try {
+                if (loginMode === 'admin') {
+                    // Authenticate against snackeando_users
+                    const { data, error } = await sb
+                        .from('snackeando_users')
+                        .select('*')
+                        .ilike('username', rawUser)
+                        .eq('password', rawPass);
+
+                    if (error) throw error;
+                    if (!data || data.length === 0) {
+                        throw new Error('Credenciales de administrador inválidas.');
+                    }
+                    const user = data[0];
+                    if (user.role !== 'Administrador') {
+                        throw new Error('Solo usuarios con rol Administrador pueden ingresar a este panel.');
+                    }
+                    currentAdmin = user;
+                    await loadAdminPanel();
+                    showView('view-admin');
+                } else {
+                    // Candidate Login
+                    if (!evalTablesReady) {
+                        throw new Error('La plataforma está en configuración inicial (tablas SQL pendientes en Supabase). Contacta a RH.');
+                    }
+                    const normalizedUser = rawUser.toLowerCase();
+                    const { data, error } = await sb
+                        .from('snackeando_eval_candidates')
+                        .select('*')
+                        .ilike('username', normalizedUser)
+                        .eq('password', rawPass);
+
+                    if (error) throw error;
+                    if (!data || data.length === 0) {
+                        throw new Error('Usuario o contraseña temporal incorrectos. Verifica los datos enviados por RH.');
+                    }
+
+                    const cand = data[0];
+                    currentCandidate = cand;
+
+                    if (cand.status === 'Completado') {
+                        showView('view-complete');
+                        return;
+                    }
+
+                    const now = new Date();
+                    const expires = new Date(cand.expires_at);
+                    if (now > expires && cand.status === 'Pendiente') {
+                        throw new Error('Tu acceso temporal ha expirado. Contacta al departamento de Recursos Humanos de Snackeando.');
+                    }
+
+                    // If already in progress, check if time remains
+                    if (cand.status === 'En Progreso' && cand.started_at) {
+                        const startedMs = new Date(cand.started_at).getTime();
+                        const durationMs = (cand.duration_minutes || 20) * 60 * 1000;
+                        const endMs = startedMs + durationMs;
+                        if (Date.now() >= endMs) {
+                            // Time already ran out — finalize automatically with cached draft
+                            restoreDraftAndResume(cand, endMs, true);
+                            return;
+                        }
+                        restoreDraftAndResume(cand, endMs, false);
+                        return;
+                    }
+
+                    // Show briefing screen
+                    document.getElementById('briefing-name').innerText = cand.full_name;
+                    document.getElementById('briefing-role').innerText = cand.role_applied || 'Ejecutivo Comercial B2B';
+                    document.getElementById('briefing-duration').innerText = cand.duration_minutes || 20;
+                    showView('view-briefing');
+                }
+            } catch (err) {
+                errBox.innerText = err.message || 'Error al iniciar sesión.';
+                errBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="log-in" style="width: 16px; height: 16px;"></i> Ingresar a la Plataforma';
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        function logout() {
+            clearInterval(timerInterval);
+            currentCandidate = null;
+            currentAdmin = null;
+            examStarted = false;
+            examSubmitted = false;
+            document.getElementById('login-password').value = '';
+            showView('view-login');
+        }
+
+        // ============================================================
+        // 4. CANDIDATE EXAM ENGINE & ANTI-CHEATING TELEMETRY
+        // ============================================================
+        async function startExam() {
+            if (!currentCandidate) return;
+            resetTelemetry();
+            const nowIso = new Date().toISOString();
+            const durationMs = (currentCandidate.duration_minutes || 20) * 60 * 1000;
+            examEndTimeMs = Date.now() + durationMs;
+
+            // Anchor start time in Supabase
+            try {
+                await sb.from('snackeando_eval_candidates')
+                    .update({ status: 'En Progreso', started_at: nowIso })
+                    .eq('id', currentCandidate.id);
+                currentCandidate.status = 'En Progreso';
+                currentCandidate.started_at = nowIso;
+            } catch (e) {
+                console.warn('Could not update started_at:', e);
+            }
+
+            examStarted = true;
+            examSubmitted = false;
+            currentStep = 1;
+            telemetry.perStep[1].enteredAtMs = Date.now();
+            logTimeline('Inicio formal de la evaluación');
+            saveLocalDraft();
+
+            showView('view-exam');
+            renderExamStep();
+            startCountdownTimer();
+        }
+
+        function restoreDraftAndResume(cand, endMs, forceAutoSubmit) {
+            resetTelemetry();
+            const savedKey = `snk_draft_${cand.id}`;
+            const rawDraft = localStorage.getItem(savedKey);
+            if (rawDraft) {
+                try {
+                    const parsed = JSON.parse(rawDraft);
+                    if (parsed.telemetry) telemetry = parsed.telemetry;
+                    if (parsed.answers) {
+                        telemetry.answers = parsed.answers;
+                        // Populate UI fields
+                        if (parsed.answers.q1) {
+                            const r = document.querySelector(`input[name="q1"][value="${parsed.answers.q1}"]`);
+                            if (r) { r.checked = true; r.closest('.option-card').classList.add('selected'); }
+                        }
+                        if (parsed.answers.q2) {
+                            const r = document.querySelector(`input[name="q2"][value="${parsed.answers.q2}"]`);
+                            if (r) { r.checked = true; r.closest('.option-card').classList.add('selected'); }
+                        }
+                        ['q3a', 'q3b', 'q4', 'q5'].forEach(k => {
+                            const el = document.getElementById(`ans-${k}`);
+                            if (el && parsed.answers[k]) {
+                                el.value = parsed.answers[k];
+                                telemetry.lastFieldValues[k] = parsed.answers[k];
+                            }
+                        });
+                    }
+                } catch (e) {}
+            }
+
+            examEndTimeMs = endMs;
+            examStarted = true;
+            examSubmitted = false;
+            currentStep = 1;
+            telemetry.perStep[1].enteredAtMs = Date.now();
+            logTimeline('Sesión reanudada');
+
+            if (forceAutoSubmit) {
+                telemetry.autoSubmittedTimeout = true;
+                submitExam(true);
+                return;
+            }
+
+            showView('view-exam');
+            renderExamStep();
+            updateCounters();
+            startCountdownTimer();
+        }
+
+        function startCountdownTimer() {
+            clearInterval(timerInterval);
+            const pill = document.getElementById('exam-timer-pill');
+            const text = document.getElementById('exam-timer-text');
+
+            const tick = () => {
+                if (!examStarted || examSubmitted) return;
+                const remainingSec = Math.max(0, Math.floor((examEndTimeMs - Date.now()) / 1000));
+                const mins = Math.floor(remainingSec / 60);
+                const secs = remainingSec % 60;
+                text.innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+                pill.classList.remove('warning', 'danger');
+                if (remainingSec <= 120) pill.classList.add('danger');
+                else if (remainingSec <= 300) pill.classList.add('warning');
+
+                if (remainingSec <= 0) {
+                    clearInterval(timerInterval);
+                    telemetry.autoSubmittedTimeout = true;
+                    logTimeline('Tiempo agotado - Envío automático');
+                    submitExam(true);
+                }
+            };
+            tick();
+            timerInterval = setInterval(tick, 1000);
+        }
+
+        function flushStepTime() {
+            const st = telemetry.perStep[currentStep];
+            if (st && st.enteredAtMs) {
+                const deltaSec = (Date.now() - st.enteredAtMs) / 1000;
+                st.timeSec += deltaSec;
+                st.enteredAtMs = Date.now();
+            }
+        }
+
+        function changeStep(delta) {
+            flushStepTime();
+            const nextStep = Math.max(1, Math.min(5, currentStep + delta));
+            if (nextStep !== currentStep) {
+                logTimeline(`Navegación de Bloque ${currentStep} a Bloque ${nextStep}`);
+                currentStep = nextStep;
+                telemetry.perStep[currentStep].enteredAtMs = Date.now();
+                renderExamStep();
+                saveLocalDraft();
+            }
+        }
+
+        function renderExamStep() {
+            document.querySelectorAll('.exam-step').forEach(el => {
+                el.classList.toggle('hidden', parseInt(el.dataset.step) !== currentStep);
+            });
+            document.getElementById('exam-step-label').innerText = `Bloque ${currentStep} de 5`;
+
+            const dots = document.querySelectorAll('#exam-step-dots .step-dot');
+            dots.forEach((d, idx) => {
+                d.classList.remove('active', 'done');
+                if (idx + 1 < currentStep) d.classList.add('done');
+                else if (idx + 1 === currentStep) d.classList.add('active');
+            });
+
+            document.getElementById('btn-prev-step').classList.toggle('hidden', currentStep === 1);
+            document.getElementById('btn-next-step').classList.toggle('hidden', currentStep === 5);
+            document.getElementById('btn-submit-exam').classList.toggle('hidden', currentStep !== 5);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectRadio(qid, val, labelEl) {
+            const container = document.getElementById(`${qid}-options`);
+            container.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+            labelEl.classList.add('selected');
+            labelEl.querySelector('input').checked = true;
+
+            const stepNum = qid === 'q1' ? 1 : 2;
+            const st = telemetry.perStep[stepNum];
+            if (st.firstInputDelaySec === null && st.enteredAtMs) {
+                st.firstInputDelaySec = Math.round((Date.now() - st.enteredAtMs) / 1000);
+            }
+            if (telemetry.answers[qid] && telemetry.answers[qid] !== val) {
+                st.changesCount += 1;
+                logTimeline(`${qid.toUpperCase()}: Cambió selección de "${telemetry.answers[qid]}" a "${val}"`);
+            }
+            telemetry.answers[qid] = val;
+            saveLocalDraft();
+        }
+
+        function logTimeline(msg) {
+            const elapsedSec = telemetry.examStartedAtIso
+                ? Math.max(0, Math.round((Date.now() - new Date(telemetry.examStartedAtIso).getTime()) / 1000))
+                : 0;
+            const m = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+            const s = String(elapsedSec % 60).padStart(2, '0');
+            telemetry.timeline.push({ t: `${m}:${s}`, sec: elapsedSec, msg });
+        }
+
+        function saveLocalDraft() {
+            if (!currentCandidate) return;
+            localStorage.setItem(`snk_draft_${currentCandidate.id}`, JSON.stringify({
+                answers: telemetry.answers,
+                telemetry
+            }));
+        }
+
+        function updateCounters() {
+            const q3b = document.getElementById('ans-q3b').value;
+            document.getElementById('count-q3b').innerText = `${q3b.length} caracteres`;
+
+            const q4 = document.getElementById('ans-q4').value.trim();
+            const q4Words = q4 ? q4.split(/\s+/).length : 0;
+            const q4El = document.getElementById('count-q4');
+            q4El.innerText = `${q4Words} / 60 palabras`;
+            q4El.style.color = q4Words > 60 ? 'var(--accent-red)' : 'var(--accent-emerald)';
+
+            const q5 = document.getElementById('ans-q5').value.trim();
+            const q5Words = q5 ? q5.split(/\s+/).length : 0;
+            document.getElementById('count-q5').innerText = `${q5Words} palabras`;
+        }
+
+        function setupAntiCopyAndTelemetry() {
+            // Block right click & copy/paste during exam
+            document.addEventListener('contextmenu', (e) => {
+                if (examStarted && !examSubmitted) {
+                    e.preventDefault();
+                }
+            });
+
+            document.addEventListener('copy', (e) => {
+                if (examStarted && !examSubmitted) {
+                    e.preventDefault();
+                    showToast('Copiado deshabilitado durante la evaluación.');
+                }
+            });
+
+            document.addEventListener('paste', (e) => {
+                if (examStarted && !examSubmitted) {
+                    e.preventDefault();
+                    telemetry.perStep[currentStep].pasteAttempts += 1;
+                    logTimeline(`Bloque ${currentStep}: Intento de pegado (Paste) bloqueado`);
+                    showToast('El pegado de texto está deshabilitado. Redacta tu respuesta con el teclado.');
+                    saveLocalDraft();
+                }
+            });
+
+            document.addEventListener('drop', (e) => {
+                if (examStarted && !examSubmitted) {
+                    e.preventDefault();
+                    telemetry.perStep[currentStep].pasteAttempts += 1;
+                    logTimeline(`Bloque ${currentStep}: Intento de arrastrar texto (Drop) bloqueado`);
+                    showToast('No se permite arrastrar texto a la zona de respuestas.');
+                }
+            });
+
+            // Tab switch / Window blur tracking
+            document.addEventListener('visibilitychange', () => {
+                if (!examStarted || examSubmitted) return;
+                if (document.hidden) {
+                    telemetry.blurStartMs = Date.now();
+                    telemetry.perStep[currentStep].tabExits += 1;
+                    logTimeline(`Bloque ${currentStep}: Salió de la pestaña de evaluación`);
+                } else if (telemetry.blurStartMs) {
+                    const awaySec = Math.round((Date.now() - telemetry.blurStartMs) / 1000);
+                    telemetry.perStep[currentStep].tabAwaySec += awaySec;
+                    telemetry.blurStartMs = null;
+                    logTimeline(`Bloque ${currentStep}: Regresó a la pestaña (${awaySec}s fuera)`);
+                    saveLocalDraft();
+                }
+            });
+
+            // Per-field keystroke & erasure monitoring
+            document.querySelectorAll('.protected-input').forEach(field => {
+                const qid = field.dataset.qid;
+
+                field.addEventListener('keydown', (e) => {
+                    if (!examStarted || examSubmitted) return;
+                    if ((e.ctrlKey || e.metaKey) && ['v', 'c', 'x'].includes(e.key.toLowerCase())) {
+                        e.preventDefault();
+                        if (e.key.toLowerCase() === 'v') {
+                            telemetry.perStep[currentStep].pasteAttempts += 1;
+                            logTimeline(`Bloque ${currentStep} (${qid}): Atajo Ctrl+V bloqueado`);
+                            showToast('El pegado con teclado (Ctrl+V) está deshabilitado.');
+                        }
+                        return;
+                    }
+                    const st = telemetry.perStep[currentStep];
+                    if (st.firstInputDelaySec === null && st.enteredAtMs) {
+                        st.firstInputDelaySec = Math.round((Date.now() - st.enteredAtMs) / 1000);
+                    }
+                    if (e.key === 'Backspace' || e.key === 'Delete') {
+                        st.backspaces += 1;
+                    } else if (e.key.length === 1) {
+                        st.keystrokes += 1;
+                    }
+                });
+
+                field.addEventListener('input', () => {
+                    if (!examStarted || examSubmitted) return;
+                    const oldVal = telemetry.lastFieldValues[qid] || '';
+                    const newVal = field.value;
+                    const delta = newVal.length - oldVal.length;
+
+                    // Detect programmatic paste / extension injection (> 18 chars in single event)
+                    if (delta > 18) {
+                        field.value = oldVal;
+                        telemetry.perStep[currentStep].pasteAttempts += 1;
+                        logTimeline(`Bloque ${currentStep} (${qid}): Inserción masiva bloqueada (+${delta} chars)`);
+                        showToast('Inserción automática bloqueada. Responde tecleando directamente.');
+                        return;
+                    }
+
+                    // Detect major erasure ("borró todo y lo volvió a hacer")
+                    if (delta < 0) {
+                        const deletedCount = Math.abs(delta);
+                        telemetry.perStep[currentStep].erasedChars += deletedCount;
+                        if (oldVal.length >= 35 && (deletedCount >= 30 || newVal.trim().length <= 5)) {
+                            telemetry.perStep[currentStep].majorErasures += 1;
+                            logTimeline(`Bloque ${currentStep} (${qid}): Borrado masivo (${deletedCount} caracteres eliminados para reescribir)`);
+                        }
+                    }
+
+                    telemetry.lastFieldValues[qid] = field.value;
+                    telemetry.answers[qid] = field.value;
+                    updateCounters();
+                    saveLocalDraft();
+                });
+            });
+        }
+
+        function confirmSubmitExam() {
+            // Check if any field is completely blank
+            const a = telemetry.answers;
+            if (!a.q1 || !a.q2 || !a.q3a.trim() || !a.q3b.trim() || !a.q4.trim() || !a.q5.trim()) {
+                if (!confirm('Aún tienes preguntas sin responder. ¿Estás seguro de enviar tu evaluación ahora?')) {
+                    return;
+                }
+            } else {
+                if (!confirm('¿Confirmas el envío definitivo de tu evaluación? No podrás modificar tus respuestas después.')) {
+                    return;
+                }
+            }
+            submitExam(false);
+        }
+
+        async function submitExam(isTimeout) {
+            if (examSubmitted) return;
+            examSubmitted = true;
+            clearInterval(timerInterval);
+            flushStepTime();
+
+            const btn = document.getElementById('btn-submit-exam');
+            if (btn) { btn.disabled = true; btn.innerText = 'Enviando respuestas...'; }
+
+            logTimeline(isTimeout ? 'Envío automático por fin de tiempo' : 'Envío manual completado por candidato');
+
+            const answers = { ...telemetry.answers };
+            const scores = scoreCandidateAnswers(answers);
+            const auditDiagnosis = generateAuditDiagnosis(telemetry, answers);
+
+            try {
+                await sb.from('snackeando_eval_submissions').insert([{
+                    candidate_id: currentCandidate.id,
+                    candidate_username: currentCandidate.username,
+                    answers: answers,
+                    telemetry: telemetry,
+                    audit_diagnosis: auditDiagnosis,
+                    scores: scores
+                }]);
+
+                await sb.from('snackeando_eval_candidates')
+                    .update({ status: 'Completado', completed_at: new Date().toISOString() })
+                    .eq('id', currentCandidate.id);
+
+                localStorage.removeItem(`snk_draft_${currentCandidate.id}`);
+            } catch (e) {
+                console.error('Error submitting evaluation:', e);
+            }
+
+            showView('view-complete');
+        }
+
+        // ============================================================
+        // 5. SCORING & FORENSIC AUDIT ENGINE
+        // ============================================================
+        function scoreCandidateAnswers(ans) {
+            // P1: SJT Conmutador (20 pts)
+            const p1Score = ans.q1 === 'b' ? 20 : (ans.q1 === 'a' ? 5 : 0);
+            // P2: SJT Oxxo (20 pts)
+            const p2Score = ans.q2 === 'b' ? 20 : (ans.q2 === 'd' ? 5 : 0);
+
+            // P3a: 100 * 5 * 22 = 11,000 MXN (15 pts)
+            const numClean = String(ans.q3a || '').replace(/[$,.\s]/g, '').toLowerCase();
+            const p3aCorrect = numClean === '11000' || numClean === '1100000' || numClean.includes('11000') || numClean === '11mil';
+            const p3aScore = p3aCorrect ? 15 : 0;
+
+            // P3b: Visión Ejecutiva CFO/RH (15 pts)
+            const q3bLow = String(ans.q3b || '').toLowerCase();
+            const execKw = ['bono', 'aumento', 'prestaci', 'poder adquisitivo', 'retenci', 'clima', 'productividad', 'costo cero', '$0', 'sin gastar', 'rotaci', 'ahorro', 'salario emocional', 'beneficio'];
+            const q3bHits = execKw.filter(k => q3bLow.includes(k)).length;
+            let p3bScore = Math.min(15, q3bHits * 3 + (q3bLow.length > 80 ? 3 : 0));
+
+            // P4: WhatsApp Cold Outreach <= 60 palabras (15 pts)
+            const q4Text = String(ans.q4 || '').trim();
+            const q4Words = q4Text ? q4Text.split(/\s+/).length : 0;
+            const q4Low = q4Text.toLowerCase();
+            let p4Score = 0;
+            const valueProps = ['$0', 'cero', 'sin costo', 'oxxo', '20%', '25%', 'barato', 'ahorro', 'bienestar', 'colaboradores', 'planta', 'empleados'];
+            const ctaProps = ['llamada', 'videollamada', '10 min', 'diez min', 'reunión', 'reunion', 'agendar', 'espacio', 'minuto'];
+            const weakCliches = ['espero se encuentre bien', 'sin más por el momento', 'saludo cordialmente', 'molestar'];
+            const vHits = valueProps.filter(k => q4Low.includes(k)).length;
+            const cHits = ctaProps.filter(k => q4Low.includes(k)).length;
+            const badHits = weakCliches.filter(k => q4Low.includes(k)).length;
+
+            if (q4Words > 10) {
+                p4Score += Math.min(7, vHits * 2);
+                p4Score += cHits > 0 ? 5 : 0;
+                p4Score += (q4Words <= 60 ? 3 : 0);
+                p4Score = Math.max(0, p4Score - badHits * 3);
+            }
+            p4Score = Math.min(15, p4Score);
+
+            // P5: Sales Grit / Resiliencia (15 pts)
+            const q5Text = String(ans.q5 || '').trim();
+            const q5Words = q5Text ? q5Text.split(/\s+/).length : 0;
+            const q5Low = q5Text.toLowerCase();
+            const actionKw = ['llam', 'prospect', 'analic', 'seguimiento', 'busqu', 'aprend', 'ajust', 'siguiente', 'puerta', 'correo', 'linkedin', 'revis', 'pedí', 'pedi', 'retroalimenta'];
+            const victimKw = ['no me apoyaron', 'producto caro', 'era imposible', 'culpa del cliente', 'no querían comprar'];
+            const aHits = actionKw.filter(k => q5Low.includes(k)).length;
+            const vctHits = victimKw.filter(k => q5Low.includes(k)).length;
+            let p5Score = q5Words >= 25 ? Math.min(15, 4 + aHits * 3 + (q5Words >= 50 ? 3 : 0) - vctHits * 4) : (q5Words > 5 ? 3 : 0);
+            p5Score = Math.max(0, p5Score);
+
+            const total = p1Score + p2Score + p3aScore + p3bScore + p4Score + p5Score;
+            return {
+                p1: p1Score,
+                p2: p2Score,
+                p3a: p3aScore,
+                p3b: p3bScore,
+                p4: p4Score,
+                p5: p5Score,
+                total,
+                q4Words,
+                q4BadCliches: badHits,
+                p3aCorrect
+            };
+        }
+
+        function generateAuditDiagnosis(tel, ans) {
+            const steps = tel.perStep || {};
+            let totalTimeSec = 0;
+            let totalPaste = 0;
+            let totalTabExits = 0;
+            let totalTabAway = 0;
+            let totalErasures = 0;
+            let maxTimeStep = { step: 1, sec: 0 };
+
+            for (let s = 1; s <= 5; s++) {
+                const st = steps[s] || {};
+                const sec = Math.round(st.timeSec || 0);
+                totalTimeSec += sec;
+                totalPaste += (st.pasteAttempts || 0);
+                totalTabExits += (st.tabExits || 0);
+                totalTabAway += (st.tabAwaySec || 0);
+                totalErasures += (st.majorErasures || 0);
+                if (sec > maxTimeStep.sec) maxTimeStep = { step: s, sec };
+            }
+
+            const conclusions = [];
+            const fmtTime = (s) => s >= 60 ? `${Math.floor(s / 60)}m ${s % 60}s` : `${s}s`;
+
+            // 1. Time summary
+            conclusions.push({
+                type: 'info',
+                icon: 'clock',
+                text: `Tiempo total efectivo: ${fmtTime(totalTimeSec)}. El bloque donde más tiempo invirtió fue ${STEP_LABELS['q' + maxTimeStep.step]} (${fmtTime(maxTimeStep.sec)}).`
+            });
+
+            // 2. Rewrites / Erasures
+            const rewriteDetails = [];
+            for (let s = 3; s <= 5; s++) {
+                const st = steps[s] || {};
+                const ratio = st.keystrokes > 0 ? Math.round((st.backspaces / (st.keystrokes + st.backspaces)) * 100) : 0;
+                if ((st.majorErasures || 0) > 0) {
+                    rewriteDetails.push(`${STEP_LABELS['q' + s]} (${st.majorErasures} borrado(s) masivo(s), ${ratio}% corrección)`);
+                } else if (ratio > 35 && st.keystrokes > 25) {
+                    rewriteDetails.push(`${STEP_LABELS['q' + s]} (alta edición: ${ratio}% teclas de borrado)`);
+                }
+            }
+            if (rewriteDetails.length > 0) {
+                conclusions.push({
+                    type: 'amber',
+                    icon: 'eraser',
+                    text: `Reescritura / Duda detectada: Borró y volvió a redactar en ${rewriteDetails.join('; ')}.`
+                });
+            } else {
+                conclusions.push({
+                    type: 'green',
+                    icon: 'pen-tool',
+                    text: `Redacción fluida y directa: No presentó borrados masivos ni dudas excesivas al redactar sus respuestas abiertas.`
+                });
+            }
+
+            // 3. Integrity (Paste + Tab Exits)
+            if (totalPaste > 0 || totalTabExits > 0) {
+                const parts = [];
+                if (totalPaste > 0) parts.push(`${totalPaste} intento(s) bloqueado(s) de copiar/pegar`);
+                if (totalTabExits > 0) parts.push(`${totalTabExits} salida(s) de la pestaña (${fmtTime(totalTabAway)} fuera)`);
+                conclusions.push({
+                    type: 'red',
+                    icon: 'shield-alert',
+                    text: `Alerta de Integridad: Se detectaron ${parts.join(' y ')}. Validar autenticidad de criterio en la entrevista en vivo.`
+                });
+            } else {
+                conclusions.push({
+                    type: 'green',
+                    icon: 'shield-check',
+                    text: `Integridad impecable: 0 intentos de pegado (Ctrl+V) y 0 salidas de la pestaña durante toda la evaluación.`
+                });
+            }
+
+            // 4. Slow start / Long pauses
+            for (let s = 1; s <= 5; s++) {
+                const st = steps[s] || {};
+                if ((st.firstInputDelaySec || 0) > 60) {
+                    conclusions.push({
+                        type: 'amber',
+                        icon: 'pause-circle',
+                        text: `Pausa prolongada en ${STEP_LABELS['q' + s]}: Tardó ${fmtTime(st.firstInputDelaySec)} antes de teclear el primer carácter.`
+                    });
+                }
+            }
+
+            const integrityScore = Math.max(0, 100 - (totalPaste * 25) - (totalTabExits * 15) - (totalTabAway > 30 ? 15 : 0));
+
+            return {
+                totalTimeSec,
+                totalPaste,
+                totalTabExits,
+                totalTabAway,
+                totalErasures,
+                integrityScore,
+                conclusions
+            };
+        }
+
+        // ============================================================
+        // 6. ADMIN PANEL, CV PARSER & CLINICAL ANALYSIS
+        // ============================================================
+        async function loadAdminPanel() {
+            document.getElementById('sql-warning-banner').classList.toggle('hidden', evalTablesReady);
+            if (!evalTablesReady) return;
+
+            await refreshAdminData();
+        }
+
+        async function refreshAdminData() {
+            try {
+                const { data: cands, error: cErr } = await sb
+                    .from('snackeando_eval_candidates')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                if (cErr) throw cErr;
+                allCandidates = cands || [];
+
+                const { data: subs, error: sErr } = await sb
+                    .from('snackeando_eval_submissions')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                if (sErr) throw sErr;
+                allSubmissions = subs || [];
+
+                renderAdminKPIs();
+                renderAdminCandidatesTable();
+
+                if (activeDossierCandidateId) {
+                    openCandidateDossier(activeDossierCandidateId, false);
+                }
+            } catch (e) {
+                console.error('Error loading admin data:', e);
+                showToast('Error al cargar datos de Supabase.');
+            }
+        }
+
+        function renderAdminKPIs() {
+            const total = allCandidates.length;
+            const done = allCandidates.filter(c => c.status === 'Completado').length;
+            const pending = allCandidates.filter(c => c.status !== 'Completado' && new Date(c.expires_at) > new Date()).length;
+
+            let avg = 0;
+            if (allSubmissions.length > 0) {
+                const sum = allSubmissions.reduce((acc, s) => acc + ((s.scores && s.scores.total) || 0), 0);
+                avg = Math.round(sum / allSubmissions.length);
+            }
+
+            document.getElementById('adm-kpi-total').innerText = total;
+            document.getElementById('adm-kpi-done').innerText = done;
+            document.getElementById('adm-kpi-pending').innerText = pending;
+            document.getElementById('adm-kpi-avg').innerText = `${avg}/100`;
+        }
+
+        function renderAdminCandidatesTable() {
+            const tbody = document.getElementById('admin-candidates-tbody');
+            if (allCandidates.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color: var(--text-muted); padding:28px;">No hay candidatos registrados aún. Crea un acceso temporal arriba.</td></tr>';
+                return;
+            }
+
+            const now = new Date();
+            tbody.innerHTML = allCandidates.map(c => {
+                const sub = allSubmissions.find(s => s.candidate_id === c.id);
+                const expDate = new Date(c.expires_at);
+                const isExpired = now > expDate && c.status !== 'Completado';
+
+                let statusBadge = `<span class="badge badge-amber">${c.status}</span>`;
+                if (c.status === 'Completado') statusBadge = `<span class="badge badge-green">Completado</span>`;
+                else if (isExpired) statusBadge = `<span class="badge badge-red">Expirado</span>`;
+                else if (c.status === 'En Progreso') statusBadge = `<span class="badge badge-blue">En Progreso</span>`;
+
+                const scoreText = sub && sub.scores ? `<strong style="color:var(--accent-bronze);">${sub.scores.total}/100</strong>` : '<span style="color:var(--text-muted);">—</span>';
+                const cvBadge = c.cv_text ? `<span class="badge badge-green">CV Cargado</span>` : `<span class="badge badge-gray">Sin CV</span>`;
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="font-weight: 700; color: #fff;">${escapeHtml(c.full_name)}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(c.role_applied || '')}</div>
+                        </td>
+                        <td>
+                            <code style="color: var(--accent-bronze); font-size: 0.82rem;">${escapeHtml(c.username)}</code><br>
+                            <span style="font-size: 0.76rem; color: var(--text-muted);">Clave: ${escapeHtml(c.password)}</span>
+                        </td>
+                        <td style="font-size: 0.8rem; color: ${isExpired ? '#f87171' : '#d1d5db'};">
+                            ${expDate.toLocaleDateString('es-MX')} ${expDate.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
+                        </td>
+                        <td>${c.duration_minutes} min</td>
+                        <td>${statusBadge}</td>
+                        <td>${scoreText}</td>
+                        <td>${cvBadge}</td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <button class="btn btn-outline btn-sm" onclick="copyInvite('${c.id}')" title="Copiar Invitación WhatsApp">
+                                <i data-lucide="copy" style="width:13px;height:13px;"></i>
+                                Invitación
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="openCandidateDossier('${c.id}', true)">
+                                <i data-lucide="stethoscope" style="width:13px;height:13px;"></i>
+                                Expediente
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteCandidate('${c.id}')" title="Eliminar">
+                                <i data-lucide="trash-2" style="width:13px;height:13px;"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function switchAdminTab(tabName) {
+            document.getElementById('tab-btn-candidates').classList.toggle('active', tabName === 'candidates');
+            document.getElementById('tab-btn-dossier').classList.toggle('active', tabName === 'dossier');
+            document.getElementById('admin-tab-candidates').classList.toggle('hidden', tabName !== 'candidates');
+            document.getElementById('admin-tab-dossier').classList.toggle('hidden', tabName !== 'dossier');
+        }
+
+        // ============================================================
+        // 7. CREATE CANDIDATE MODAL & INVITE GENERATOR
+        // ============================================================
+        function openCreateCandidateModal() {
+            document.getElementById('create-candidate-form').reset();
+            document.getElementById('new-cand-role').value = 'Ejecutivo Comercial B2B';
+            document.getElementById('new-cand-duration').value = 20;
+            generateTempPass();
+            // Default expiration: +48 hours
+            const exp = new Date(Date.now() + 48 * 3600 * 1000);
+            exp.setMinutes(exp.getMinutes() - exp.getTimezoneOffset());
+            document.getElementById('new-cand-expires').value = exp.toISOString().slice(0, 16);
+            document.getElementById('modal-create-candidate').classList.remove('hidden');
+        }
+
+        function closeCreateCandidateModal() {
+            document.getElementById('modal-create-candidate').classList.add('hidden');
+        }
+
+        function autoSuggestUsername() {
+            const name = document.getElementById('new-cand-name').value.trim().toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9\s]/g, '');
+            const parts = name.split(/\s+/).filter(Boolean);
+            if (parts.length >= 2) {
+                document.getElementById('new-cand-user').value = `${parts[0]}.${parts[1]}`;
+            } else if (parts.length === 1) {
+                document.getElementById('new-cand-user').value = parts[0];
+            }
+        }
+
+        function generateTempPass() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let code = 'SNK-';
+            for (let i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById('new-cand-pass').value = code;
+        }
+
+        async function saveNewCandidate(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('new-cand-name').value.trim();
+            const role = document.getElementById('new-cand-role').value.trim();
+            const email = document.getElementById('new-cand-email').value.trim();
+            const phone = document.getElementById('new-cand-phone').value.trim();
+            const username = document.getElementById('new-cand-user').value.trim().toLowerCase();
+            const password = document.getElementById('new-cand-pass').value.trim();
+            const expiresLocal = document.getElementById('new-cand-expires').value;
+            const duration = parseInt(document.getElementById('new-cand-duration').value) || 20;
+
+            const expiresIso = new Date(expiresLocal).toISOString();
+
+            try {
+                const { error } = await sb.from('snackeando_eval_candidates').insert([{
+                    full_name: fullName,
+                    role_applied: role,
+                    email,
+                    phone,
+                    username,
+                    password,
+                    expires_at: expiresIso,
+                    duration_minutes: duration,
+                    status: 'Pendiente'
+                }]);
+                if (error) throw error;
+                closeCreateCandidateModal();
+                showToast(`Acceso creado para ${fullName}.`);
+                await refreshAdminData();
+            } catch (err) {
+                alert('Error al guardar candidato: ' + (err.message || err));
+            }
+        }
+
+        function copyInvite(candId) {
+            const c = allCandidates.find(x => x.id === candId);
+            if (!c) return;
+            const exp = new Date(c.expires_at);
+            const expStr = `${exp.toLocaleDateString('es-MX')} a las ${exp.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}`;
+            const url = window.location.href.split('#')[0].split('?')[0];
+            const msg = `Hola ${c.full_name}, bienvenido(a) al proceso de selección de *Snackeando*.\n\nPor favor completa tu Evaluación Comercial en el siguiente enlace:\n🔗 ${url}\n\n👤 *Usuario:* ${c.username}\n🔑 *Contraseña temporal:* ${c.password}\n⏱️ *Tiempo límite:* ${c.duration_minutes} minutos continuos (una sola oportunidad)\n📅 *Vigencia del enlace:* Hasta el ${expStr}\n\n_Nota: Responde directamente con tu teclado (el pegado de texto está deshabilitado). ¡Mucho éxito!_`;
+            navigator.clipboard.writeText(msg).then(() => {
+                showToast('Invitación copiada al portapapeles lista para enviar por WhatsApp o Email.');
+            });
+        }
+
+        async function deleteCandidate(candId) {
+            if (!confirm('¿Eliminar permanentemente este candidato y sus resultados?')) return;
+            try {
+                const { error } = await sb.from('snackeando_eval_candidates').delete().eq('id', candId);
+                if (error) throw error;
+                if (activeDossierCandidateId === candId) activeDossierCandidateId = null;
+                showToast('Candidato eliminado.');
+                await refreshAdminData();
+            } catch (e) {
+                alert('Error al eliminar: ' + e.message);
+            }
+        }
+
+        // ============================================================
+        // 8. CLINICAL DOSSIER, CV UPLOAD & CROSS-ANALYSIS
+        // ============================================================
+        function openCandidateDossier(candId, switchTab) {
+            activeDossierCandidateId = candId;
+            if (switchTab) switchAdminTab('dossier');
+
+            const cand = allCandidates.find(c => c.id === candId);
+            const sub = allSubmissions.find(s => s.candidate_id === candId);
+            if (!cand) return;
+
+            document.getElementById('dossier-empty').classList.add('hidden');
+            document.getElementById('dossier-content').classList.remove('hidden');
+
+            document.getElementById('dos-name').innerText = cand.full_name;
+            document.getElementById('dos-meta').innerText = `${cand.role_applied} · Usuario: ${cand.username} · Estatus: ${cand.status}` +
+                (cand.completed_at ? ` · Enviado: ${new Date(cand.completed_at).toLocaleString('es-MX')}` : '');
+
+            const scoreTotal = sub && sub.scores ? sub.scores.total : 0;
+            document.getElementById('dos-total-score').innerText = sub ? `${scoreTotal}/100` : 'Pendiente';
+
+            // Verdict badge
+            const vBadge = document.getElementById('dos-verdict-badge');
+            const iBadge = document.getElementById('dos-integrity-badge');
+            if (!sub) {
+                vBadge.className = 'badge badge-amber';
+                vBadge.innerText = 'TEST PENDIENTE DE REALIZAR';
+                iBadge.className = 'badge badge-gray';
+                iBadge.innerText = 'SIN AUDITORÍA AÚN';
+            } else {
+                const integ = sub.audit_diagnosis ? sub.audit_diagnosis.integrityScore : 100;
+                if (scoreTotal >= 75 && integ >= 80) {
+                    vBadge.className = 'badge badge-green';
+                    vBadge.innerText = 'ALTAMENTE RECOMENDADO · AVANZAR A AUDICIÓN';
+                } else if (scoreTotal >= 55) {
+                    vBadge.className = 'badge badge-amber';
+                    vBadge.innerText = 'AVANZAR CON RESERVAS · VALIDAR EN VIVO';
+                } else {
+                    vBadge.className = 'badge badge-red';
+                    vBadge.innerText = 'ALTO RIESGO · NO RECOMENDADO';
+                }
+                iBadge.className = integ >= 85 ? 'badge badge-green' : (integ >= 60 ? 'badge badge-amber' : 'badge badge-red');
+                iBadge.innerText = `INTEGRIDAD: ${integ}/100`;
+            }
+
+            // CV Section
+            const hasCv = Boolean(cand.cv_text && cand.cv_text.trim().length > 20);
+            document.getElementById('cv-missing-box').classList.toggle('hidden', hasCv);
+            document.getElementById('cv-analysis-box').classList.toggle('hidden', !hasCv);
+            document.getElementById('cv-upload-btn-text').innerText = hasCv ? 'Reemplazar CV' : 'Subir CV (PDF / DOCX / TXT)';
+
+            let cvInsights = null;
+            if (hasCv) {
+                document.getElementById('dos-cv-filename').innerText = cand.cv_filename || 'CV Cargado';
+                cvInsights = analyzeCvClinically(cand.cv_text, sub);
+                renderCvClinicalBox(cvInsights);
+            }
+
+            // Audit & Answers
+            if (sub) {
+                renderAuditSection(sub);
+                renderAnswersBreakdown(sub);
+                renderCustomInterviewQuestions(sub, cvInsights);
+
+                // Rubric
+                const rub = sub.interview_rubric || {};
+                document.getElementById('rub-modelo').value = rub.modelo || '0';
+                document.getElementById('rub-objeciones').value = rub.objeciones || '0';
+                document.getElementById('rub-escucha').value = rub.escucha || '0';
+                document.getElementById('rub-coachability').value = rub.coachability || '0';
+                document.getElementById('dos-admin-notes').value = sub.admin_notes || '';
+            } else {
+                document.getElementById('dos-audit-conclusions').innerHTML = '<div style="color:var(--text-muted); font-size:0.86rem;">El candidato aún no ha enviado su evaluación.</div>';
+                document.getElementById('dos-telemetry-tbody').innerHTML = '';
+                document.getElementById('dos-timeline-list').innerHTML = '';
+                document.getElementById('dos-answers-breakdown').innerHTML = '<div style="color:var(--text-muted); font-size:0.86rem;">Sin respuestas registradas aún.</div>';
+                renderCustomInterviewQuestions(null, cvInsights);
+            }
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        async function handleCvUpload(e) {
+            const file = e.target.files[0];
+            if (!file || !activeDossierCandidateId) return;
+
+            showToast('Procesando y extrayendo texto del CV...');
+            try {
+                let text = '';
+                const ext = file.name.split('.').pop().toLowerCase();
+
+                if (ext === 'pdf') {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const content = await page.getTextContent();
+                        text += content.items.map(item => item.str).join(' ') + '\n';
+                    }
+                } else if (ext === 'docx') {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const result = await mammoth.extractRawText({ arrayBuffer });
+                    text = result.value;
+                } else {
+                    text = await file.text();
+                }
+
+                text = text.replace(/\s+/g, ' ').trim();
+                if (text.length < 20) {
+                    throw new Error('No se pudo extraer texto legible del archivo (si es PDF escaneado como imagen, súbelo en PDF de texto o DOCX).');
+                }
+
+                const { error } = await sb.from('snackeando_eval_candidates')
+                    .update({ cv_filename: file.name, cv_text: text })
+                    .eq('id', activeDossierCandidateId);
+                if (error) throw error;
+
+                showToast('CV guardado y analizado clínicamente.');
+                await refreshAdminData();
+            } catch (err) {
+                alert('Error al leer CV: ' + err.message);
+            } finally {
+                e.target.value = '';
+            }
+        }
+
+        function analyzeCvClinically(cvText, sub) {
+            const low = cvText.toLowerCase();
+
+            // 1. B2B vs B2C orientation
+            const b2bKw = ['b2b', 'corporativo', 'empresas', 'recursos humanos', 'director', 'gerente', 'planta', 'industrial', 'parque industrial', 'cuentas clave', 'key account', 'convenios', 'alamedas', 'institucional'];
+            const hunterKw = ['prospección en frío', 'prospeccion en frio', 'prospección', 'hunter', 'cambaceo', 'apertura de mercado', 'cartera nueva', 'puerta en frío', 'linkedin', 'llamadas en frío'];
+            const metricsKw = ['%', 'cuota', 'meta', 'kpi', 'crm', 'salesforce', 'hubspot', 'pipedrive', 'cierre', 'facturación', 'millones', '$'];
+
+            const b2bHits = b2bKw.filter(k => low.includes(k));
+            const hunterHits = hunterKw.filter(k => low.includes(k));
+            const metricHits = metricsKw.filter(k => low.includes(k));
+
+            // 2. Years detection
+            const yearMatches = cvText.match(/\b(201\d|202\d)\b/g) || [];
+            const uniqueYears = [...new Set(yearMatches)].sort();
+            const jobCountEstimate = Math.max(1, Math.floor(uniqueYears.length / 2));
+
+            const alerts = [];
+            if (b2bHits.length === 0) {
+                alerts.push({ level: 'red', text: 'Alerta de Perfil: Su CV no menciona experiencia clara en ventas B2B, corporativos ni contacto con Directores/RH. Riesgo de venir solo de venta en mostrador/B2C.' });
+            } else {
+                alerts.push({ level: 'green', text: `Afinidad B2B detectada (${b2bHits.slice(0, 4).join(', ')}).` });
+            }
+
+            if (hunterHits.length === 0) {
+                alerts.push({ level: 'amber', text: 'Perfil Hunter no explícito: El CV no detalla prospección en frío ni apertura de cuentas desde cero. Indagar si solo administraba cartera existente (Farmer).' });
+            } else {
+                alerts.push({ level: 'green', text: `Indicadores de Cazador (Hunter): Menciona ${hunterHits.slice(0, 4).join(', ')}.` });
+            }
+
+            if (metricHits.length < 2) {
+                alerts.push({ level: 'amber', text: 'Baja orientación numérica en CV: Pocos logros cuantificados (%, cuotas, montos). Preguntar números exactos en la entrevista.' });
+            }
+
+            // 3. Cross-check CV vs Exam
+            if (sub && sub.scores) {
+                if (b2bHits.length >= 2 && sub.scores.p4 < 8) {
+                    alerts.push({ level: 'red', text: 'Inconsistencia CV vs. Test: En su CV dice tener experiencia corporativa B2B, pero su mensaje de Cold Outreach (P4) obtuvo puntaje bajo o usó clichés débiles.' });
+                }
+                if (metricHits.length >= 2 && !sub.scores.p3aCorrect) {
+                    alerts.push({ level: 'red', text: 'Inconsistencia Numérica: Su CV presume manejo de indicadores/cuotas, pero falló el cálculo básico de ahorro mensual ($11,000 MXN).' });
+                }
+                if (sub.audit_diagnosis && sub.audit_diagnosis.totalTabExits > 1) {
+                    alerts.push({ level: 'red', text: 'Alerta Conductual: Se salió de la pestaña durante el examen. Contrastar su fluidez real haciendo preguntas de quiebre en vivo sin tiempo para consultar notas.' });
+                }
+            }
+
+            return {
+                b2bHits,
+                hunterHits,
+                metricHits,
+                yearsRange: uniqueYears.length >= 2 ? `${uniqueYears[0]} – ${uniqueYears[uniqueYears.length - 1]}` : 'No especificado',
+                jobCountEstimate,
+                alerts
+            };
+        }
+
+        function renderCvClinicalBox(cv) {
+            document.getElementById('dos-clinical-insights').innerHTML = `
+                <div style="background: rgba(0,0,0,0.28); padding: 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size:0.72rem; color:var(--accent-bronze); text-transform:uppercase; font-weight:700;">Adn Comercial Detectado en CV</div>
+                    <div style="font-size:0.86rem; color:#e5e7eb; margin-top:6px;">
+                        • <strong>Señales B2B:</strong> ${cv.b2bHits.length > 0 ? cv.b2bHits.join(', ') : 'Ninguna clara'}<br>
+                        • <strong>Señales Hunter:</strong> ${cv.hunterHits.length > 0 ? cv.hunterHits.join(', ') : 'No explícitas'}
+                    </div>
+                </div>
+                <div style="background: rgba(0,0,0,0.28); padding: 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size:0.72rem; color:var(--accent-bronze); text-transform:uppercase; font-weight:700;">Trayectoria y Cuantificación</div>
+                    <div style="font-size:0.86rem; color:#e5e7eb; margin-top:6px;">
+                        • <strong>Rango de años en CV:</strong> ${cv.yearsRange}<br>
+                        • <strong>Métricas/CRM mencionados:</strong> ${cv.metricHits.length > 0 ? cv.metricHits.join(', ') : 'Sin métricas explícitas'}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('dos-cross-alerts').innerHTML = cv.alerts.map(a => {
+                const cls = a.level === 'green' ? 'badge-green' : (a.level === 'amber' ? 'badge-amber' : 'badge-red');
+                return `
+                    <div style="display:flex; align-items:flex-start; gap:10px; padding:10px 14px; background:rgba(0,0,0,0.25); border-radius:10px; border:1px solid rgba(255,255,255,0.06); font-size:0.84rem;">
+                        <span class="badge ${cls}" style="flex-shrink:0;">${a.level.toUpperCase()}</span>
+                        <span style="color:#e5e7eb;">${a.text}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderAuditSection(sub) {
+            const diag = sub.audit_diagnosis || {};
+            const tel = sub.telemetry || {};
+            const steps = tel.perStep || {};
+
+            // Conclusions
+            const concEl = document.getElementById('dos-audit-conclusions');
+            concEl.innerHTML = (diag.conclusions || []).map(c => {
+                const color = c.type === 'red' ? '#f87171' : (c.type === 'amber' ? '#fbbf24' : (c.type === 'green' ? '#34d399' : '#60a5fa'));
+                return `
+                    <div style="display:flex; align-items:flex-start; gap:10px; font-size:0.86rem;">
+                        <i data-lucide="${c.icon || 'info'}" style="width:16px;height:16px;color:${color};flex-shrink:0;margin-top:2px;"></i>
+                        <span style="color:#f3f4f6;">${c.text}</span>
+                    </div>
+                `;
+            }).join('');
+
+            // Per-step table
+            const tbody = document.getElementById('dos-telemetry-tbody');
+            const times = [];
+            tbody.innerHTML = [1, 2, 3, 4, 5].map(s => {
+                const st = steps[s] || {};
+                const sec = Math.round(st.timeSec || 0);
+                times.push(sec);
+                const delay = st.firstInputDelaySec !== null && st.firstInputDelaySec !== undefined ? `${st.firstInputDelaySec}s` : '—';
+                const delRatio = st.keystrokes > 0 ? Math.round((st.backspaces / (st.keystrokes + st.backspaces)) * 100) : 0;
+                const rewrites = st.majorErasures || 0;
+                return `
+                    <tr>
+                        <td style="font-weight:600;color:#fff;">${STEP_LABELS['q' + s]}</td>
+                        <td>${sec}s</td>
+                        <td>${delay}</td>
+                        <td>${st.keystrokes || 0} / ${st.backspaces || 0} (${delRatio}%)</td>
+                        <td>${rewrites > 0 ? `<span class="badge badge-amber">${rewrites} masivo(s)</span>` : '0'}</td>
+                        <td>${st.tabExits || 0} sal. (${st.tabAwaySec || 0}s) · ${st.pasteAttempts || 0} peg.</td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Timeline
+            const tlEl = document.getElementById('dos-timeline-list');
+            tlEl.innerHTML = (tel.timeline || []).map(ev =>
+                `<div><code style="color:var(--accent-bronze);">[${ev.t}]</code> ${escapeHtml(ev.msg)}</div>`
+            ).join('') || '<div>Sin eventos registrados.</div>';
+
+            // Chart
+            const canvas = document.getElementById('dos-time-chart');
+            if (dossierChartInst) dossierChartInst.destroy();
+            dossierChartInst = new Chart(canvas.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['P1 Conmutador', 'P2 Oxxo', 'P3 Numérica', 'P4 WhatsApp', 'P5 Grit'],
+                    datasets: [{
+                        label: 'Segundos invertidos',
+                        data: times,
+                        backgroundColor: ['#3b82f6', '#3b82f6', '#f59e0b', '#10b981', '#c5a880'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#9ca3af', font: { size: 10 } }, grid: { display: false } },
+                        y: { ticks: { color: '#9ca3af', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    }
+                }
+            });
+        }
+
+        function renderAnswersBreakdown(sub) {
+            const a = sub.answers || {};
+            const sc = sub.scores || {};
+            const box = document.getElementById('dos-answers-breakdown');
+
+            box.innerHTML = `
+                <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                        <strong style="color:var(--accent-bronze);">P1 · Conmutador Industrial (Ideal: Opción b)</strong>
+                        <span class="badge ${sc.p1 === 20 ? 'badge-green' : 'badge-red'}">${sc.p1 || 0}/20 pts</span>
+                    </div>
+                    <div style="font-size:0.88rem; color:#e5e7eb;">Respondió: <strong>Opción ${(a.q1 || '—').toUpperCase()}</strong></div>
+                </div>
+
+                <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                        <strong style="color:var(--accent-bronze);">P2 · Objeción Comedor &amp; Oxxo (Ideal: Opción b)</strong>
+                        <span class="badge ${sc.p2 === 20 ? 'badge-green' : 'badge-red'}">${sc.p2 || 0}/20 pts</span>
+                    </div>
+                    <div style="font-size:0.88rem; color:#e5e7eb;">Respondió: <strong>Opción ${(a.q2 || '—').toUpperCase()}</strong></div>
+                </div>
+
+                <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <strong style="color:var(--accent-bronze);">P3 · Agilidad Numérica ($11,000) &amp; Visión Ejecutiva CFO/RH</strong>
+                        <span class="badge ${(sc.p3a + sc.p3b) >= 22 ? 'badge-green' : 'badge-amber'}">${(sc.p3a || 0) + (sc.p3b || 0)}/30 pts</span>
+                    </div>
+                    <div style="font-size:0.86rem; color:#d1d5db; margin-bottom:8px;">
+                        <strong>Cálculo 3A:</strong> ${escapeHtml(a.q3a || 'Sin respuesta')} ${sc.p3aCorrect ? '<span style="color:#34d399;">(Correcto)</span>' : '<span style="color:#f87171;">(Incorrecto · Ideal: $11,000)</span>'}
+                    </div>
+                    <div style="font-size:0.86rem; color:#e5e7eb; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+                        <strong>Argumento 3B:</strong> ${escapeHtml(a.q3b || 'Sin respuesta')}
+                    </div>
+                </div>
+
+                <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <strong style="color:var(--accent-bronze);">P4 · WhatsApp Cold Outreach (${sc.q4Words || 0} palabras / Máx 60)</strong>
+                        <span class="badge ${sc.p4 >= 11 ? 'badge-green' : 'badge-amber'}">${sc.p4 || 0}/15 pts</span>
+                    </div>
+                    <div style="font-size:0.88rem; color:#e5e7eb; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+                        ${escapeHtml(a.q4 || 'Sin respuesta')}
+                    </div>
+                </div>
+
+                <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <strong style="color:var(--accent-bronze);">P5 · Resiliencia Comercial (Sales Grit)</strong>
+                        <span class="badge ${sc.p5 >= 11 ? 'badge-green' : 'badge-amber'}">${sc.p5 || 0}/15 pts</span>
+                    </div>
+                    <div style="font-size:0.88rem; color:#e5e7eb; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+                        ${escapeHtml(a.q5 || 'Sin respuesta')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCustomInterviewQuestions(sub, cv) {
+            const list = [
+                '<strong>1. Quiebre de Ego:</strong> "Convénceme en 60 segundos de por qué NO debería contratarte hoy."',
+                '<strong>2. Responsabilidad vs. Excusas:</strong> "¿Cuál es la mentira más común que le dice un vendedor mediocre a su Gerente Comercial a fin de mes?"',
+                '<strong>3. Gen de Cazador (Hunter):</strong> "Son las 4:00 PM de un jueves en Cuautitlán/Tlalnepantla, se cayó tu cita y tienes 2 horas libres y tu auto. ¿Qué haces paso a paso?"'
+            ];
+
+            if (sub && sub.scores && !sub.scores.p3aCorrect) {
+                list.push('<strong>4. Validación Numérica (Alerta del Test):</strong> Falló el cálculo de ahorro mensual en la prueba. Pídele calcular en vivo cuánto ahorra una planta de 300 personas con ahorro de $5 por compra.');
+            } else {
+                list.push('<strong>4. Pensamiento Disruptivo:</strong> "Dime algo en lo que creas firmemente en ventas, pero con lo que el 90% de los vendedores tradicionales no esté de acuerdo."');
+            }
+
+            if (cv && cv.b2bHits.length === 0) {
+                list.push('<strong>5. Cuestionamiento Directo al CV:</strong> "En tu CV veo perfil más operativo/B2C que B2B corporativo. ¿Cómo vas a lograr sentarte con un Director de RH de planta de 400 empleados?"');
+            } else {
+                list.push('<strong>5. Segmentación B2B:</strong> "Si te doy 100 nombres de Directores de RH mañana, ¿cómo segmentas a los 10 primeros que vas a contactar y por qué?"');
+            }
+
+            document.getElementById('dos-custom-questions').innerHTML = list.map(q => `<li>${q}</li>`).join('');
+        }
+
+        async function saveInterviewEvaluation() {
+            const sub = allSubmissions.find(s => s.candidate_id === activeDossierCandidateId);
+            if (!sub) {
+                alert('El candidato debe completar primero la evaluación escrita para guardar la rúbrica sobre su expediente.');
+                return;
+            }
+            const rubric = {
+                modelo: parseInt(document.getElementById('rub-modelo').value) || 0,
+                objeciones: parseInt(document.getElementById('rub-objeciones').value) || 0,
+                escucha: parseInt(document.getElementById('rub-escucha').value) || 0,
+                coachability: parseInt(document.getElementById('rub-coachability').value) || 0
+            };
+            const notes = document.getElementById('dos-admin-notes').value;
+
+            try {
+                const { error } = await sb.from('snackeando_eval_submissions')
+                    .update({ interview_rubric: rubric, admin_notes: notes })
+                    .eq('id', sub.id);
+                if (error) throw error;
+                showToast('Rúbrica y notas clínicas guardadas en Supabase.');
+                await refreshAdminData();
+            } catch (e) {
+                alert('Error al guardar notas: ' + e.message);
+            }
+        }
+
+        // ============================================================
+        // 9. HELPERS & SQL MODAL
+        // ============================================================
+        function openSqlModal() {
+            document.getElementById('sql-preview-box').value = SQL_SCHEMA_TEXT;
+            document.getElementById('modal-sql-setup').classList.remove('hidden');
+        }
+
+        function copySqlScript() {
+            navigator.clipboard.writeText(SQL_SCHEMA_TEXT).then(() => {
+                showToast('Script SQL copiado. Pégalo en Supabase > SQL Editor y presiona Run.');
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>
