@@ -565,91 +565,42 @@
     </section>
 
     <!-- ========================================================= -->
-    <!-- VIEW 3: CANDIDATE ACTIVE EXAM                             -->
+    <!-- VIEW 3: CANDIDATE ACTIVE EXAM (OR ADMIN AUDIT PREVIEW)    -->
     <!-- ========================================================= -->
     <section id="view-exam" class="container-narrow hidden">
+        <!-- Admin Audit Preview Banner -->
+        <div id="audit-preview-banner" class="hidden card" style="margin-bottom: 16px; padding: 14px 20px; border-color: rgba(59, 130, 246, 0.5); background: rgba(59, 130, 246, 0.12); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="font-size: 0.85rem; color: #93c5fd; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="eye" style="width: 18px; height: 18px;"></i>
+                <span><strong>MODO AUDITORÍA (VISTA PREVIA):</strong> Navega por los 13 bloques sin responder y sin afectar Supabase.</span>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="exitAdminAuditPreview()">
+                <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i>
+                Volver al Panel Admin
+            </button>
+        </div>
+
         <div class="card">
             <!-- Step Progress -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <span id="exam-step-label" style="font-size: 0.78rem; font-weight: 700; color: var(--accent-bronze); text-transform: uppercase; letter-spacing: 1px;">
-                    Bloque 1 de 5
+                    Bloque 1 de 13
                 </span>
-                <span style="font-size: 0.76rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
+                <span id="exam-keyboard-hint" style="font-size: 0.76rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
                     <i data-lucide="keyboard" style="width: 13px; height: 13px;"></i>
                     Pegado deshabilitado · Responde con tu teclado
                 </span>
             </div>
-            <div class="step-dots" id="exam-step-dots">
-                <div class="step-dot active"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-            </div>
+            <div class="step-dots" id="exam-step-dots"></div>
 
-            <!-- Step 1: Q1 SJT Conmutador -->
-            <div class="exam-step" data-step="1">
-                <div class="no-select-prompt" style="margin-bottom: 20px;">
-                    <span class="badge badge-blue" style="margin-bottom: 10px;">Bloque A · Juicio Situacional Comercial</span>
-                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">1. Superando al Filtro de Conmutador</h3>
-                    <p style="font-size: 0.94rem; color: #e5e7eb; line-height: 1.65;">
-                        Llamas al conmutador de una planta industrial de 400 empleados. La recepcionista te dice tajantemente: <em>"No recibimos vendedores y no transferimos con Recursos Humanos"</em>. ¿Qué haces?
-                    </p>
-                </div>
-                <div id="q1-options">
-                    <label class="option-card" onclick="selectRadio('q1', 'a', this)">
-                        <input type="radio" name="q1" value="a">
-                        <span><strong>a)</strong> Pides su correo institucional para mandar un brochure corporativo.</span>
-                    </label>
-                    <label class="option-card" onclick="selectRadio('q1', 'b', this)">
-                        <input type="radio" name="q1" value="b">
-                        <span><strong>b)</strong> Preguntas el nombre del responsable de Seguridad e Higiene o Relaciones Laborales y buscas conectar por LinkedIn con un mensaje personalizado de bienestar laboral.</span>
-                    </label>
-                    <label class="option-card" onclick="selectRadio('q1', 'c', this)">
-                        <input type="radio" name="q1" value="c">
-                        <span><strong>c)</strong> Insistes diciendo que tienes una llamada pactada con el Director.</span>
-                    </label>
-                    <label class="option-card" onclick="selectRadio('q1', 'd', this)">
-                        <input type="radio" name="q1" value="d">
-                        <span><strong>d)</strong> Dejas tu número telefónico y pides que te devuelvan la llamada.</span>
-                    </label>
-                </div>
-            </div>
+            <!-- Dynamic SJT Steps (1 to 10) -->
+            <div id="dynamic-sjt-steps"></div>
 
-            <!-- Step 2: Q2 SJT Oxxo / Comedor -->
-            <div class="exam-step hidden" data-step="2">
-                <div class="no-select-prompt" style="margin-bottom: 20px;">
-                    <span class="badge badge-blue" style="margin-bottom: 10px;">Bloque A · Juicio Situacional Comercial</span>
-                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">2. Manejo de Objeción Directa</h3>
-                    <p style="font-size: 0.94rem; color: #e5e7eb; line-height: 1.65;">
-                        Un Gerente de Recursos Humanos te dice: <em>"Aquí ya tenemos comedor industrial y un Oxxo enfrente a 30 metros; no necesitamos máquinas vending"</em>. ¿Cuál es tu mejor respuesta?
-                    </p>
-                </div>
-                <div id="q2-options">
-                    <label class="option-card" onclick="selectRadio('q2', 'a', this)">
-                        <input type="radio" name="q2" value="a">
-                        <span><strong>a)</strong> "Pero nuestras máquinas son más modernas y aceptan tarjeta de crédito."</span>
-                    </label>
-                    <label class="option-card" onclick="selectRadio('q2', 'b', this)">
-                        <input type="radio" name="q2" value="b">
-                        <span><strong>b)</strong> "Entiendo, Licenciado. Sin embargo, ¿ha medido cuánto tiempo pierden sus operadores saliendo a la calle en turnos vespertinos y nocturnos? Con Snackeando, les damos los mismos productos 20% a 25% más baratos dentro de la planta, a costo cero para ustedes."</span>
-                    </label>
-                    <label class="option-card" onclick="selectRadio('q2', 'c', this)">
-                        <input type="radio" name="q2" value="c">
-                        <span><strong>c)</strong> "El Oxxo es carísimo, nosotros somos mucho mejores."</span>
-                    </label>
-                    <label class="option-card" onclick="selectRadio('q2', 'd', this)">
-                        <input type="radio" name="q2" value="d">
-                        <span><strong>d)</strong> "Podemos dejarle la máquina a prueba y si no le gusta nos la llevamos."</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Step 3: Q3 Numerical & Executive Logic -->
-            <div class="exam-step hidden" data-step="3">
+            <!-- Step 11: Numerical & Executive Logic -->
+            <div class="exam-step hidden" data-step="11">
                 <div class="no-select-prompt" style="margin-bottom: 18px;">
                     <span class="badge badge-amber" style="margin-bottom: 10px;">Bloque B · Agilidad Numérica y Lógica de Negocio</span>
-                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">3. Cálculo de Impacto Económico para el Cliente</h3>
+                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">11. Cálculo de Impacto Económico para el Cliente</h3>
                     <div style="background: rgba(255,255,255,0.03); border-left: 3px solid var(--accent-bronze); padding: 14px; border-radius: 0 10px 10px 0; font-size: 0.92rem; color: #e5e7eb;">
                         Una empresa tiene 250 empleados. En promedio, <strong>100 colaboradores</strong> compran 1 producto al día en una tienda de conveniencia a <strong>$22 MXN</strong> durante <strong>22 días laborales al mes</strong>.<br>
                         Si con Snackeando el mismo producto cuesta <strong>$17 MXN</strong> (ahorro de $5 MXN por compra):
@@ -657,55 +608,55 @@
                 </div>
 
                 <div style="margin-bottom: 20px;">
-                    <label class="field-label" for="ans-q3a">3A. ¿Cuánto dinero ahorra la plantilla de empleados en conjunto al mes? ($ MXN)</label>
-                    <input type="text" id="ans-q3a" class="protected-input" data-qid="q3a" placeholder="Escribe el monto mensual en MXN (ej. 11000)">
+                    <label class="field-label" for="ans-q11a">11A. ¿Cuánto dinero ahorra la plantilla de empleados en conjunto al mes? ($ MXN)</label>
+                    <input type="text" id="ans-q11a" class="protected-input" data-qid="q11a" placeholder="Escribe el monto mensual en MXN (ej. 11000)">
                 </div>
 
                 <div>
-                    <label class="field-label" for="ans-q3b">3B. Si la empresa gasta $0 de renta, ¿por qué para el Director de Finanzas y RH esto equivale a dar un aumento o bono indirecto a sus colaboradores? (3 a 5 líneas)</label>
-                    <textarea id="ans-q3b" class="protected-input" data-qid="q3b" placeholder="Redacta tu argumento ejecutivo directamente con el teclado..."></textarea>
+                    <label class="field-label" for="ans-q11b">11B. Si la empresa gasta $0 de renta, ¿por qué para el Director de Finanzas y RH esto equivale a dar un aumento o bono indirecto a sus colaboradores? (3 a 5 líneas)</label>
+                    <textarea id="ans-q11b" class="protected-input" data-qid="q11b" placeholder="Redacta tu argumento ejecutivo directamente con el teclado..."></textarea>
                     <div style="display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--text-muted); margin-top: 6px;">
                         <span>Explica el impacto financiero y de clima laboral.</span>
-                        <span id="count-q3b">0 caracteres</span>
+                        <span id="count-q11b">0 caracteres</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Step 4: Q4 Cold Outreach WhatsApp -->
-            <div class="exam-step hidden" data-step="4">
+            <!-- Step 12: Cold Outreach WhatsApp -->
+            <div class="exam-step hidden" data-step="12">
                 <div class="no-select-prompt" style="margin-bottom: 18px;">
                     <span class="badge badge-green" style="margin-bottom: 10px;">Bloque C · Redacción y Prospección en Frío</span>
-                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">4. Mensaje de WhatsApp Ejecutivo (Máx. 60 palabras)</h3>
+                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">12. Mensaje de WhatsApp Ejecutivo (Máx. 60 palabras)</h3>
                     <p style="font-size: 0.94rem; color: #e5e7eb; line-height: 1.65;">
                         Redacta un mensaje de WhatsApp de <strong>máximo 60 palabras</strong> para enviarle a un Director de Recursos Humanos que encontraste en LinkedIn.<br>
                         Tu único objetivo es conseguir una <strong>videollamada de 10 minutos</strong> para presentar el modelo de bienestar laboral Snackeando (renta <strong>$0 pesos</strong>, nosotros abastecemos y precios <strong>20%–25% más baratos que Oxxo</strong>).
                     </p>
                 </div>
                 <div>
-                    <label class="field-label" for="ans-q4">Tu Mensaje de Prospección en Frío</label>
-                    <textarea id="ans-q4" class="protected-input" data-qid="q4" placeholder="Escribe el mensaje exacto que enviarías por WhatsApp..."></textarea>
+                    <label class="field-label" for="ans-q12">Tu Mensaje de Prospección en Frío</label>
+                    <textarea id="ans-q12" class="protected-input" data-qid="q12" placeholder="Escribe el mensaje exacto que enviarías por WhatsApp..."></textarea>
                     <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 6px;">
                         <span style="color: var(--text-muted);">Límite recomendado: 60 palabras.</span>
-                        <span id="count-q4" style="font-weight: 700; color: var(--accent-emerald);">0 / 60 palabras</span>
+                        <span id="count-q12" style="font-weight: 700; color: var(--accent-emerald);">0 / 60 palabras</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Step 5: Q5 Sales Grit -->
-            <div class="exam-step hidden" data-step="5">
+            <!-- Step 13: Sales Grit -->
+            <div class="exam-step hidden" data-step="13">
                 <div class="no-select-prompt" style="margin-bottom: 18px;">
                     <span class="badge badge-red" style="margin-bottom: 10px;">Bloque D · Resiliencia Comercial (Sales Grit)</span>
-                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">5. Manejo Real del Rechazo</h3>
+                    <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">13. Manejo Real del Rechazo</h3>
                     <p style="font-size: 0.94rem; color: #e5e7eb; line-height: 1.65;">
                         De tus últimos 12 meses en ventas, descríbeme <strong>el rechazo más doloroso</strong> que tuviste tras meses de seguimiento y <strong>qué hiciste exactamente las 2 horas siguientes</strong> para sobreponerte.
                     </p>
                 </div>
                 <div>
-                    <label class="field-label" for="ans-q5">Tu Respuesta Honesta y Detallada</label>
-                    <textarea id="ans-q5" class="protected-input" data-qid="q5" style="min-height: 165px;" placeholder="Describe la situación concreta y tus acciones inmediatas..."></textarea>
+                    <label class="field-label" for="ans-q13">Tu Respuesta Honesta y Detallada</label>
+                    <textarea id="ans-q13" class="protected-input" data-qid="q13" style="min-height: 165px;" placeholder="Describe la situación concreta y tus acciones inmediatas..."></textarea>
                     <div style="display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--text-muted); margin-top: 6px;">
                         <span>Sé específico en tus acciones concretas.</span>
-                        <span id="count-q5">0 palabras</span>
+                        <span id="count-q13">0 palabras</span>
                     </div>
                 </div>
             </div>
@@ -724,6 +675,10 @@
                 <button id="btn-submit-exam" class="btn btn-emerald hidden" onclick="confirmSubmitExam()">
                     <i data-lucide="send" style="width: 16px; height: 16px;"></i>
                     Enviar Evaluación
+                </button>
+                <button id="btn-finish-audit" class="btn btn-primary hidden" onclick="exitAdminAuditPreview()">
+                    <i data-lucide="check" style="width: 16px; height: 16px;"></i>
+                    Finalizar Vista Previa
                 </button>
             </div>
         </div>
@@ -778,7 +733,11 @@
                 <span class="badge badge-amber" style="margin-bottom: 6px;">Panel Directivo · RH &amp; Dirección Comercial</span>
                 <h1 class="serif" style="font-size: 2rem; color: #fff;">Centro de Evaluación y Análisis Clínico</h1>
             </div>
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-outline btn-sm" onclick="startAdminAuditPreview()">
+                    <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
+                    Vista Previa del Examen (Auditoría)
+                </button>
                 <button class="btn btn-outline btn-sm" onclick="refreshAdminData()">
                     <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i>
                     Actualizar
@@ -923,35 +882,37 @@
                     </p>
 
                     <!-- Audit Conclusions List -->
-                    <div id="dos-audit-conclusions" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 18px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px;">
+                    <div id="dos-audit-conclusions" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 18px; margin-bottom: 22px; display: flex; flex-direction: column; gap: 10px;">
                     </div>
 
-                    <div class="grid-2" style="align-items: start;">
-                        <!-- Per-question telemetry table -->
-                        <div style="overflow-x: auto;">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Bloque</th>
-                                        <th>Tiempo</th>
-                                        <th>1ª Tecla</th>
-                                        <th>Teclas / Borrados</th>
-                                        <th>Reescrituras</th>
-                                        <th>Salidas / Pegado</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dos-telemetry-tbody"></tbody>
-                            </table>
-                        </div>
-                        <!-- Timeline & Chart -->
-                        <div>
-                            <div style="height: 200px; margin-bottom: 14px;">
+                    <!-- Full-width Per-question telemetry table -->
+                    <div style="overflow-x: auto; background: rgba(0,0,0,0.22); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 8px 12px; margin-bottom: 22px;">
+                        <table class="data-table" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 220px;">Bloque / Pregunta</th>
+                                    <th style="white-space: nowrap;">Tiempo</th>
+                                    <th style="white-space: nowrap;">1ª Tecla</th>
+                                    <th style="white-space: nowrap;">Teclas / Borrados</th>
+                                    <th style="white-space: nowrap;">Reescrituras</th>
+                                    <th style="white-space: nowrap;">Salidas / Pegado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dos-telemetry-tbody"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Chart & Chronological Timeline side-by-side -->
+                    <div class="grid-2" style="align-items: stretch;">
+                        <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px;">
+                            <div style="color: var(--accent-bronze); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;">Distribución de Tiempo por Bloque (Segundos)</div>
+                            <div style="height: 240px;">
                                 <canvas id="dos-time-chart"></canvas>
                             </div>
-                            <div style="max-height: 170px; overflow-y: auto; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 12px; font-size: 0.78rem;">
-                                <div style="color: var(--accent-bronze); font-weight: 700; margin-bottom: 6px;">Bitácora Cronológica de Eventos</div>
-                                <div id="dos-timeline-list" style="display: flex; flex-direction: column; gap: 5px; color: #d1d5db;"></div>
-                            </div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; display: flex; flex-direction: column;">
+                            <div style="color: var(--accent-bronze); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;">Bitácora Cronológica de Eventos</div>
+                            <div id="dos-timeline-list" style="flex: 1; max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem; color: #d1d5db; padding-right: 6px;"></div>
                         </div>
                     </div>
                 </div>
@@ -1103,7 +1064,7 @@
                     </div>
                     <div>
                         <label class="field-label" for="new-cand-duration">Tiempo para el Test (Minutos) *</label>
-                        <input type="number" id="new-cand-duration" value="20" min="5" max="90" required>
+                        <input type="number" id="new-cand-duration" value="25" min="5" max="90" required>
                     </div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 10px;">
@@ -1166,34 +1127,207 @@
         let activeDossierCandidateId = null;
         let dossierChartInst = null;
 
+        let isAuditPreview = false;
+        const TOTAL_STEPS = 13;
+
+        // 10 High-Difficulty Non-Obvious B2B Sales SJT Questions
+        const SJT_QUESTIONS = [
+            {
+                id: 'q1',
+                step: 1,
+                title: '1. Superando al Filtro de Conmutador Industrial',
+                prompt: 'Llamas al conmutador de una planta industrial de 400 empleados. La recepcionista te dice tajantemente: "No recibimos vendedores y no transferimos con Recursos Humanos". ¿Qué estrategia tiene mayor probabilidad real de abrir la cuenta?',
+                correct: 'b',
+                options: {
+                    a: 'Pedir el correo genérico de compras para enviar la ficha técnica corporativa y programar seguimiento telefónico en 48 horas.',
+                    b: 'Preguntar el nombre del responsable de Seguridad e Higiene o Relaciones Laborales, ubicarlo en LinkedIn y enviar un mensaje de valor enfocado en productividad y rotación antes de volver a llamar.',
+                    c: 'Preguntar el nombre del Gerente de Planta, volver a llamar en horario de cambio de turno y solicitar que te transfieran directamente a su extensión.',
+                    d: 'Acudir presencialmente a caseta de vigilancia con tarjetas y folletos impresos para solicitar cita formal a través de recepción.'
+                }
+            },
+            {
+                id: 'q2',
+                step: 2,
+                title: '2. Objeción de Comedor Subsidiado y Oxxo Enfrente',
+                prompt: 'Un Gerente de Recursos Humanos te responde: "Aquí ya tenemos comedor industrial subsidiado y un Oxxo enfrente a 30 metros; la verdad no necesitamos máquinas vending". ¿Cuál es la respuesta más efectiva?',
+                correct: 'c',
+                options: {
+                    a: 'Destacar que nuestras máquinas aceptan pagos con tarjeta, QR y efectivo, además de contar con sensor óptico e iluminación LED.',
+                    b: 'Proponer una instalación piloto de 30 días sin compromiso para que el mismo personal decida si prefiere la máquina o salir al Oxxo.',
+                    c: 'Validar su punto y preguntar cuánto tiempo productivo pierden los operadores saliendo a la calle en turnos vespertinos/nocturnos, contrastándolo con snacks 20–25% más baratos dentro de planta a costo $0.',
+                    d: 'Explicar que el comedor solo opera en horarios fijos de comida y que Snackeando cubre los horarios intermedios con un catálogo de alta rotación.'
+                }
+            },
+            {
+                id: 'q3',
+                step: 3,
+                title: '3. Escepticismo Financiero ante el Modelo "$0 Renta"',
+                prompt: 'El Director de Finanzas interrumpe tu llamada y dice: "Nadie regala máquinas ni operación. Seguramente nos van a amarrar con consumos mínimos obligatorios o penalizaciones ocultas". ¿Cómo desactivas la desconfianza?',
+                correct: 'b',
+                options: {
+                    a: 'Enviar de inmediato el contrato estándar para que su departamento jurídico verifique que no existen cláusulas de consumo mínimo.',
+                    b: 'Explicar con transparencia la economía unitaria: Snackeando amortiza el equipo con el margen del volumen diario de sus colaboradores, por lo que nuestro único incentivo es surtir productos que realmente roten.',
+                    c: 'Ofrecer incluir una cláusula de salida anticipada con 15 días de preaviso sin costo si no quedan satisfechos con el servicio.',
+                    d: 'Comentarle que pertenecemos al grupo INDW Trading y que ya operamos con éxito en otras plantas industriales bajo el mismo esquema.'
+                }
+            },
+            {
+                id: 'q4',
+                step: 4,
+                title: '4. Defendiendo el Diferencial de Precios (20–25% vs. Oxxo)',
+                prompt: 'El comprador cuestiona: "Si venden 20% a 25% más barato que Oxxo, ¿significa que meten producto genérico, próximo a caducar o de menor gramaje?" ¿Cuál es el argumento comercial más sólido?',
+                correct: 'b',
+                options: {
+                    a: 'Aclarar que trabajamos únicamente con marcas líderes reconocidas (Coca-Cola, Sabritas, Bimbo, Mondelez) y con fechas de caducidad vigentes.',
+                    b: 'Explicar que no pagamos rentas comerciales de locales en esquina ni nómina de cajeros 24/7, trasladando ese ahorro estructural directo al precio final del colaborador con marcas líderes originales.',
+                    c: 'Ofrecer una comparativa física con tickets reales de Oxxo y muestras de producto durante la visita de levantamiento técnico.',
+                    d: 'Indicar que nuestros convenios de compra por volumen con proveedores mayoristas nos permiten ofrecer descuentos competitivos sin bajar calidad.'
+                }
+            },
+            {
+                id: 'q5',
+                step: 5,
+                title: '5. Cualificación y Priorización de Pipeline (Hunter B2B)',
+                prompt: 'Tienes 4 prospectos interesados esta semana, pero solo capacidad operativa para cerrar e instalar 1 cuenta este mes. ¿A cuál le dedicas el 80% de tu energía de cierre?',
+                correct: 'b',
+                options: {
+                    a: 'Corporativo de oficinas de 120 empleados en zona ejecutiva donde el Director General ya dio su visto bueno verbal.',
+                    b: 'Planta manufacturera de 450 operarios con 3 turnos (incluyendo nocturno), sin tienda cercana, cuyo Gerente de RH busca reducir salidas y mejorar clima laboral.',
+                    c: 'Colegio privado de 300 alumnos donde la Sociedad de Padres pide cotización formal para someterla a votación en junta el próximo mes.',
+                    d: 'Hospital privado con cafetería propia abierta 24 horas que solicita una máquina adicional en el área de sótano.'
+                }
+            },
+            {
+                id: 'q6',
+                step: 6,
+                title: '6. Negociación cuando el Cliente Exige Renta o Comisión',
+                prompt: 'El Gerente de Compras te exige: "Si quieren poner su máquina en nuestra planta, nos tienen que pagar $3,000 MXN mensuales de renta por el espacio o el 10% de las ventas". ¿Cómo manejas la negociación?',
+                correct: 'b',
+                options: {
+                    a: 'Ceder un 5% de comisión sobre ventas brutas para asegurar la cuenta estratégica y compensar el margen con el volumen mensual.',
+                    b: 'Explicar que pagar renta o comisión obligaría a subir los precios al empleado al nivel de un Oxxo; nuestro modelo sacrifica esa renta para entregar precios 20–25% abajo como prestación laboral directa.',
+                    c: 'Solicitar que la propuesta se escale con el Director de RH o Dirección General, ya que Compras suele evaluar ingresos directos y no bienestar laboral.',
+                    d: 'Ofrecer un bono único de firma de $3,000 MXN a cambio de exclusividad contractual por 24 meses en todas sus naves.'
+                }
+            },
+            {
+                id: 'q7',
+                step: 7,
+                title: '7. Recuperación ante Silencio Post-Propuesta (Ghosting B2B)',
+                prompt: 'Enviaste la carta oferta hace 8 días a una Gerente de RH que mostró alto interés en la llamada, pero no responde tus últimos 2 WhatsApps ni llamadas. ¿Cuál es el siguiente paso más profesional y efectivo?',
+                correct: 'c',
+                options: {
+                    a: 'Enviar un mensaje cordial preguntando si pudo revisar la cotización y reiterando tu total disponibilidad para resolver cualquier duda.',
+                    b: 'Esperar 7 días adicionales para no saturarla y enviarle por correo un caso de éxito de otra planta similar.',
+                    c: 'Enviar un mensaje breve de ruptura positiva ("break-up"): darle una salida elegante preguntando si el proyecto se pausó por otras prioridades de planta para cerrar el ciclo o reactivar conversación honesta.',
+                    d: 'Contactar directamente al Director de Planta por LinkedIn comentándole que ya enviaste la propuesta a RH pero sigues en espera de comentarios.'
+                }
+            },
+            {
+                id: 'q8',
+                step: 8,
+                title: '8. Desactivando el Dolor Operativo de RH',
+                prompt: 'La Directora de RH te frena: "Ya tuvimos máquinas vending antes y fue un dolor de cabeza: se tragaban los billetes, duraban días vacías y mis empleados venían a reclamarme a mí". ¿Qué argumento neutraliza el riesgo?',
+                correct: 'b',
+                options: {
+                    a: 'Comprometerte por escrito a que nuestro equipo técnico atenderá cualquier reporte de falla en menos de 24 horas hábiles.',
+                    b: 'Detallar la arquitectura anti-fricción: sensor óptico de entrega (si no cae el producto no cobra), telemetría remota para resurtir antes del quiebre y atención directa vía QR/WhatsApp para que RH no gestione ni un reclamo.',
+                    c: 'Proponer iniciar con una sola máquina ubicada frente a caseta o comedor donde exista vigilancia constante.',
+                    d: 'Compartirle referencias de clientes actuales y darle tu número celular directo para atención inmediata.'
+                }
+            },
+            {
+                id: 'q9',
+                step: 9,
+                title: '9. Estructura de una Llamada de Descubrimiento (10 min)',
+                prompt: 'Consigues una videollamada de 10 minutos con un Director de Operaciones muy ocupado. ¿Qué debes hacer en los primeros 3 minutos de la sesión?',
+                correct: 'b',
+                options: {
+                    a: 'Presentar ágilmente tu deck de 5 diapositivas mostrando quién es Snackeando, las máquinas AMS y el catálogo de productos.',
+                    b: 'Hacer preguntas de diagnóstico sobre turnos, tiempos de traslado para comprar snacks y prioridades de retención/bienestar sin presupuesto, antes de presentar la solución.',
+                    c: 'Ir directo a la propuesta de valor explicando el modelo $0 renta y precios 20–25% menores a Oxxo para validar interés rápido.',
+                    d: 'Preguntar la plantilla exacta de empleados y verificar si cuentan con espacio de 1m² y contacto de 110V.'
+                }
+            },
+            {
+                id: 'q10',
+                step: 10,
+                title: '10. Cierre de Siguiente Paso Firme (Next Step)',
+                prompt: 'Al terminar la presentación, tu contacto dice: "Está muy interesante, déjame platicarlo con el Director en la junta mensual y yo te aviso". ¿Qué haces antes de terminar la llamada?',
+                correct: 'b',
+                options: {
+                    a: 'Agradecer el espacio, enviar la presentación en PDF esa tarde y programar un seguimiento en tu CRM dentro de 3 semanas.',
+                    b: 'Preguntar qué objeción específica podría plantear el Director para resolverla juntos ahora y agendar en calendario una micro-llamada de validación o visita técnica con fecha exacta tras su junta.',
+                    c: 'Ofrecer enviarle una tabla comparativa de precios contra Oxxo para fortalecer su presentación interna ante Dirección.',
+                    d: 'Pedir el correo del Director para copiarlo en el resumen ejecutivo y acelerar la aprobación.'
+                }
+            }
+        ];
+
         // Forensic Behavioral Telemetry State
-        const QUESTIONS = ['q1', 'q2', 'q3', 'q4', 'q5'];
         const STEP_LABELS = {
             q1: 'P1 · Filtro Conmutador',
             q2: 'P2 · Objeción Oxxo',
-            q3: 'P3 · Cálculo y Visión CFO',
-            q4: 'P4 · WhatsApp Cold Outreach',
-            q5: 'P5 · Sales Grit (Rechazo)'
+            q3: 'P3 · Escepticismo $0',
+            q4: 'P4 · Precios vs Oxxo',
+            q5: 'P5 · Priorización Lead',
+            q6: 'P6 · Renta / Comisión',
+            q7: 'P7 · Ghosting B2B',
+            q8: 'P8 · Dolor Operativo RH',
+            q9: 'P9 · Discovery 3 Min',
+            q10: 'P10 · Cierre Next Step',
+            q11: 'B11 · Cálculo y Visión CFO',
+            q12: 'B12 · WhatsApp Outreach',
+            q13: 'B13 · Sales Grit (Rechazo)'
         };
 
         let telemetry = {};
 
         function resetTelemetry() {
+            const perStep = {};
+            for (let s = 1; s <= TOTAL_STEPS; s++) {
+                perStep[s] = { timeSec: 0, enteredAtMs: null, firstInputDelaySec: null, keystrokes: 0, backspaces: 0, erasedChars: 0, majorErasures: 0, changesCount: 0, pasteAttempts: 0, tabExits: 0, tabAwaySec: 0 };
+            }
+            const answers = { q11a: '', q11b: '', q12: '', q13: '' };
+            for (let s = 1; s <= 10; s++) answers['q' + s] = '';
             telemetry = {
                 examStartedAtIso: new Date().toISOString(),
-                perStep: {
-                    1: { timeSec: 0, enteredAtMs: null, firstInputDelaySec: null, keystrokes: 0, backspaces: 0, erasedChars: 0, majorErasures: 0, changesCount: 0, pasteAttempts: 0, tabExits: 0, tabAwaySec: 0 },
-                    2: { timeSec: 0, enteredAtMs: null, firstInputDelaySec: null, keystrokes: 0, backspaces: 0, erasedChars: 0, majorErasures: 0, changesCount: 0, pasteAttempts: 0, tabExits: 0, tabAwaySec: 0 },
-                    3: { timeSec: 0, enteredAtMs: null, firstInputDelaySec: null, keystrokes: 0, backspaces: 0, erasedChars: 0, majorErasures: 0, changesCount: 0, pasteAttempts: 0, tabExits: 0, tabAwaySec: 0 },
-                    4: { timeSec: 0, enteredAtMs: null, firstInputDelaySec: null, keystrokes: 0, backspaces: 0, erasedChars: 0, majorErasures: 0, changesCount: 0, pasteAttempts: 0, tabExits: 0, tabAwaySec: 0 },
-                    5: { timeSec: 0, enteredAtMs: null, firstInputDelaySec: null, keystrokes: 0, backspaces: 0, erasedChars: 0, majorErasures: 0, changesCount: 0, pasteAttempts: 0, tabExits: 0, tabAwaySec: 0 }
-                },
+                perStep,
                 timeline: [],
                 autoSubmittedTimeout: false,
                 blurStartMs: null,
-                lastFieldValues: { q3a: '', q3b: '', q4: '', q5: '' },
-                answers: { q1: '', q2: '', q3a: '', q3b: '', q4: '', q5: '' }
+                lastFieldValues: { q11a: '', q11b: '', q12: '', q13: '' },
+                answers
             };
+        }
+
+        function renderDynamicSjtSteps() {
+            const container = document.getElementById('dynamic-sjt-steps');
+            if (!container) return;
+            container.innerHTML = SJT_QUESTIONS.map((q, idx) => `
+                <div class="exam-step ${idx === 0 ? '' : 'hidden'}" data-step="${q.step}">
+                    <div class="no-select-prompt" style="margin-bottom: 20px;">
+                        <span class="badge badge-blue" style="margin-bottom: 10px;">Bloque A · Juicio Situacional B2B (${q.step} de 10)</span>
+                        <h3 class="serif" style="font-size: 1.3rem; color: #fff; margin-bottom: 10px;">${q.title}</h3>
+                        <p style="font-size: 0.94rem; color: #e5e7eb; line-height: 1.65;">${q.prompt}</p>
+                    </div>
+                    <div id="${q.id}-options">
+                        ${['a', 'b', 'c', 'd'].map(opt => `
+                            <label class="option-card" onclick="selectRadio('${q.id}', '${opt}', this)">
+                                <input type="radio" name="${q.id}" value="${opt}">
+                                <span><strong>${opt})</strong> ${q.options[opt]}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            const dotsEl = document.getElementById('exam-step-dots');
+            if (dotsEl) {
+                dotsEl.innerHTML = Array.from({ length: TOTAL_STEPS }, (_, i) =>
+                    `<div class="step-dot ${i === 0 ? 'active' : ''}" onclick="onStepDotClick(${i + 1})" title="Bloque ${i + 1}"></div>`
+                ).join('');
+            }
         }
 
         const SQL_SCHEMA_TEXT = `-- SCRIPT SQL PARA SUPABASE (Evaluación de Ventas Snackeando)
@@ -1251,6 +1385,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
         // 2. INITIALIZATION
         // ============================================================
         document.addEventListener('DOMContentLoaded', async () => {
+            renderDynamicSjtSteps();
             if (window.lucide) lucide.createIcons();
             await initSupabase();
             setupAntiCopyAndTelemetry();
@@ -1400,6 +1535,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
 
         function logout() {
             clearInterval(timerInterval);
+            isAuditPreview = false;
             currentCandidate = null;
             currentAdmin = null;
             examStarted = false;
@@ -1409,13 +1545,47 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
         }
 
         // ============================================================
-        // 4. CANDIDATE EXAM ENGINE & ANTI-CHEATING TELEMETRY
+        // 4. CANDIDATE EXAM ENGINE, ADMIN AUDIT PREVIEW & TELEMETRY
         // ============================================================
+        function startAdminAuditPreview() {
+            isAuditPreview = true;
+            examStarted = false;
+            examSubmitted = false;
+            currentStep = 1;
+            resetTelemetry();
+            // Clear UI inputs for clean preview
+            document.querySelectorAll('#view-exam input[type="radio"]').forEach(r => { r.checked = false; });
+            document.querySelectorAll('#view-exam .option-card').forEach(c => c.classList.remove('selected'));
+            ['q11a', 'q11b', 'q12', 'q13'].forEach(k => {
+                const el = document.getElementById(`ans-${k}`);
+                if (el) el.value = '';
+            });
+            updateCounters();
+            showView('view-exam');
+            document.getElementById('audit-preview-banner').classList.remove('hidden');
+            document.getElementById('exam-timer-container').classList.add('hidden');
+            renderExamStep();
+        }
+
+        function exitAdminAuditPreview() {
+            isAuditPreview = false;
+            document.getElementById('audit-preview-banner').classList.add('hidden');
+            showView('view-admin');
+        }
+
+        function onStepDotClick(stepNum) {
+            if (!isAuditPreview) return;
+            currentStep = stepNum;
+            renderExamStep();
+        }
+
         async function startExam() {
             if (!currentCandidate) return;
+            isAuditPreview = false;
+            document.getElementById('audit-preview-banner').classList.add('hidden');
             resetTelemetry();
             const nowIso = new Date().toISOString();
-            const durationMs = (currentCandidate.duration_minutes || 20) * 60 * 1000;
+            const durationMs = (currentCandidate.duration_minutes || 25) * 60 * 1000;
             examEndTimeMs = Date.now() + durationMs;
 
             // Anchor start time in Supabase
@@ -1442,6 +1612,8 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
         }
 
         function restoreDraftAndResume(cand, endMs, forceAutoSubmit) {
+            isAuditPreview = false;
+            document.getElementById('audit-preview-banner').classList.add('hidden');
             resetTelemetry();
             const savedKey = `snk_draft_${cand.id}`;
             const rawDraft = localStorage.getItem(savedKey);
@@ -1451,16 +1623,14 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                     if (parsed.telemetry) telemetry = parsed.telemetry;
                     if (parsed.answers) {
                         telemetry.answers = parsed.answers;
-                        // Populate UI fields
-                        if (parsed.answers.q1) {
-                            const r = document.querySelector(`input[name="q1"][value="${parsed.answers.q1}"]`);
-                            if (r) { r.checked = true; r.closest('.option-card').classList.add('selected'); }
+                        for (let s = 1; s <= 10; s++) {
+                            const qid = 'q' + s;
+                            if (parsed.answers[qid]) {
+                                const r = document.querySelector(`input[name="${qid}"][value="${parsed.answers[qid]}"]`);
+                                if (r) { r.checked = true; r.closest('.option-card').classList.add('selected'); }
+                            }
                         }
-                        if (parsed.answers.q2) {
-                            const r = document.querySelector(`input[name="q2"][value="${parsed.answers.q2}"]`);
-                            if (r) { r.checked = true; r.closest('.option-card').classList.add('selected'); }
-                        }
-                        ['q3a', 'q3b', 'q4', 'q5'].forEach(k => {
+                        ['q11a', 'q11b', 'q12', 'q13'].forEach(k => {
                             const el = document.getElementById(`ans-${k}`);
                             if (el && parsed.answers[k]) {
                                 el.value = parsed.answers[k];
@@ -1496,7 +1666,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             const text = document.getElementById('exam-timer-text');
 
             const tick = () => {
-                if (!examStarted || examSubmitted) return;
+                if (!examStarted || examSubmitted || isAuditPreview) return;
                 const remainingSec = Math.max(0, Math.floor((examEndTimeMs - Date.now()) / 1000));
                 const mins = Math.floor(remainingSec / 60);
                 const secs = remainingSec % 60;
@@ -1518,6 +1688,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
         }
 
         function flushStepTime() {
+            if (isAuditPreview) return;
             const st = telemetry.perStep[currentStep];
             if (st && st.enteredAtMs) {
                 const deltaSec = (Date.now() - st.enteredAtMs) / 1000;
@@ -1528,11 +1699,11 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
 
         function changeStep(delta) {
             flushStepTime();
-            const nextStep = Math.max(1, Math.min(5, currentStep + delta));
+            const nextStep = Math.max(1, Math.min(TOTAL_STEPS, currentStep + delta));
             if (nextStep !== currentStep) {
-                logTimeline(`Navegación de Bloque ${currentStep} a Bloque ${nextStep}`);
+                if (!isAuditPreview) logTimeline(`Navegación de Bloque ${currentStep} a Bloque ${nextStep}`);
                 currentStep = nextStep;
-                telemetry.perStep[currentStep].enteredAtMs = Date.now();
+                if (!isAuditPreview) telemetry.perStep[currentStep].enteredAtMs = Date.now();
                 renderExamStep();
                 saveLocalDraft();
             }
@@ -1542,18 +1713,20 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             document.querySelectorAll('.exam-step').forEach(el => {
                 el.classList.toggle('hidden', parseInt(el.dataset.step) !== currentStep);
             });
-            document.getElementById('exam-step-label').innerText = `Bloque ${currentStep} de 5`;
+            document.getElementById('exam-step-label').innerText = `Bloque ${currentStep} de ${TOTAL_STEPS}`;
 
             const dots = document.querySelectorAll('#exam-step-dots .step-dot');
             dots.forEach((d, idx) => {
                 d.classList.remove('active', 'done');
+                d.style.cursor = isAuditPreview ? 'pointer' : 'default';
                 if (idx + 1 < currentStep) d.classList.add('done');
                 else if (idx + 1 === currentStep) d.classList.add('active');
             });
 
             document.getElementById('btn-prev-step').classList.toggle('hidden', currentStep === 1);
-            document.getElementById('btn-next-step').classList.toggle('hidden', currentStep === 5);
-            document.getElementById('btn-submit-exam').classList.toggle('hidden', currentStep !== 5);
+            document.getElementById('btn-next-step').classList.toggle('hidden', currentStep === TOTAL_STEPS);
+            document.getElementById('btn-submit-exam').classList.toggle('hidden', isAuditPreview || currentStep !== TOTAL_STEPS);
+            document.getElementById('btn-finish-audit').classList.toggle('hidden', !isAuditPreview || currentStep !== TOTAL_STEPS);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1563,7 +1736,9 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             labelEl.classList.add('selected');
             labelEl.querySelector('input').checked = true;
 
-            const stepNum = qid === 'q1' ? 1 : 2;
+            if (isAuditPreview) return;
+
+            const stepNum = parseInt(qid.replace('q', ''), 10);
             const st = telemetry.perStep[stepNum];
             if (st.firstInputDelaySec === null && st.enteredAtMs) {
                 st.firstInputDelaySec = Math.round((Date.now() - st.enteredAtMs) / 1000);
@@ -1577,6 +1752,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
         }
 
         function logTimeline(msg) {
+            if (isAuditPreview) return;
             const elapsedSec = telemetry.examStartedAtIso
                 ? Math.max(0, Math.round((Date.now() - new Date(telemetry.examStartedAtIso).getTime()) / 1000))
                 : 0;
@@ -1586,7 +1762,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
         }
 
         function saveLocalDraft() {
-            if (!currentCandidate) return;
+            if (!currentCandidate || isAuditPreview) return;
             localStorage.setItem(`snk_draft_${currentCandidate.id}`, JSON.stringify({
                 answers: telemetry.answers,
                 telemetry
@@ -1594,37 +1770,43 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
         }
 
         function updateCounters() {
-            const q3b = document.getElementById('ans-q3b').value;
-            document.getElementById('count-q3b').innerText = `${q3b.length} caracteres`;
+            const q11bEl = document.getElementById('ans-q11b');
+            if (q11bEl) document.getElementById('count-q11b').innerText = `${q11bEl.value.length} caracteres`;
 
-            const q4 = document.getElementById('ans-q4').value.trim();
-            const q4Words = q4 ? q4.split(/\s+/).length : 0;
-            const q4El = document.getElementById('count-q4');
-            q4El.innerText = `${q4Words} / 60 palabras`;
-            q4El.style.color = q4Words > 60 ? 'var(--accent-red)' : 'var(--accent-emerald)';
+            const q12El = document.getElementById('ans-q12');
+            if (q12El) {
+                const q12 = q12El.value.trim();
+                const q12Words = q12 ? q12.split(/\s+/).length : 0;
+                const q12Count = document.getElementById('count-q12');
+                q12Count.innerText = `${q12Words} / 60 palabras`;
+                q12Count.style.color = q12Words > 60 ? 'var(--accent-red)' : 'var(--accent-emerald)';
+            }
 
-            const q5 = document.getElementById('ans-q5').value.trim();
-            const q5Words = q5 ? q5.split(/\s+/).length : 0;
-            document.getElementById('count-q5').innerText = `${q5Words} palabras`;
+            const q13El = document.getElementById('ans-q13');
+            if (q13El) {
+                const q13 = q13El.value.trim();
+                const q13Words = q13 ? q13.split(/\s+/).length : 0;
+                document.getElementById('count-q13').innerText = `${q13Words} palabras`;
+            }
         }
 
         function setupAntiCopyAndTelemetry() {
-            // Block right click & copy/paste during exam
+            // Block right click & copy/paste during active candidate exam (skip in Audit Preview)
             document.addEventListener('contextmenu', (e) => {
-                if (examStarted && !examSubmitted) {
+                if (examStarted && !examSubmitted && !isAuditPreview) {
                     e.preventDefault();
                 }
             });
 
             document.addEventListener('copy', (e) => {
-                if (examStarted && !examSubmitted) {
+                if (examStarted && !examSubmitted && !isAuditPreview) {
                     e.preventDefault();
                     showToast('Copiado deshabilitado durante la evaluación.');
                 }
             });
 
             document.addEventListener('paste', (e) => {
-                if (examStarted && !examSubmitted) {
+                if (examStarted && !examSubmitted && !isAuditPreview) {
                     e.preventDefault();
                     telemetry.perStep[currentStep].pasteAttempts += 1;
                     logTimeline(`Bloque ${currentStep}: Intento de pegado (Paste) bloqueado`);
@@ -1634,7 +1816,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             });
 
             document.addEventListener('drop', (e) => {
-                if (examStarted && !examSubmitted) {
+                if (examStarted && !examSubmitted && !isAuditPreview) {
                     e.preventDefault();
                     telemetry.perStep[currentStep].pasteAttempts += 1;
                     logTimeline(`Bloque ${currentStep}: Intento de arrastrar texto (Drop) bloqueado`);
@@ -1644,7 +1826,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
 
             // Tab switch / Window blur tracking
             document.addEventListener('visibilitychange', () => {
-                if (!examStarted || examSubmitted) return;
+                if (!examStarted || examSubmitted || isAuditPreview) return;
                 if (document.hidden) {
                     telemetry.blurStartMs = Date.now();
                     telemetry.perStep[currentStep].tabExits += 1;
@@ -1663,7 +1845,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                 const qid = field.dataset.qid;
 
                 field.addEventListener('keydown', (e) => {
-                    if (!examStarted || examSubmitted) return;
+                    if (!examStarted || examSubmitted || isAuditPreview) return;
                     if ((e.ctrlKey || e.metaKey) && ['v', 'c', 'x'].includes(e.key.toLowerCase())) {
                         e.preventDefault();
                         if (e.key.toLowerCase() === 'v') {
@@ -1685,6 +1867,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                 });
 
                 field.addEventListener('input', () => {
+                    if (isAuditPreview) { updateCounters(); return; }
                     if (!examStarted || examSubmitted) return;
                     const oldVal = telemetry.lastFieldValues[qid] || '';
                     const newVal = field.value;
@@ -1718,9 +1901,13 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
         }
 
         function confirmSubmitExam() {
-            // Check if any field is completely blank
+            if (isAuditPreview) { exitAdminAuditPreview(); return; }
             const a = telemetry.answers;
-            if (!a.q1 || !a.q2 || !a.q3a.trim() || !a.q3b.trim() || !a.q4.trim() || !a.q5.trim()) {
+            let hasMissing = !a.q11a.trim() || !a.q11b.trim() || !a.q12.trim() || !a.q13.trim();
+            for (let s = 1; s <= 10; s++) {
+                if (!a['q' + s]) hasMissing = true;
+            }
+            if (hasMissing) {
                 if (!confirm('Aún tienes preguntas sin responder. ¿Estás seguro de enviar tu evaluación ahora?')) {
                     return;
                 }
@@ -1773,70 +1960,78 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
         // 5. SCORING & FORENSIC AUDIT ENGINE
         // ============================================================
         function scoreCandidateAnswers(ans) {
-            // P1: SJT Conmutador (20 pts)
-            const p1Score = ans.q1 === 'b' ? 20 : (ans.q1 === 'a' ? 5 : 0);
-            // P2: SJT Oxxo (20 pts)
-            const p2Score = ans.q2 === 'b' ? 20 : (ans.q2 === 'd' ? 5 : 0);
+            // 10 SJT Questions x 5 pts = 50 pts
+            const sjtDetails = {};
+            let sjtTotal = 0;
+            SJT_QUESTIONS.forEach(q => {
+                const isOk = ans[q.id] === q.correct;
+                const pts = isOk ? 5 : 0;
+                sjtDetails[q.id] = pts;
+                sjtTotal += pts;
+            });
 
-            // P3a: 100 * 5 * 22 = 11,000 MXN (15 pts)
-            const numClean = String(ans.q3a || '').replace(/[$,.\s]/g, '').toLowerCase();
-            const p3aCorrect = numClean === '11000' || numClean === '1100000' || numClean.includes('11000') || numClean === '11mil';
-            const p3aScore = p3aCorrect ? 15 : 0;
+            // 11A: 100 * 5 * 22 = 11,000 MXN (15 pts)
+            const numClean = String(ans.q11a || '').replace(/[$,.\s]/g, '').toLowerCase();
+            const p11aCorrect = numClean === '11000' || numClean === '1100000' || numClean.includes('11000') || numClean === '11mil';
+            const p11aScore = p11aCorrect ? 15 : 0;
 
-            // P3b: Visión Ejecutiva CFO/RH (15 pts)
-            const q3bLow = String(ans.q3b || '').toLowerCase();
+            // 11B: Visión Ejecutiva CFO/RH (10 pts)
+            const q11bLow = String(ans.q11b || '').toLowerCase();
             const execKw = ['bono', 'aumento', 'prestaci', 'poder adquisitivo', 'retenci', 'clima', 'productividad', 'costo cero', '$0', 'sin gastar', 'rotaci', 'ahorro', 'salario emocional', 'beneficio'];
-            const q3bHits = execKw.filter(k => q3bLow.includes(k)).length;
-            let p3bScore = Math.min(15, q3bHits * 3 + (q3bLow.length > 80 ? 3 : 0));
+            const q11bHits = execKw.filter(k => q11bLow.includes(k)).length;
+            const p11bScore = Math.min(10, q11bHits * 2 + (q11bLow.length > 80 ? 2 : 0));
 
-            // P4: WhatsApp Cold Outreach <= 60 palabras (15 pts)
-            const q4Text = String(ans.q4 || '').trim();
-            const q4Words = q4Text ? q4Text.split(/\s+/).length : 0;
-            const q4Low = q4Text.toLowerCase();
-            let p4Score = 0;
+            // 12: WhatsApp Cold Outreach <= 60 palabras (15 pts)
+            const q12Text = String(ans.q12 || '').trim();
+            const q12Words = q12Text ? q12Text.split(/\s+/).length : 0;
+            const q12Low = q12Text.toLowerCase();
+            let p12Score = 0;
             const valueProps = ['$0', 'cero', 'sin costo', 'oxxo', '20%', '25%', 'barato', 'ahorro', 'bienestar', 'colaboradores', 'planta', 'empleados'];
             const ctaProps = ['llamada', 'videollamada', '10 min', 'diez min', 'reunión', 'reunion', 'agendar', 'espacio', 'minuto'];
             const weakCliches = ['espero se encuentre bien', 'sin más por el momento', 'saludo cordialmente', 'molestar'];
-            const vHits = valueProps.filter(k => q4Low.includes(k)).length;
-            const cHits = ctaProps.filter(k => q4Low.includes(k)).length;
-            const badHits = weakCliches.filter(k => q4Low.includes(k)).length;
+            const vHits = valueProps.filter(k => q12Low.includes(k)).length;
+            const cHits = ctaProps.filter(k => q12Low.includes(k)).length;
+            const badHits = weakCliches.filter(k => q12Low.includes(k)).length;
 
-            if (q4Words > 10) {
-                p4Score += Math.min(7, vHits * 2);
-                p4Score += cHits > 0 ? 5 : 0;
-                p4Score += (q4Words <= 60 ? 3 : 0);
-                p4Score = Math.max(0, p4Score - badHits * 3);
+            if (q12Words > 10) {
+                p12Score += Math.min(7, vHits * 2);
+                p12Score += cHits > 0 ? 5 : 0;
+                p12Score += (q12Words <= 60 ? 3 : 0);
+                p12Score = Math.max(0, p12Score - badHits * 3);
             }
-            p4Score = Math.min(15, p4Score);
+            p12Score = Math.min(15, p12Score);
 
-            // P5: Sales Grit / Resiliencia (15 pts)
-            const q5Text = String(ans.q5 || '').trim();
-            const q5Words = q5Text ? q5Text.split(/\s+/).length : 0;
-            const q5Low = q5Text.toLowerCase();
+            // 13: Sales Grit / Resiliencia (10 pts)
+            const q13Text = String(ans.q13 || '').trim();
+            const q13Words = q13Text ? q13Text.split(/\s+/).length : 0;
+            const q13Low = q13Text.toLowerCase();
             const actionKw = ['llam', 'prospect', 'analic', 'seguimiento', 'busqu', 'aprend', 'ajust', 'siguiente', 'puerta', 'correo', 'linkedin', 'revis', 'pedí', 'pedi', 'retroalimenta'];
             const victimKw = ['no me apoyaron', 'producto caro', 'era imposible', 'culpa del cliente', 'no querían comprar'];
-            const aHits = actionKw.filter(k => q5Low.includes(k)).length;
-            const vctHits = victimKw.filter(k => q5Low.includes(k)).length;
-            let p5Score = q5Words >= 25 ? Math.min(15, 4 + aHits * 3 + (q5Words >= 50 ? 3 : 0) - vctHits * 4) : (q5Words > 5 ? 3 : 0);
-            p5Score = Math.max(0, p5Score);
+            const aHits = actionKw.filter(k => q13Low.includes(k)).length;
+            const vctHits = victimKw.filter(k => q13Low.includes(k)).length;
+            let p13Score = q13Words >= 25 ? Math.min(10, 3 + aHits * 2 + (q13Words >= 50 ? 2 : 0) - vctHits * 4) : (q13Words > 5 ? 2 : 0);
+            p13Score = Math.max(0, p13Score);
 
-            const total = p1Score + p2Score + p3aScore + p3bScore + p4Score + p5Score;
+            const total = sjtTotal + p11aScore + p11bScore + p12Score + p13Score;
             return {
-                p1: p1Score,
-                p2: p2Score,
-                p3a: p3aScore,
-                p3b: p3bScore,
-                p4: p4Score,
-                p5: p5Score,
+                version: 2,
+                sjtTotal,
+                sjtDetails,
+                p11a: p11aScore,
+                p11b: p11bScore,
+                p12: p12Score,
+                p13: p13Score,
                 total,
-                q4Words,
-                q4BadCliches: badHits,
-                p3aCorrect
+                q12Words,
+                q12BadCliches: badHits,
+                p11aCorrect,
+                p3aCorrect: p11aCorrect
             };
         }
 
         function generateAuditDiagnosis(tel, ans) {
             const steps = tel.perStep || {};
+            const stepNums = Object.keys(steps).map(n => parseInt(n, 10)).sort((a, b) => a - b);
             let totalTimeSec = 0;
             let totalPaste = 0;
             let totalTabExits = 0;
@@ -1844,7 +2039,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             let totalErasures = 0;
             let maxTimeStep = { step: 1, sec: 0 };
 
-            for (let s = 1; s <= 5; s++) {
+            stepNums.forEach(s => {
                 const st = steps[s] || {};
                 const sec = Math.round(st.timeSec || 0);
                 totalTimeSec += sec;
@@ -1853,7 +2048,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                 totalTabAway += (st.tabAwaySec || 0);
                 totalErasures += (st.majorErasures || 0);
                 if (sec > maxTimeStep.sec) maxTimeStep = { step: s, sec };
-            }
+            });
 
             const conclusions = [];
             const fmtTime = (s) => s >= 60 ? `${Math.floor(s / 60)}m ${s % 60}s` : `${s}s`;
@@ -1862,20 +2057,21 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             conclusions.push({
                 type: 'info',
                 icon: 'clock',
-                text: `Tiempo total efectivo: ${fmtTime(totalTimeSec)}. El bloque donde más tiempo invirtió fue ${STEP_LABELS['q' + maxTimeStep.step]} (${fmtTime(maxTimeStep.sec)}).`
+                text: `Tiempo total efectivo: ${fmtTime(totalTimeSec)}. El bloque donde más tiempo invirtió fue ${STEP_LABELS['q' + maxTimeStep.step] || ('Bloque ' + maxTimeStep.step)} (${fmtTime(maxTimeStep.sec)}).`
             });
 
-            // 2. Rewrites / Erasures
+            // 2. Rewrites / Erasures on open-ended steps (11..13 or 3..5)
             const rewriteDetails = [];
-            for (let s = 3; s <= 5; s++) {
+            stepNums.filter(s => s >= 11 || (stepNums.length <= 5 && s >= 3)).forEach(s => {
                 const st = steps[s] || {};
                 const ratio = st.keystrokes > 0 ? Math.round((st.backspaces / (st.keystrokes + st.backspaces)) * 100) : 0;
+                const lbl = STEP_LABELS['q' + s] || `Bloque ${s}`;
                 if ((st.majorErasures || 0) > 0) {
-                    rewriteDetails.push(`${STEP_LABELS['q' + s]} (${st.majorErasures} borrado(s) masivo(s), ${ratio}% corrección)`);
+                    rewriteDetails.push(`${lbl} (${st.majorErasures} borrado(s) masivo(s), ${ratio}% corrección)`);
                 } else if (ratio > 35 && st.keystrokes > 25) {
-                    rewriteDetails.push(`${STEP_LABELS['q' + s]} (alta edición: ${ratio}% teclas de borrado)`);
+                    rewriteDetails.push(`${lbl} (alta edición: ${ratio}% teclas de borrado)`);
                 }
-            }
+            });
             if (rewriteDetails.length > 0) {
                 conclusions.push({
                     type: 'amber',
@@ -1909,16 +2105,16 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             }
 
             // 4. Slow start / Long pauses
-            for (let s = 1; s <= 5; s++) {
+            stepNums.forEach(s => {
                 const st = steps[s] || {};
                 if ((st.firstInputDelaySec || 0) > 60) {
                     conclusions.push({
                         type: 'amber',
                         icon: 'pause-circle',
-                        text: `Pausa prolongada en ${STEP_LABELS['q' + s]}: Tardó ${fmtTime(st.firstInputDelaySec)} antes de teclear el primer carácter.`
+                        text: `Pausa prolongada en ${STEP_LABELS['q' + s] || ('Bloque ' + s)}: Tardó ${fmtTime(st.firstInputDelaySec)} antes de teclear el primer carácter.`
                     });
                 }
-            }
+            });
 
             const integrityScore = Math.max(0, 100 - (totalPaste * 25) - (totalTabExits * 15) - (totalTabAway > 30 ? 15 : 0));
 
@@ -2058,7 +2254,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
         function openCreateCandidateModal() {
             document.getElementById('create-candidate-form').reset();
             document.getElementById('new-cand-role').value = 'Ejecutivo Comercial B2B';
-            document.getElementById('new-cand-duration').value = 20;
+            document.getElementById('new-cand-duration').value = 25;
             generateTempPass();
             // Default expiration: +48 hours
             const exp = new Date(Date.now() + 48 * 3600 * 1000);
@@ -2311,8 +2507,9 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
 
             // 3. Cross-check CV vs Exam
             if (sub && sub.scores) {
-                if (b2bHits.length >= 2 && sub.scores.p4 < 8) {
-                    alerts.push({ level: 'red', text: 'Inconsistencia CV vs. Test: En su CV dice tener experiencia corporativa B2B, pero su mensaje de Cold Outreach (P4) obtuvo puntaje bajo o usó clichés débiles.' });
+                const outreachScore = sub.scores.p12 !== undefined ? sub.scores.p12 : (sub.scores.p4 || 0);
+                if (b2bHits.length >= 2 && outreachScore < 8) {
+                    alerts.push({ level: 'red', text: 'Inconsistencia CV vs. Test: En su CV dice tener experiencia corporativa B2B, pero su mensaje de Cold Outreach obtuvo puntaje bajo o usó clichés débiles.' });
                 }
                 if (metricHits.length >= 2 && !sub.scores.p3aCorrect) {
                     alerts.push({ level: 'red', text: 'Inconsistencia Numérica: Su CV presume manejo de indicadores/cuotas, pero falló el cálculo básico de ahorro mensual ($11,000 MXN).' });
@@ -2365,6 +2562,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             const diag = sub.audit_diagnosis || {};
             const tel = sub.telemetry || {};
             const steps = tel.perStep || {};
+            const stepNums = Object.keys(steps).map(n => parseInt(n, 10)).sort((a, b) => a - b);
 
             // Conclusions
             const concEl = document.getElementById('dos-audit-conclusions');
@@ -2378,24 +2576,29 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                 `;
             }).join('');
 
-            // Per-step table
+            // Per-step table (clean full-width)
             const tbody = document.getElementById('dos-telemetry-tbody');
             const times = [];
-            tbody.innerHTML = [1, 2, 3, 4, 5].map(s => {
+            const chartLabels = [];
+            const chartColors = [];
+            tbody.innerHTML = stepNums.map(s => {
                 const st = steps[s] || {};
                 const sec = Math.round(st.timeSec || 0);
                 times.push(sec);
+                const lbl = STEP_LABELS['q' + s] || `Bloque ${s}`;
+                chartLabels.push(`B${s}`);
+                chartColors.push(s <= 10 && stepNums.length > 5 ? '#3b82f6' : (s === 11 || (stepNums.length <= 5 && s === 3) ? '#f59e0b' : (s === 12 || (stepNums.length <= 5 && s === 4) ? '#10b981' : '#c5a880')));
                 const delay = st.firstInputDelaySec !== null && st.firstInputDelaySec !== undefined ? `${st.firstInputDelaySec}s` : '—';
                 const delRatio = st.keystrokes > 0 ? Math.round((st.backspaces / (st.keystrokes + st.backspaces)) * 100) : 0;
                 const rewrites = st.majorErasures || 0;
                 return `
                     <tr>
-                        <td style="font-weight:600;color:#fff;">${STEP_LABELS['q' + s]}</td>
-                        <td>${sec}s</td>
-                        <td>${delay}</td>
-                        <td>${st.keystrokes || 0} / ${st.backspaces || 0} (${delRatio}%)</td>
-                        <td>${rewrites > 0 ? `<span class="badge badge-amber">${rewrites} masivo(s)</span>` : '0'}</td>
-                        <td>${st.tabExits || 0} sal. (${st.tabAwaySec || 0}s) · ${st.pasteAttempts || 0} peg.</td>
+                        <td style="font-weight:600;color:#fff;">${lbl}</td>
+                        <td style="white-space:nowrap;">${sec}s</td>
+                        <td style="white-space:nowrap;">${delay}</td>
+                        <td style="white-space:nowrap;">${st.keystrokes || 0} / ${st.backspaces || 0} (${delRatio}%)</td>
+                        <td style="white-space:nowrap;">${rewrites > 0 ? `<span class="badge badge-amber">${rewrites} masivo(s)</span>` : '0'}</td>
+                        <td style="white-space:nowrap;">${st.tabExits || 0} sal. (${st.tabAwaySec || 0}s) · ${st.pasteAttempts || 0} peg.</td>
                     </tr>
                 `;
             }).join('');
@@ -2412,11 +2615,11 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             dossierChartInst = new Chart(canvas.getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: ['P1 Conmutador', 'P2 Oxxo', 'P3 Numérica', 'P4 WhatsApp', 'P5 Grit'],
+                    labels: chartLabels,
                     datasets: [{
                         label: 'Segundos invertidos',
                         data: times,
-                        backgroundColor: ['#3b82f6', '#3b82f6', '#f59e0b', '#10b981', '#c5a880'],
+                        backgroundColor: chartColors,
                         borderRadius: 6
                     }]
                 },
@@ -2425,8 +2628,8 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { ticks: { color: '#9ca3af', font: { size: 10 } }, grid: { display: false } },
-                        y: { ticks: { color: '#9ca3af', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                        x: { ticks: { color: '#9ca3af', font: { size: 11 } }, grid: { display: false } },
+                        y: { ticks: { color: '#9ca3af', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
                     }
                 }
             });
@@ -2437,6 +2640,61 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             const sc = sub.scores || {};
             const box = document.getElementById('dos-answers-breakdown');
 
+            // Support v2 (13 blocks: 10 SJT + 3 cases) and legacy v1 (5 blocks)
+            if (sc.version === 2 || a.q10 !== undefined || a.q11a !== undefined) {
+                const sjtHtml = SJT_QUESTIONS.map(q => {
+                    const chosen = a[q.id] || '';
+                    const isOk = chosen === q.correct;
+                    const chosenText = chosen ? `<strong>${chosen.toUpperCase()})</strong> ${escapeHtml(q.options[chosen] || '')}` : '<em>Sin respuesta</em>';
+                    return `
+                        <div style="background:rgba(0,0,0,0.25); padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px;">
+                                <strong style="color:var(--accent-bronze);">${q.title} <span style="color:var(--text-muted); font-weight:normal; font-size:0.8rem;">(Ideal: ${q.correct.toUpperCase()})</span></strong>
+                                <span class="badge ${isOk ? 'badge-green' : 'badge-red'}">${isOk ? '5/5' : '0/5'} pts</span>
+                            </div>
+                            <div style="font-size:0.85rem; color:#e5e7eb;">Respondió: ${chosenText}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                box.innerHTML = sjtHtml + `
+                    <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <strong style="color:var(--accent-bronze);">Bloque 11 · Agilidad Numérica ($11,000) &amp; Visión Ejecutiva CFO/RH</strong>
+                            <span class="badge ${(sc.p11a + sc.p11b) >= 18 ? 'badge-green' : 'badge-amber'}">${(sc.p11a || 0) + (sc.p11b || 0)}/25 pts</span>
+                        </div>
+                        <div style="font-size:0.86rem; color:#d1d5db; margin-bottom:8px;">
+                            <strong>Cálculo 11A:</strong> ${escapeHtml(a.q11a || 'Sin respuesta')} ${sc.p11aCorrect ? '<span style="color:#34d399;">(Correcto)</span>' : '<span style="color:#f87171;">(Incorrecto · Ideal: $11,000)</span>'}
+                        </div>
+                        <div style="font-size:0.86rem; color:#e5e7eb; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+                            <strong>Argumento 11B:</strong> ${escapeHtml(a.q11b || 'Sin respuesta')}
+                        </div>
+                    </div>
+
+                    <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <strong style="color:var(--accent-bronze);">Bloque 12 · WhatsApp Cold Outreach (${sc.q12Words || 0} palabras / Máx 60)</strong>
+                            <span class="badge ${sc.p12 >= 11 ? 'badge-green' : 'badge-amber'}">${sc.p12 || 0}/15 pts</span>
+                        </div>
+                        <div style="font-size:0.88rem; color:#e5e7eb; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+                            ${escapeHtml(a.q12 || 'Sin respuesta')}
+                        </div>
+                    </div>
+
+                    <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <strong style="color:var(--accent-bronze);">Bloque 13 · Resiliencia Comercial (Sales Grit)</strong>
+                            <span class="badge ${sc.p13 >= 7 ? 'badge-green' : 'badge-amber'}">${sc.p13 || 0}/10 pts</span>
+                        </div>
+                        <div style="font-size:0.88rem; color:#e5e7eb; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+                            ${escapeHtml(a.q13 || 'Sin respuesta')}
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Legacy v1 fallback
             box.innerHTML = `
                 <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
                     <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
