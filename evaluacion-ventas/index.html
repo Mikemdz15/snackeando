@@ -15,6 +15,9 @@
     <!-- PDF.js & Mammoth.js for CV parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <!-- html2canvas & jsPDF for 1-click pixel-identical digital PDF download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --bg-dark: #070a12;
@@ -529,10 +532,13 @@
 
         /* Print Styles for Clinical Dossier */
         @media print {
-            body { background: #fff !important; color: #111 !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #0f172a !important; }
             .topbar, .no-print, #sql-warning-banner, .tabs { display: none !important; }
             .container { max-width: 100% !important; padding: 0 !important; }
             .exec-sheet { box-shadow: none !important; border: none !important; border-radius: 0 !important; }
+            .grid-2 { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+            .grid-4 { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 12px !important; }
             .exec-panel, .exec-kpi-pill { break-inside: avoid; }
         }
     </style>
@@ -931,9 +937,9 @@
                             <div style="font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; color: #fff;">SNACKEANDO</div>
                             <div style="font-size: 0.65rem; color: #7dd3fc; letter-spacing: 0.8px;">TALENTO &amp; VENTAS B2B</div>
                         </div>
-                        <button class="btn btn-sm no-print" onclick="window.print()" style="background: rgba(255,255,255,0.14); color: #fff; border: 1px solid rgba(255,255,255,0.28);">
-                            <i data-lucide="printer" style="width: 15px; height: 15px;"></i>
-                            Imprimir / PDF
+                        <button id="btn-download-pdf" class="btn btn-sm no-print" onclick="downloadDossierPdf()" style="background: rgba(255,255,255,0.16); color: #fff; border: 1px solid rgba(255,255,255,0.35);">
+                            <i data-lucide="download" style="width: 15px; height: 15px;"></i>
+                            Descargar PDF
                         </button>
                     </div>
                 </div>
@@ -3110,6 +3116,87 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             navigator.clipboard.writeText(SQL_SCHEMA_TEXT).then(() => {
                 showToast('Script SQL copiado. Pégalo en Supabase > SQL Editor y presiona Run.');
             });
+        }
+
+        async function downloadDossierPdf() {
+            const el = document.getElementById('dossier-content');
+            const btn = document.getElementById('btn-download-pdf');
+            if (!el || typeof html2canvas === 'undefined' || !window.jspdf) {
+                window.print();
+                return;
+            }
+
+            const origBtnHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = 'Generando PDF...';
+            showToast('Generando expediente digital en PDF...');
+
+            // Temporarily hide .no-print inside dossier & expand scrollable timeline
+            const noPrints = Array.from(el.querySelectorAll('.no-print'));
+            noPrints.forEach(n => { n.dataset.prevDisplay = n.style.display; n.style.display = 'none'; });
+            const tl = document.getElementById('dos-timeline-list');
+            const prevTlMax = tl ? tl.style.maxHeight : '';
+            if (tl) tl.style.maxHeight = 'none';
+
+            const prevWidth = el.style.width;
+            if (el.offsetWidth < 1040) el.style.width = '1120px';
+
+            try {
+                const canvas = await html2canvas(el, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'pt', 'letter');
+                const pageW = pdf.internal.pageSize.getWidth();
+                const pageH = pdf.internal.pageSize.getHeight();
+                const margin = 18;
+                const imgW = pageW - margin * 2;
+                const pageContentH = pageH - margin * 2;
+
+                const pxPerPt = canvas.width / imgW;
+                const sliceH_px = Math.floor(pageContentH * pxPerPt);
+
+                let yOffset = 0;
+                let pageIndex = 0;
+                while (yOffset < canvas.height) {
+                    const currentSliceH = Math.min(sliceH_px, canvas.height - yOffset);
+                    const pageCanvas = document.createElement('canvas');
+                    pageCanvas.width = canvas.width;
+                    pageCanvas.height = currentSliceH;
+                    const pCtx = pageCanvas.getContext('2d');
+                    pCtx.fillStyle = '#ffffff';
+                    pCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+                    pCtx.drawImage(canvas, 0, yOffset, canvas.width, currentSliceH, 0, 0, canvas.width, currentSliceH);
+
+                    const imgData = pageCanvas.toDataURL('image/jpeg', 0.95);
+                    const drawH = currentSliceH / pxPerPt;
+                    if (pageIndex > 0) pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', margin, margin, imgW, drawH);
+
+                    yOffset += currentSliceH;
+                    pageIndex += 1;
+                }
+
+                const rawName = (document.getElementById('dos-name').innerText || 'Candidato')
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
+                pdf.save(`Expediente_Clinico_${rawName}_Snackeando.pdf`);
+                showToast('PDF descargado exitosamente.');
+            } catch (err) {
+                console.error('Error generating PDF:', err);
+                alert('No se pudo generar el PDF automático: ' + err.message);
+            } finally {
+                el.style.width = prevWidth;
+                if (tl) tl.style.maxHeight = prevTlMax;
+                noPrints.forEach(n => { n.style.display = n.dataset.prevDisplay || ''; });
+                btn.disabled = false;
+                btn.innerHTML = origBtnHtml;
+                if (window.lucide) lucide.createIcons();
+            }
         }
 
         function escapeHtml(str) {
