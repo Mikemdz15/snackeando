@@ -430,12 +430,110 @@
             border-bottom-color: var(--accent-bronze);
         }
 
+        /* Executive C-Level Report Sheet (for Candidate Dossier) */
+        .exec-sheet {
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid #cbd5e1;
+        }
+        .exec-banner {
+            background: linear-gradient(135deg, #071936 0%, #0d2b59 100%);
+            color: #ffffff;
+            padding: 26px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .exec-body {
+            padding: 28px 32px;
+        }
+        .exec-section-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f294a;
+            margin-bottom: 12px;
+            letter-spacing: -0.2px;
+        }
+        .exec-section-sub {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: -8px;
+            margin-bottom: 14px;
+        }
+        .exec-kpi-pill {
+            border-radius: 16px;
+            padding: 16px 18px;
+            color: #ffffff;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+        }
+        .exec-kpi-pill .kpi-lbl {
+            font-size: 0.72rem;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+        .exec-kpi-pill .kpi-val {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+        .exec-kpi-pill .kpi-sub {
+            font-size: 0.7rem;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+        .exec-panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px 20px;
+        }
+        .exec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+        .exec-table thead th {
+            background: #0b1e3d;
+            color: #ffffff;
+            text-align: left;
+            padding: 10px 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        .exec-table tbody td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #1e293b;
+            vertical-align: middle;
+        }
+        .exec-table tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        .exec-sheet input, .exec-sheet select, .exec-sheet textarea {
+            background: #f8fafc;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+        }
+        .exec-sheet label.field-label {
+            color: #0f294a;
+        }
+
         /* Print Styles for Clinical Dossier */
         @media print {
             body { background: #fff !important; color: #111 !important; }
-            .topbar, .no-print { display: none !important; }
-            .card { background: #fff !important; border: 1px solid #ddd !important; box-shadow: none !important; color: #111 !important; break-inside: avoid; }
-            .text-white, h1, h2, h3, h4 { color: #111 !important; }
+            .topbar, .no-print, #sql-warning-banner, .tabs { display: none !important; }
+            .container { max-width: 100% !important; padding: 0 !important; }
+            .exec-sheet { box-shadow: none !important; border: none !important; border-radius: 0 !important; }
+            .exec-panel, .exec-kpi-pill { break-inside: avoid; }
         }
     </style>
 </head>
@@ -812,85 +910,158 @@
                 <p style="font-size: 0.88rem; color: var(--text-muted);">Haz clic en <strong>"Ver Expediente"</strong> desde la pestaña de Candidatos.</p>
             </div>
 
-            <div id="dossier-content" class="hidden">
-                <!-- Dossier Top Banner -->
-                <div class="card" style="margin-bottom: 20px; border-color: rgba(197, 168, 128, 0.35);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; flex-wrap: wrap;">
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap;">
-                                <span id="dos-verdict-badge" class="badge badge-green">VEREDICTO</span>
-                                <span id="dos-integrity-badge" class="badge badge-blue">INTEGRIDAD</span>
-                            </div>
-                            <h2 class="serif" id="dos-name" style="font-size: 1.9rem; color: #fff;">Nombre</h2>
-                            <p id="dos-meta" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;"></p>
+            <div id="dossier-content" class="hidden exec-sheet">
+                <!-- EXECUTIVE TOP BANNER (Deep Navy) -->
+                <div class="exec-banner">
+                    <div>
+                        <div style="font-size: 0.72rem; font-weight: 700; letter-spacing: 1.4px; color: #7dd3fc; text-transform: uppercase; margin-bottom: 6px;">
+                            REPORTE CLÍNICO EJECUTIVO · EVALUACIÓN DE TALENTO COMERCIAL B2B
                         </div>
-                        <div style="display: flex; align-items: center; gap: 16px;">
-                            <div style="text-align: center; background: rgba(0,0,0,0.35); padding: 12px 22px; border-radius: 12px; border: 1px solid rgba(197, 168, 128, 0.3);">
-                                <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted);">Score Evaluación</div>
-                                <div id="dos-total-score" style="font-size: 2rem; font-weight: 800; color: var(--accent-bronze);">0/100</div>
-                            </div>
-                            <button class="btn btn-outline btn-sm no-print" onclick="window.print()">
-                                <i data-lucide="printer" style="width: 15px; height: 15px;"></i>
-                                Imprimir / PDF
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CV UPLOAD & CLINICAL CROSS-ANALYSIS -->
-                <div class="card" style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
-                        <div>
-                            <span class="badge badge-amber" style="margin-bottom: 6px;">Paso Obligatorio Pre-Entrevista</span>
-                            <h3 class="serif" style="font-size: 1.35rem; color: #fff;">Cruce Clínico: CV vs. Desempeño Real en Prueba</h3>
-                        </div>
-                        <div class="no-print">
-                            <input type="file" id="cv-file-input" accept=".pdf,.docx,.txt" class="hidden" onchange="handleCvUpload(event)">
-                            <button class="btn btn-primary btn-sm" onclick="document.getElementById('cv-file-input').click()">
-                                <i data-lucide="upload" style="width: 14px; height: 14px;"></i>
-                                <span id="cv-upload-btn-text">Subir CV (PDF / DOCX / TXT)</span>
-                            </button>
+                        <h2 id="dos-name" style="font-size: 1.85rem; font-weight: 800; color: #ffffff; margin-bottom: 4px; letter-spacing: -0.4px;">Nombre del Candidato</h2>
+                        <p id="dos-meta" style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 10px;"></p>
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <span id="dos-verdict-badge" class="badge badge-green">VEREDICTO</span>
+                            <span id="dos-integrity-badge" class="badge badge-blue">INTEGRIDAD</span>
                         </div>
                     </div>
 
-                    <div id="cv-missing-box" style="background: rgba(245, 158, 11, 0.08); border: 1px dashed rgba(245, 158, 11, 0.45); border-radius: 12px; padding: 20px; text-align: center;">
-                        <p style="font-size: 0.88rem; color: #fbbf24; margin-bottom: 10px;">
-                            <strong>Aún no has cargado el CV de este candidato.</strong> Súbelo para cruzar su historial declarado contra sus resultados reales y generar las preguntas de quiebre personalizadas.
-                        </p>
-                        <button class="btn btn-outline btn-sm no-print" onclick="document.getElementById('cv-file-input').click()">
-                            Seleccionar Archivo CV
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="text-align: right;">
+                            <img src="../Imagenes Web/Logo_Snackeando.jpeg" alt="Snackeando" style="width: 48px; height: 48px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(255,255,255,0.25); margin-bottom: 4px;" onerror="this.style.display='none'">
+                            <div style="font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; color: #fff;">SNACKEANDO</div>
+                            <div style="font-size: 0.65rem; color: #7dd3fc; letter-spacing: 0.8px;">TALENTO &amp; VENTAS B2B</div>
+                        </div>
+                        <button class="btn btn-sm no-print" onclick="window.print()" style="background: rgba(255,255,255,0.14); color: #fff; border: 1px solid rgba(255,255,255,0.28);">
+                            <i data-lucide="printer" style="width: 15px; height: 15px;"></i>
+                            Imprimir / PDF
                         </button>
                     </div>
-
-                    <div id="cv-analysis-box" class="hidden">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-size: 0.84rem; color: var(--accent-emerald);">
-                            <i data-lucide="file-check-2" style="width: 16px; height: 16px;"></i>
-                            <span>Archivo analizado: <strong id="dos-cv-filename">cv.pdf</strong></span>
-                        </div>
-                        <div id="dos-clinical-insights" class="grid-2" style="margin-bottom: 14px;"></div>
-                        <div id="dos-cross-alerts" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                    </div>
                 </div>
 
-                <!-- FORENSIC AUDIT & TIME TELEMETRY -->
-                <div class="card" style="margin-bottom: 20px;">
-                    <h3 class="serif" style="font-size: 1.35rem; color: #fff; margin-bottom: 6px;">
-                        Auditoría Forense de Tiempos, Reescritura e Integridad
-                    </h3>
-                    <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 18px;">
-                        Diagnóstico puntual de cómo resolvió cada bloque: tiempo invertido, pausas iniciales, borrados masivos, salidas de pestaña e intentos de pegado bloqueados.
-                    </p>
-
-                    <!-- Audit Conclusions List -->
-                    <div id="dos-audit-conclusions" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 18px; margin-bottom: 22px; display: flex; flex-direction: column; gap: 10px;">
+                <!-- EXECUTIVE BODY -->
+                <div class="exec-body">
+                    <!-- 4 CONSOLIDATED PILL KPIs -->
+                    <div class="exec-section-title">KPIs Consolidados del Candidato</div>
+                    <div class="grid-4" style="margin-bottom: 26px;">
+                        <div class="exec-kpi-pill" style="background: #0369a1;">
+                            <div class="kpi-lbl">Score Global Evaluación</div>
+                            <div id="dos-total-score" class="kpi-val">0/100</div>
+                            <div class="kpi-sub">Puntuación Fase 1</div>
+                        </div>
+                        <div class="exec-kpi-pill" style="background: #0f294a;">
+                            <div class="kpi-lbl">Juicio B2B (SJT)</div>
+                            <div id="dos-kpi-sjt" class="kpi-val">0 / 10</div>
+                            <div class="kpi-sub">Escenarios Comerciales</div>
+                        </div>
+                        <div id="dos-kpi-integrity-card" class="exec-kpi-pill" style="background: #059669;">
+                            <div class="kpi-lbl">Integridad Anti-IA</div>
+                            <div id="dos-kpi-integrity" class="kpi-val">100/100</div>
+                            <div id="dos-kpi-integrity-sub" class="kpi-sub">Sin alertas</div>
+                        </div>
+                        <div class="exec-kpi-pill" style="background: #0f172a;">
+                            <div class="kpi-lbl">Tiempo Total Efectivo</div>
+                            <div id="dos-kpi-time" class="kpi-val">0s</div>
+                            <div class="kpi-sub">Duración en Prueba</div>
+                        </div>
                     </div>
 
-                    <!-- Full-width Per-question telemetry table -->
-                    <div style="overflow-x: auto; background: rgba(0,0,0,0.22); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 8px 12px; margin-bottom: 22px;">
-                        <table class="data-table" style="width: 100%;">
+                    <!-- 2-COLUMN DONUT CHARTS (BALANCE DE PUNTUACIÓN & DISTRIBUCIÓN DE TIEMPO) -->
+                    <div class="grid-2" style="margin-bottom: 26px;">
+                        <div class="exec-panel">
+                            <div class="exec-section-title" style="margin-bottom: 2px;">Balance de Puntuación por Bloque</div>
+                            <div class="exec-section-sub">Aportación real sobre los 100 puntos posibles.</div>
+                            <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+                                <div style="position: relative; width: 165px; height: 165px; flex-shrink: 0;">
+                                    <canvas id="dos-donut-score"></canvas>
+                                    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none;">
+                                        <div id="dos-donut-score-center" style="font-size: 1.4rem; font-weight: 800; color: #0f294a;">0</div>
+                                        <div style="font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Puntos</div>
+                                    </div>
+                                </div>
+                                <div id="dos-score-legend" style="flex: 1; display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem; color: #1e293b;"></div>
+                            </div>
+                        </div>
+
+                        <div class="exec-panel">
+                            <div class="exec-section-title" style="margin-bottom: 2px;">Distribución de Tiempo y Foco</div>
+                            <div class="exec-section-sub">Segundos invertidos por bloque de evaluación.</div>
+                            <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+                                <div style="position: relative; width: 165px; height: 165px; flex-shrink: 0;">
+                                    <canvas id="dos-donut-time"></canvas>
+                                    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none;">
+                                        <div id="dos-donut-time-center" style="font-size: 1.25rem; font-weight: 800; color: #0f294a;">0s</div>
+                                        <div style="font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Total</div>
+                                    </div>
+                                </div>
+                                <div id="dos-time-legend" style="flex: 1; display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem; color: #1e293b;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2-COLUMN COMPETENCY BAR CHART + INSIGHTS & DIAGNÓSTICO -->
+                    <div class="grid-2" style="margin-bottom: 26px; align-items: stretch;">
+                        <div class="exec-panel">
+                            <div class="exec-section-title" style="margin-bottom: 2px;">Desempeño por Competencia (%)</div>
+                            <div class="exec-section-sub">Nivel alcanzado en cada dimensión comercial evaluada.</div>
+                            <div style="height: 230px;">
+                                <canvas id="dos-time-chart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="exec-panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div class="exec-section-title" style="margin-bottom: 2px;">Insights Clínicos &amp; Auditoría Forense</div>
+                                <div class="exec-section-sub">Conclusiones puntuales de comportamiento, tiempos y reescritura.</div>
+                                <div id="dos-audit-conclusions" style="display: flex; flex-direction: column; gap: 9px; font-size: 0.82rem; color: #1e293b;"></div>
+                            </div>
+                            <div id="dos-cv-summary-pill" style="margin-top: 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 10px 14px; font-size: 0.78rem; color: #1e3a8a;">
+                                <strong>Estado de CV:</strong> Pendiente de cargar CV para cruce clínico.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CV UPLOAD & CLINICAL CROSS-ANALYSIS -->
+                    <div class="exec-panel" style="margin-bottom: 26px; background: #f8fafc;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px;">
+                            <div>
+                                <div class="exec-section-title" style="margin-bottom: 2px;">Cruce Clínico: CV vs. Desempeño Real en Prueba</div>
+                                <div class="exec-section-sub" style="margin-bottom: 0;">Validación automática de experiencia B2B, perfil Hunter y consistencia numérica.</div>
+                            </div>
+                            <div class="no-print">
+                                <input type="file" id="cv-file-input" accept=".pdf,.docx,.txt" class="hidden" onchange="handleCvUpload(event)">
+                                <button class="btn btn-primary btn-sm" onclick="document.getElementById('cv-file-input').click()">
+                                    <i data-lucide="upload" style="width: 14px; height: 14px;"></i>
+                                    <span id="cv-upload-btn-text">Subir CV (PDF / DOCX / TXT)</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="cv-missing-box" style="background: #fffbeb; border: 1px dashed #f59e0b; border-radius: 10px; padding: 16px; text-align: center;">
+                            <p style="font-size: 0.84rem; color: #92400e; margin-bottom: 8px;">
+                                <strong>Aún no has cargado el CV de este candidato.</strong> Súbelo para cruzar su historial declarado contra sus resultados reales.
+                            </p>
+                            <button class="btn btn-sm no-print" style="background: #0f294a; color: #fff;" onclick="document.getElementById('cv-file-input').click()">
+                                Seleccionar Archivo CV
+                            </button>
+                        </div>
+
+                        <div id="cv-analysis-box" class="hidden">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 0.82rem; color: #059669; font-weight: 600;">
+                                <i data-lucide="file-check-2" style="width: 16px; height: 16px;"></i>
+                                <span>Archivo analizado: <strong id="dos-cv-filename">cv.pdf</strong></span>
+                            </div>
+                            <div id="dos-clinical-insights" class="grid-2" style="margin-bottom: 12px;"></div>
+                            <div id="dos-cross-alerts" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- FULL-WIDTH FORENSIC TELEMETRY MATRIX -->
+                    <div class="exec-section-title">Matriz de Auditoría Forense por Bloque</div>
+                    <div style="overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 10px; margin-bottom: 24px;">
+                        <table class="exec-table">
                             <thead>
                                 <tr>
-                                    <th style="min-width: 220px;">Bloque / Pregunta</th>
+                                    <th style="min-width: 210px;">Bloque / Pregunta</th>
                                     <th style="white-space: nowrap;">Tiempo</th>
                                     <th style="white-space: nowrap;">1ª Tecla</th>
                                     <th style="white-space: nowrap;">Teclas / Borrados</th>
@@ -902,111 +1073,96 @@
                         </table>
                     </div>
 
-                    <!-- Chart & Chronological Timeline side-by-side -->
-                    <div class="grid-2" style="align-items: stretch;">
-                        <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px;">
-                            <div style="color: var(--accent-bronze); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;">Distribución de Tiempo por Bloque (Segundos)</div>
-                            <div style="height: 240px;">
-                                <canvas id="dos-time-chart"></canvas>
-                            </div>
-                        </div>
-                        <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; display: flex; flex-direction: column;">
-                            <div style="color: var(--accent-bronze); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;">Bitácora Cronológica de Eventos</div>
-                            <div id="dos-timeline-list" style="flex: 1; max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem; color: #d1d5db; padding-right: 6px;"></div>
-                        </div>
-                    </div>
-                </div>
+                    <!-- EXACT ANSWERS BREAKDOWN -->
+                    <div class="exec-section-title">Matriz de Respuestas Exactas y Calificación</div>
+                    <div id="dos-answers-breakdown" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;"></div>
 
-                <!-- ANSWERS & SCORING BREAKDOWN -->
-                <div class="card" style="margin-bottom: 20px;">
-                    <h3 class="serif" style="font-size: 1.35rem; color: #fff; margin-bottom: 16px;">
-                        Respuestas Exactas y Evaluación por Competencia
-                    </h3>
-                    <div id="dos-answers-breakdown" style="display: flex; flex-direction: column; gap: 16px;"></div>
-                </div>
-
-                <!-- PHASE 2, 3, 4 INTERVIEW GUIDE & LIVE RUBRIC -->
-                <div class="card">
-                    <span class="badge badge-blue" style="margin-bottom: 8px;">Fases 2, 3 y 4 · Guía de Entrevista Disruptiva</span>
-                    <h3 class="serif" style="font-size: 1.4rem; color: #fff; margin-bottom: 14px;">
-                        Plan de Ataque para la Entrevista en Vivo + Rúbrica (1–5)
-                    </h3>
-
-                    <div class="grid-2" style="margin-bottom: 22px;">
-                        <div style="background: rgba(0,0,0,0.28); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.06);">
-                            <h4 style="color: var(--accent-bronze); font-size: 0.88rem; margin-bottom: 10px;">Fase 2: Preguntas de Quiebre Psicológico (Personalizadas)</h4>
-                            <ul id="dos-custom-questions" style="font-size: 0.84rem; color: #e5e7eb; padding-left: 18px; display: flex; flex-direction: column; gap: 8px;"></ul>
-                        </div>
-                        <div style="background: rgba(0,0,0,0.28); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.06);">
-                            <h4 style="color: var(--accent-emerald); font-size: 0.88rem; margin-bottom: 10px;">Fase 3 y 4: Roleplay Modelo $0 + Coachability Test</h4>
-                            <div style="font-size: 0.82rem; color: #d1d5db; display: flex; flex-direction: column; gap: 8px;">
-                                <p><strong>Escenario:</strong> Planta 380 empleados. Director RH escéptico.</p>
-                                <p><strong>Objeción 1 ($0 Renta):</strong> "¿Dónde están las letras chiquitas?" → Debe explicar margen por volumen.</p>
-                                <p><strong>Objeción 2 (Oxxo a 30m):</strong> Debe reencuadrar a tiempos muertos, turnos nocturnos y 20-25% ahorro.</p>
-                                <p><strong>Objeción 3 (Atorones/Fallas):</strong> Debe explicar Sensor Óptico, telemetría y 0 carga para RH.</p>
-                                <p><strong>Fase 4 (Coachability):</strong> Dar feedback duro tras el roleplay y pedirle repetir desde el saludo. Observar si se justifica (DESCARTAR) o aplica al 100% (CONTRATAR).</p>
-                            </div>
-                        </div>
+                    <!-- CHRONOLOGICAL TIMELINE -->
+                    <div class="exec-panel" style="margin-bottom: 24px; background: #f8fafc;">
+                        <div class="exec-section-title" style="font-size: 0.92rem; margin-bottom: 8px;">Bitácora Cronológica de Eventos</div>
+                        <div id="dos-timeline-list" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; font-size: 0.78rem; color: #334155;"></div>
                     </div>
 
-                    <!-- Live Interview Rubric -->
-                    <div style="background: rgba(197, 168, 128, 0.06); border: 1px solid rgba(197, 168, 128, 0.25); border-radius: 12px; padding: 18px;">
-                        <h4 style="color: var(--accent-bronze); font-size: 0.9rem; margin-bottom: 14px;">Calificación de Entrevista en Vivo (Escala 1 al 5)</h4>
-                        <div class="grid-4" style="margin-bottom: 16px;">
-                            <div>
-                                <label class="field-label" for="rub-modelo">Comprensión Modelo $0</label>
-                                <select id="rub-modelo">
-                                    <option value="0">Sin calificar</option>
-                                    <option value="1">1 - Deficiente</option>
-                                    <option value="2">2 - Bajo</option>
-                                    <option value="3">3 - Aceptable</option>
-                                    <option value="4">4 - Bueno</option>
-                                    <option value="5">5 - Sobresaliente</option>
-                                </select>
+                    <!-- PHASE 2, 3, 4 INTERVIEW GUIDE & LIVE RUBRIC -->
+                    <div class="exec-panel" style="border-color: #cbd5e1;">
+                        <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #0369a1; margin-bottom: 4px;">Fases 2, 3 y 4 · Guía de Entrevista Disruptiva</div>
+                        <div class="exec-section-title" style="font-size: 1.15rem; margin-bottom: 14px;">Plan de Ataque para la Entrevista en Vivo + Rúbrica (1–5)</div>
+
+                        <div class="grid-2" style="margin-bottom: 18px;">
+                            <div style="background: #f8fafc; border-radius: 10px; padding: 14px; border: 1px solid #e2e8f0;">
+                                <h4 style="color: #0f294a; font-size: 0.85rem; margin-bottom: 8px; font-weight: 700;">Fase 2: Preguntas de Quiebre Psicológico (Personalizadas)</h4>
+                                <ul id="dos-custom-questions" style="font-size: 0.81rem; color: #334155; padding-left: 18px; display: flex; flex-direction: column; gap: 7px;"></ul>
                             </div>
-                            <div>
-                                <label class="field-label" for="rub-objeciones">Manejo de Objeciones</label>
-                                <select id="rub-objeciones">
-                                    <option value="0">Sin calificar</option>
-                                    <option value="1">1 - Deficiente</option>
-                                    <option value="2">2 - Bajo</option>
-                                    <option value="3">3 - Aceptable</option>
-                                    <option value="4">4 - Bueno</option>
-                                    <option value="5">5 - Sobresaliente</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="field-label" for="rub-escucha">Escucha Activa</label>
-                                <select id="rub-escucha">
-                                    <option value="0">Sin calificar</option>
-                                    <option value="1">1 - Deficiente</option>
-                                    <option value="2">2 - Bajo</option>
-                                    <option value="3">3 - Aceptable</option>
-                                    <option value="4">4 - Bueno</option>
-                                    <option value="5">5 - Sobresaliente</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="field-label" for="rub-coachability">Coachability (Clave)</label>
-                                <select id="rub-coachability">
-                                    <option value="0">Sin calificar</option>
-                                    <option value="1">1 - Se justifica / Ego</option>
-                                    <option value="2">2 - Bajo</option>
-                                    <option value="3">3 - Aplica a medias</option>
-                                    <option value="4">4 - Bueno</option>
-                                    <option value="5">5 - Aplica al 100%</option>
-                                </select>
+                            <div style="background: #f8fafc; border-radius: 10px; padding: 14px; border: 1px solid #e2e8f0;">
+                                <h4 style="color: #059669; font-size: 0.85rem; margin-bottom: 8px; font-weight: 700;">Fase 3 y 4: Roleplay Modelo $0 + Coachability Test</h4>
+                                <div style="font-size: 0.8rem; color: #334155; display: flex; flex-direction: column; gap: 6px;">
+                                    <p><strong>Escenario:</strong> Planta 380 empleados. Director RH escéptico.</p>
+                                    <p><strong>Objeción 1 ($0 Renta):</strong> "¿Dónde están las letras chiquitas?" → Debe explicar margen por volumen.</p>
+                                    <p><strong>Objeción 2 (Oxxo a 30m):</strong> Debe reencuadrar a tiempos muertos, turnos nocturnos y 20-25% ahorro.</p>
+                                    <p><strong>Objeción 3 (Atorones/Fallas):</strong> Debe explicar Sensor Óptico, telemetría y 0 carga para RH.</p>
+                                    <p><strong>Fase 4 (Coachability):</strong> Dar feedback duro tras el roleplay y pedirle repetir desde el saludo. Observar si se justifica (DESCARTAR) o aplica al 100% (CONTRATAR).</p>
+                                </div>
                             </div>
                         </div>
-                        <div style="margin-bottom: 14px;">
-                            <label class="field-label" for="dos-admin-notes">Notas Clínicas del Entrevistador (Miguel / RH)</label>
-                            <textarea id="dos-admin-notes" style="min-height: 90px;" placeholder="Anota impresiones de lenguaje corporal, respuesta al feedback duro y decisión final..."></textarea>
-                        </div>
-                        <div style="display: flex; justify-content: flex-end;" class="no-print">
-                            <button class="btn btn-primary btn-sm" onclick="saveInterviewEvaluation()">
-                                <i data-lucide="save" style="width: 14px; height: 14px;"></i>
-                                Guardar Calificación y Notas en Supabase
-                            </button>
+
+                        <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px;">
+                            <h4 style="color: #0f294a; font-size: 0.88rem; margin-bottom: 12px; font-weight: 700;">Calificación de Entrevista en Vivo (Escala 1 al 5)</h4>
+                            <div class="grid-4" style="margin-bottom: 14px;">
+                                <div>
+                                    <label class="field-label" for="rub-modelo">Comprensión Modelo $0</label>
+                                    <select id="rub-modelo">
+                                        <option value="0">Sin calificar</option>
+                                        <option value="1">1 - Deficiente</option>
+                                        <option value="2">2 - Bajo</option>
+                                        <option value="3">3 - Aceptable</option>
+                                        <option value="4">4 - Bueno</option>
+                                        <option value="5">5 - Sobresaliente</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="field-label" for="rub-objeciones">Manejo de Objeciones</label>
+                                    <select id="rub-objeciones">
+                                        <option value="0">Sin calificar</option>
+                                        <option value="1">1 - Deficiente</option>
+                                        <option value="2">2 - Bajo</option>
+                                        <option value="3">3 - Aceptable</option>
+                                        <option value="4">4 - Bueno</option>
+                                        <option value="5">5 - Sobresaliente</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="field-label" for="rub-escucha">Escucha Activa</label>
+                                    <select id="rub-escucha">
+                                        <option value="0">Sin calificar</option>
+                                        <option value="1">1 - Deficiente</option>
+                                        <option value="2">2 - Bajo</option>
+                                        <option value="3">3 - Aceptable</option>
+                                        <option value="4">4 - Bueno</option>
+                                        <option value="5">5 - Sobresaliente</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="field-label" for="rub-coachability">Coachability (Clave)</label>
+                                    <select id="rub-coachability">
+                                        <option value="0">Sin calificar</option>
+                                        <option value="1">1 - Se justifica / Ego</option>
+                                        <option value="2">2 - Bajo</option>
+                                        <option value="3">3 - Aplica a medias</option>
+                                        <option value="4">4 - Bueno</option>
+                                        <option value="5">5 - Aplica al 100%</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <label class="field-label" for="dos-admin-notes">Notas Clínicas del Entrevistador (Miguel / RH)</label>
+                                <textarea id="dos-admin-notes" style="min-height: 85px;" placeholder="Anota impresiones de lenguaje corporal, respuesta al feedback duro y decisión final..."></textarea>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end;" class="no-print">
+                                <button class="btn btn-sm" style="background: #0f294a; color: #fff;" onclick="saveInterviewEvaluation()">
+                                    <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+                                    Guardar Calificación y Notas en Supabase
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2348,6 +2504,9 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
         // ============================================================
         // 8. CLINICAL DOSSIER, CV UPLOAD & CROSS-ANALYSIS
         // ============================================================
+        let donutScoreInst = null;
+        let donutTimeInst = null;
+
         function openCandidateDossier(candId, switchTab) {
             activeDossierCandidateId = candId;
             if (switchTab) switchAdminTab('dossier');
@@ -2360,22 +2519,56 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             document.getElementById('dossier-content').classList.remove('hidden');
 
             document.getElementById('dos-name').innerText = cand.full_name;
-            document.getElementById('dos-meta').innerText = `${cand.role_applied} · Usuario: ${cand.username} · Estatus: ${cand.status}` +
-                (cand.completed_at ? ` · Enviado: ${new Date(cand.completed_at).toLocaleString('es-MX')}` : '');
+            document.getElementById('dos-meta').innerText = `${cand.role_applied}  |  Usuario: ${cand.username}  |  Estatus: ${cand.status}` +
+                (cand.completed_at ? `  |  Enviado: ${new Date(cand.completed_at).toLocaleString('es-MX')}` : '');
 
             const scoreTotal = sub && sub.scores ? sub.scores.total : 0;
             document.getElementById('dos-total-score').innerText = sub ? `${scoreTotal}/100` : 'Pendiente';
 
-            // Verdict badge
+            // Verdict & Integrity badges + KPI Pills
             const vBadge = document.getElementById('dos-verdict-badge');
             const iBadge = document.getElementById('dos-integrity-badge');
+            const kpiSjt = document.getElementById('dos-kpi-sjt');
+            const kpiInt = document.getElementById('dos-kpi-integrity');
+            const kpiIntCard = document.getElementById('dos-kpi-integrity-card');
+            const kpiIntSub = document.getElementById('dos-kpi-integrity-sub');
+            const kpiTime = document.getElementById('dos-kpi-time');
+
             if (!sub) {
                 vBadge.className = 'badge badge-amber';
                 vBadge.innerText = 'TEST PENDIENTE DE REALIZAR';
                 iBadge.className = 'badge badge-gray';
                 iBadge.innerText = 'SIN AUDITORÍA AÚN';
+                kpiSjt.innerText = '—';
+                kpiInt.innerText = '—';
+                kpiIntCard.style.background = '#475569';
+                kpiIntSub.innerText = 'Sin datos';
+                kpiTime.innerText = '—';
             } else {
                 const integ = sub.audit_diagnosis ? sub.audit_diagnosis.integrityScore : 100;
+                const totSec = sub.audit_diagnosis ? (sub.audit_diagnosis.totalTimeSec || 0) : 0;
+                const fmtTot = totSec >= 60 ? `${Math.floor(totSec / 60)}m ${totSec % 60}s` : `${totSec}s`;
+                kpiTime.innerText = fmtTot;
+                kpiInt.innerText = `${integ}/100`;
+                if (integ >= 85) {
+                    kpiIntCard.style.background = '#059669';
+                    kpiIntSub.innerText = 'Integridad Limpia';
+                } else if (integ >= 60) {
+                    kpiIntCard.style.background = '#d97706';
+                    kpiIntSub.innerText = 'Revisar Salidas/Pegado';
+                } else {
+                    kpiIntCard.style.background = '#b91c1c';
+                    kpiIntSub.innerText = 'Alerta Crítica Anti-IA';
+                }
+
+                if (sub.scores && sub.scores.version === 2) {
+                    const hits = Math.round((sub.scores.sjtTotal || 0) / 5);
+                    kpiSjt.innerText = `${hits} / 10 (${hits * 10}%)`;
+                } else if (sub.scores) {
+                    const hits = (sub.scores.p1 === 20 ? 1 : 0) + (sub.scores.p2 === 20 ? 1 : 0);
+                    kpiSjt.innerText = `${hits} / 2`;
+                }
+
                 if (scoreTotal >= 75 && integ >= 80) {
                     vBadge.className = 'badge badge-green';
                     vBadge.innerText = 'ALTAMENTE RECOMENDADO · AVANZAR A AUDICIÓN';
@@ -2397,10 +2590,15 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             document.getElementById('cv-upload-btn-text').innerText = hasCv ? 'Reemplazar CV' : 'Subir CV (PDF / DOCX / TXT)';
 
             let cvInsights = null;
+            const cvPill = document.getElementById('dos-cv-summary-pill');
             if (hasCv) {
                 document.getElementById('dos-cv-filename').innerText = cand.cv_filename || 'CV Cargado';
                 cvInsights = analyzeCvClinically(cand.cv_text, sub);
                 renderCvClinicalBox(cvInsights);
+                const redAlerts = cvInsights.alerts.filter(a => a.level === 'red').length;
+                cvPill.innerHTML = `<strong>Resumen CV (${escapeHtml(cand.cv_filename || 'CV')}):</strong> ${cvInsights.b2bHits.length} señal(es) B2B · ${cvInsights.hunterHits.length} señal(es) Hunter · <strong>${redAlerts} alerta(s) crítica(s)</strong> en cruce vs. prueba.`;
+            } else {
+                cvPill.innerHTML = '<strong>Estado de CV:</strong> Pendiente de cargar CV abajo para habilitar el cruce clínico automático.';
             }
 
             // Audit & Answers
@@ -2417,10 +2615,12 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                 document.getElementById('rub-coachability').value = rub.coachability || '0';
                 document.getElementById('dos-admin-notes').value = sub.admin_notes || '';
             } else {
-                document.getElementById('dos-audit-conclusions').innerHTML = '<div style="color:var(--text-muted); font-size:0.86rem;">El candidato aún no ha enviado su evaluación.</div>';
+                document.getElementById('dos-audit-conclusions').innerHTML = '<div style="color:#64748b; font-size:0.84rem;">El candidato aún no ha enviado su evaluación.</div>';
                 document.getElementById('dos-telemetry-tbody').innerHTML = '';
                 document.getElementById('dos-timeline-list').innerHTML = '';
-                document.getElementById('dos-answers-breakdown').innerHTML = '<div style="color:var(--text-muted); font-size:0.86rem;">Sin respuestas registradas aún.</div>';
+                document.getElementById('dos-answers-breakdown').innerHTML = '<div style="color:#64748b; font-size:0.84rem;">Sin respuestas registradas aún.</div>';
+                document.getElementById('dos-score-legend').innerHTML = '';
+                document.getElementById('dos-time-legend').innerHTML = '';
                 renderCustomInterviewQuestions(null, cvInsights);
             }
 
@@ -2531,16 +2731,16 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
 
         function renderCvClinicalBox(cv) {
             document.getElementById('dos-clinical-insights').innerHTML = `
-                <div style="background: rgba(0,0,0,0.28); padding: 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size:0.72rem; color:var(--accent-bronze); text-transform:uppercase; font-weight:700;">Adn Comercial Detectado en CV</div>
-                    <div style="font-size:0.86rem; color:#e5e7eb; margin-top:6px;">
+                <div style="background: #ffffff; padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1;">
+                    <div style="font-size:0.72rem; color:#0f294a; text-transform:uppercase; font-weight:700;">ADN Comercial Detectado en CV</div>
+                    <div style="font-size:0.84rem; color:#1e293b; margin-top:6px;">
                         • <strong>Señales B2B:</strong> ${cv.b2bHits.length > 0 ? cv.b2bHits.join(', ') : 'Ninguna clara'}<br>
                         • <strong>Señales Hunter:</strong> ${cv.hunterHits.length > 0 ? cv.hunterHits.join(', ') : 'No explícitas'}
                     </div>
                 </div>
-                <div style="background: rgba(0,0,0,0.28); padding: 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size:0.72rem; color:var(--accent-bronze); text-transform:uppercase; font-weight:700;">Trayectoria y Cuantificación</div>
-                    <div style="font-size:0.86rem; color:#e5e7eb; margin-top:6px;">
+                <div style="background: #ffffff; padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1;">
+                    <div style="font-size:0.72rem; color:#0f294a; text-transform:uppercase; font-weight:700;">Trayectoria y Cuantificación</div>
+                    <div style="font-size:0.84rem; color:#1e293b; margin-top:6px;">
                         • <strong>Rango de años en CV:</strong> ${cv.yearsRange}<br>
                         • <strong>Métricas/CRM mencionados:</strong> ${cv.metricHits.length > 0 ? cv.metricHits.join(', ') : 'Sin métricas explícitas'}
                     </div>
@@ -2548,11 +2748,14 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             `;
 
             document.getElementById('dos-cross-alerts').innerHTML = cv.alerts.map(a => {
-                const cls = a.level === 'green' ? 'badge-green' : (a.level === 'amber' ? 'badge-amber' : 'badge-red');
+                const bg = a.level === 'green' ? '#ecfdf5' : (a.level === 'amber' ? '#fffbeb' : '#fef2f2');
+                const bd = a.level === 'green' ? '#a7f3d0' : (a.level === 'amber' ? '#fde68a' : '#fecaca');
+                const tc = a.level === 'green' ? '#065f46' : (a.level === 'amber' ? '#92400e' : '#991b1b');
+                const tag = a.level === 'green' ? 'OK' : (a.level === 'amber' ? 'VALIDAR' : 'ALERTA');
                 return `
-                    <div style="display:flex; align-items:flex-start; gap:10px; padding:10px 14px; background:rgba(0,0,0,0.25); border-radius:10px; border:1px solid rgba(255,255,255,0.06); font-size:0.84rem;">
-                        <span class="badge ${cls}" style="flex-shrink:0;">${a.level.toUpperCase()}</span>
-                        <span style="color:#e5e7eb;">${a.text}</span>
+                    <div style="display:flex; align-items:flex-start; gap:10px; padding:10px 14px; background:${bg}; border-radius:10px; border:1px solid ${bd}; font-size:0.83rem;">
+                        <span style="background:${tc}; color:#fff; padding:2px 8px; border-radius:999px; font-size:0.68rem; font-weight:700; flex-shrink:0;">${tag}</span>
+                        <span style="color:#1e293b;">${a.text}</span>
                     </div>
                 `;
             }).join('');
@@ -2562,43 +2765,51 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             const diag = sub.audit_diagnosis || {};
             const tel = sub.telemetry || {};
             const steps = tel.perStep || {};
+            const sc = sub.scores || {};
             const stepNums = Object.keys(steps).map(n => parseInt(n, 10)).sort((a, b) => a - b);
 
-            // Conclusions
+            // Conclusions (dark crisp text for white sheet)
             const concEl = document.getElementById('dos-audit-conclusions');
             concEl.innerHTML = (diag.conclusions || []).map(c => {
-                const color = c.type === 'red' ? '#f87171' : (c.type === 'amber' ? '#fbbf24' : (c.type === 'green' ? '#34d399' : '#60a5fa'));
+                const color = c.type === 'red' ? '#b91c1c' : (c.type === 'amber' ? '#d97706' : (c.type === 'green' ? '#059669' : '#0369a1'));
                 return `
-                    <div style="display:flex; align-items:flex-start; gap:10px; font-size:0.86rem;">
+                    <div style="display:flex; align-items:flex-start; gap:10px; font-size:0.83rem; line-height:1.45;">
                         <i data-lucide="${c.icon || 'info'}" style="width:16px;height:16px;color:${color};flex-shrink:0;margin-top:2px;"></i>
-                        <span style="color:#f3f4f6;">${c.text}</span>
+                        <span style="color:#1e293b;">${c.text}</span>
                     </div>
                 `;
             }).join('');
 
-            // Per-step table (clean full-width)
+            // Per-step table (clean full-width white/navy matrix)
             const tbody = document.getElementById('dos-telemetry-tbody');
-            const times = [];
-            const chartLabels = [];
-            const chartColors = [];
+            let sjtSec = 0, b11Sec = 0, b12Sec = 0, b13Sec = 0;
             tbody.innerHTML = stepNums.map(s => {
                 const st = steps[s] || {};
                 const sec = Math.round(st.timeSec || 0);
-                times.push(sec);
+                if (stepNums.length > 5) {
+                    if (s <= 10) sjtSec += sec;
+                    else if (s === 11) b11Sec += sec;
+                    else if (s === 12) b12Sec += sec;
+                    else b13Sec += sec;
+                } else {
+                    if (s <= 2) sjtSec += sec;
+                    else if (s === 3) b11Sec += sec;
+                    else if (s === 4) b12Sec += sec;
+                    else b13Sec += sec;
+                }
                 const lbl = STEP_LABELS['q' + s] || `Bloque ${s}`;
-                chartLabels.push(`B${s}`);
-                chartColors.push(s <= 10 && stepNums.length > 5 ? '#3b82f6' : (s === 11 || (stepNums.length <= 5 && s === 3) ? '#f59e0b' : (s === 12 || (stepNums.length <= 5 && s === 4) ? '#10b981' : '#c5a880')));
                 const delay = st.firstInputDelaySec !== null && st.firstInputDelaySec !== undefined ? `${st.firstInputDelaySec}s` : '—';
                 const delRatio = st.keystrokes > 0 ? Math.round((st.backspaces / (st.keystrokes + st.backspaces)) * 100) : 0;
                 const rewrites = st.majorErasures || 0;
+                const hasAlert = (st.tabExits || 0) > 0 || (st.pasteAttempts || 0) > 0;
                 return `
                     <tr>
-                        <td style="font-weight:600;color:#fff;">${lbl}</td>
-                        <td style="white-space:nowrap;">${sec}s</td>
+                        <td style="font-weight:700; color:#0f294a;">${lbl}</td>
+                        <td style="white-space:nowrap; font-weight:600;">${sec}s</td>
                         <td style="white-space:nowrap;">${delay}</td>
                         <td style="white-space:nowrap;">${st.keystrokes || 0} / ${st.backspaces || 0} (${delRatio}%)</td>
-                        <td style="white-space:nowrap;">${rewrites > 0 ? `<span class="badge badge-amber">${rewrites} masivo(s)</span>` : '0'}</td>
-                        <td style="white-space:nowrap;">${st.tabExits || 0} sal. (${st.tabAwaySec || 0}s) · ${st.pasteAttempts || 0} peg.</td>
+                        <td style="white-space:nowrap;">${rewrites > 0 ? `<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:999px; font-weight:700; font-size:0.72rem;">${rewrites} masivo(s)</span>` : '0'}</td>
+                        <td style="white-space:nowrap; color:${hasAlert ? '#b91c1c' : '#334155'}; font-weight:${hasAlert ? '700' : '400'};">${st.tabExits || 0} sal. (${st.tabAwaySec || 0}s) · ${st.pasteAttempts || 0} peg.</td>
                     </tr>
                 `;
             }).join('');
@@ -2606,21 +2817,100 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             // Timeline
             const tlEl = document.getElementById('dos-timeline-list');
             tlEl.innerHTML = (tel.timeline || []).map(ev =>
-                `<div><code style="color:var(--accent-bronze);">[${ev.t}]</code> ${escapeHtml(ev.msg)}</div>`
+                `<div><code style="color:#0369a1; font-weight:700;">[${ev.t}]</code> ${escapeHtml(ev.msg)}</div>`
             ).join('') || '<div>Sin eventos registrados.</div>';
 
-            // Chart
+            // 1. Donut Score Breakdown
+            const isV2 = sc.version === 2 || sub.answers.q10 !== undefined || sub.answers.q11a !== undefined;
+            const ptsA = isV2 ? (sc.sjtTotal || 0) : ((sc.p1 || 0) + (sc.p2 || 0));
+            const ptsB = isV2 ? ((sc.p11a || 0) + (sc.p11b || 0)) : ((sc.p3a || 0) + (sc.p3b || 0));
+            const ptsC = isV2 ? (sc.p12 || 0) : (sc.p4 || 0);
+            const ptsD = isV2 ? (sc.p13 || 0) : (sc.p5 || 0);
+            const ptsLost = Math.max(0, 100 - (sc.total || 0));
+
+            document.getElementById('dos-donut-score-center').innerText = `${sc.total || 0}`;
+            const scoreLegendItems = [
+                { lbl: 'Bloque A (SJT B2B)', val: `${ptsA} pts`, color: '#0b1e3d' },
+                { lbl: 'Bloque B (Numérica/CFO)', val: `${ptsB} pts`, color: '#0369a1' },
+                { lbl: 'Bloque C (WhatsApp)', val: `${ptsC} pts`, color: '#059669' },
+                { lbl: 'Bloque D (Sales Grit)', val: `${ptsD} pts`, color: '#d97706' },
+                { lbl: 'Puntos Perdidos', val: `${ptsLost} pts`, color: '#e2e8f0' }
+            ];
+            document.getElementById('dos-score-legend').innerHTML = scoreLegendItems.map(i => `
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                    <span style="display:flex; align-items:center; gap:7px;"><span style="width:10px; height:10px; border-radius:3px; background:${i.color}; display:inline-block;"></span>${i.lbl}</span>
+                    <strong>${i.val}</strong>
+                </div>
+            `).join('');
+
+            if (donutScoreInst) donutScoreInst.destroy();
+            donutScoreInst = new Chart(document.getElementById('dos-donut-score').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: scoreLegendItems.map(i => i.lbl),
+                    datasets: [{ data: [ptsA, ptsB, ptsC, ptsD, ptsLost], backgroundColor: scoreLegendItems.map(i => i.color), borderWidth: 0 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false } } }
+            });
+
+            // 2. Donut Time Distribution
+            const totTime = sjtSec + b11Sec + b12Sec + b13Sec;
+            const fmtT = (s) => s >= 60 ? `${Math.floor(s / 60)}m ${s % 60}s` : `${s}s`;
+            document.getElementById('dos-donut-time-center').innerText = fmtT(totTime);
+            const timeLegendItems = [
+                { lbl: 'Bloque A (SJT B2B)', sec: sjtSec, color: '#0b1e3d' },
+                { lbl: 'Bloque B (Numérica/CFO)', sec: b11Sec, color: '#0369a1' },
+                { lbl: 'Bloque C (WhatsApp)', sec: b12Sec, color: '#059669' },
+                { lbl: 'Bloque D (Sales Grit)', sec: b13Sec, color: '#b91c1c' }
+            ];
+            document.getElementById('dos-time-legend').innerHTML = timeLegendItems.map(i => {
+                const pct = totTime > 0 ? Math.round((i.sec / totTime) * 100) : 0;
+                return `
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                        <span style="display:flex; align-items:center; gap:7px;"><span style="width:10px; height:10px; border-radius:3px; background:${i.color}; display:inline-block;"></span>${i.lbl}</span>
+                        <strong>${fmtT(i.sec)} (${pct}%)</strong>
+                    </div>
+                `;
+            }).join('');
+
+            if (donutTimeInst) donutTimeInst.destroy();
+            donutTimeInst = new Chart(document.getElementById('dos-donut-time').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: timeLegendItems.map(i => i.lbl),
+                    datasets: [{ data: timeLegendItems.map(i => i.sec), backgroundColor: timeLegendItems.map(i => i.color), borderWidth: 0 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false } } }
+            });
+
+            // 3. Competency Bar Chart (%)
+            const compData = isV2 ? [
+                Math.round(((sc.sjtTotal || 0) / 50) * 100),
+                Math.round(((sc.p11a || 0) / 15) * 100),
+                Math.round(((sc.p11b || 0) / 10) * 100),
+                Math.round(((sc.p12 || 0) / 15) * 100),
+                Math.round(((sc.p13 || 0) / 10) * 100)
+            ] : [
+                Math.round((((sc.p1 || 0) + (sc.p2 || 0)) / 40) * 100),
+                Math.round(((sc.p3a || 0) / 15) * 100),
+                Math.round(((sc.p3b || 0) / 15) * 100),
+                Math.round(((sc.p4 || 0) / 15) * 100),
+                Math.round(((sc.p5 || 0) / 15) * 100)
+            ];
+            const compColors = compData.map(v => v >= 75 ? '#059669' : (v >= 50 ? '#0369a1' : '#b91c1c'));
+
             const canvas = document.getElementById('dos-time-chart');
             if (dossierChartInst) dossierChartInst.destroy();
             dossierChartInst = new Chart(canvas.getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: chartLabels,
+                    labels: ['Juicio B2B', 'Cálculo $', 'Visión CFO', 'WhatsApp', 'Sales Grit'],
                     datasets: [{
-                        label: 'Segundos invertidos',
-                        data: times,
-                        backgroundColor: chartColors,
-                        borderRadius: 6
+                        label: '% Logrado',
+                        data: compData,
+                        backgroundColor: compColors,
+                        borderRadius: 6,
+                        barPercentage: 0.6
                     }]
                 },
                 options: {
@@ -2628,8 +2918,12 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { ticks: { color: '#9ca3af', font: { size: 11 } }, grid: { display: false } },
-                        y: { ticks: { color: '#9ca3af', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                        x: { ticks: { color: '#334155', font: { size: 11, weight: '600' } }, grid: { display: false } },
+                        y: {
+                            min: 0, max: 100,
+                            ticks: { color: '#64748b', font: { size: 10 }, callback: v => v + '%' },
+                            grid: { color: '#e2e8f0' }
+                        }
                     }
                 }
             });
@@ -2642,51 +2936,64 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
 
             // Support v2 (13 blocks: 10 SJT + 3 cases) and legacy v1 (5 blocks)
             if (sc.version === 2 || a.q10 !== undefined || a.q11a !== undefined) {
-                const sjtHtml = SJT_QUESTIONS.map(q => {
+                const sjtRows = SJT_QUESTIONS.map(q => {
                     const chosen = a[q.id] || '';
                     const isOk = chosen === q.correct;
                     const chosenText = chosen ? `<strong>${chosen.toUpperCase()})</strong> ${escapeHtml(q.options[chosen] || '')}` : '<em>Sin respuesta</em>';
                     return `
-                        <div style="background:rgba(0,0,0,0.25); padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
-                            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px;">
-                                <strong style="color:var(--accent-bronze);">${q.title} <span style="color:var(--text-muted); font-weight:normal; font-size:0.8rem;">(Ideal: ${q.correct.toUpperCase()})</span></strong>
-                                <span class="badge ${isOk ? 'badge-green' : 'badge-red'}">${isOk ? '5/5' : '0/5'} pts</span>
-                            </div>
-                            <div style="font-size:0.85rem; color:#e5e7eb;">Respondió: ${chosenText}</div>
-                        </div>
+                        <tr>
+                            <td style="font-weight:700; color:#0f294a; width:28%;">${q.title}</td>
+                            <td style="font-size:0.8rem;">${chosenText}</td>
+                            <td style="white-space:nowrap; font-weight:700; color:#475569;">Ideal: ${q.correct.toUpperCase()}</td>
+                            <td style="white-space:nowrap;"><span style="background:${isOk ? '#d1fae5' : '#fee2e2'}; color:${isOk ? '#065f46' : '#991b1b'}; padding:2px 8px; border-radius:999px; font-weight:700; font-size:0.74rem;">${isOk ? '5/5' : '0/5'} pts</span></td>
+                        </tr>
                     `;
                 }).join('');
 
-                box.innerHTML = sjtHtml + `
-                    <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                box.innerHTML = `
+                    <div style="overflow-x:auto; border:1px solid #cbd5e1; border-radius:10px; margin-bottom:10px;">
+                        <table class="exec-table">
+                            <thead>
+                                <tr>
+                                    <th>Reactivo SJT B2B</th>
+                                    <th>Respuesta Seleccionada por el Candidato</th>
+                                    <th>Clave</th>
+                                    <th>Puntaje</th>
+                                </tr>
+                            </thead>
+                            <tbody>${sjtRows}</tbody>
+                        </table>
+                    </div>
+
+                    <div style="background:#f8fafc; padding:16px; border-radius:10px; border:1px solid #cbd5e1;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                            <strong style="color:var(--accent-bronze);">Bloque 11 · Agilidad Numérica ($11,000) &amp; Visión Ejecutiva CFO/RH</strong>
-                            <span class="badge ${(sc.p11a + sc.p11b) >= 18 ? 'badge-green' : 'badge-amber'}">${(sc.p11a || 0) + (sc.p11b || 0)}/25 pts</span>
+                            <strong style="color:#0f294a;">Bloque 11 · Agilidad Numérica ($11,000) &amp; Visión Ejecutiva CFO/RH</strong>
+                            <span style="background:#0f294a; color:#fff; padding:2px 10px; border-radius:999px; font-weight:700; font-size:0.75rem;">${(sc.p11a || 0) + (sc.p11b || 0)}/25 pts</span>
                         </div>
-                        <div style="font-size:0.86rem; color:#d1d5db; margin-bottom:8px;">
-                            <strong>Cálculo 11A:</strong> ${escapeHtml(a.q11a || 'Sin respuesta')} ${sc.p11aCorrect ? '<span style="color:#34d399;">(Correcto)</span>' : '<span style="color:#f87171;">(Incorrecto · Ideal: $11,000)</span>'}
+                        <div style="font-size:0.84rem; color:#334155; margin-bottom:8px;">
+                            <strong>Cálculo 11A:</strong> ${escapeHtml(a.q11a || 'Sin respuesta')} ${sc.p11aCorrect ? '<span style="color:#059669; font-weight:700;">(Correcto)</span>' : '<span style="color:#b91c1c; font-weight:700;">(Incorrecto · Ideal: $11,000)</span>'}
                         </div>
-                        <div style="font-size:0.86rem; color:#e5e7eb; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+                        <div style="font-size:0.84rem; color:#0f172a; background:#ffffff; padding:10px 12px; border-radius:8px; border:1px solid #e2e8f0;">
                             <strong>Argumento 11B:</strong> ${escapeHtml(a.q11b || 'Sin respuesta')}
                         </div>
                     </div>
 
-                    <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="background:#f8fafc; padding:16px; border-radius:10px; border:1px solid #cbd5e1;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                            <strong style="color:var(--accent-bronze);">Bloque 12 · WhatsApp Cold Outreach (${sc.q12Words || 0} palabras / Máx 60)</strong>
-                            <span class="badge ${sc.p12 >= 11 ? 'badge-green' : 'badge-amber'}">${sc.p12 || 0}/15 pts</span>
+                            <strong style="color:#0f294a;">Bloque 12 · WhatsApp Cold Outreach (${sc.q12Words || 0} palabras / Máx 60)</strong>
+                            <span style="background:#0369a1; color:#fff; padding:2px 10px; border-radius:999px; font-weight:700; font-size:0.75rem;">${sc.p12 || 0}/15 pts</span>
                         </div>
-                        <div style="font-size:0.88rem; color:#e5e7eb; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+                        <div style="font-size:0.85rem; color:#0f172a; background:#ffffff; padding:10px 12px; border-radius:8px; border:1px solid #e2e8f0;">
                             ${escapeHtml(a.q12 || 'Sin respuesta')}
                         </div>
                     </div>
 
-                    <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                    <div style="background:#f8fafc; padding:16px; border-radius:10px; border:1px solid #cbd5e1;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                            <strong style="color:var(--accent-bronze);">Bloque 13 · Resiliencia Comercial (Sales Grit)</strong>
-                            <span class="badge ${sc.p13 >= 7 ? 'badge-green' : 'badge-amber'}">${sc.p13 || 0}/10 pts</span>
+                            <strong style="color:#0f294a;">Bloque 13 · Resiliencia Comercial (Sales Grit)</strong>
+                            <span style="background:#059669; color:#fff; padding:2px 10px; border-radius:999px; font-weight:700; font-size:0.75rem;">${sc.p13 || 0}/10 pts</span>
                         </div>
-                        <div style="font-size:0.88rem; color:#e5e7eb; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+                        <div style="font-size:0.85rem; color:#0f172a; background:#ffffff; padding:10px 12px; border-radius:8px; border:1px solid #e2e8f0;">
                             ${escapeHtml(a.q13 || 'Sin respuesta')}
                         </div>
                     </div>
@@ -2694,53 +3001,49 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                 return;
             }
 
-            // Legacy v1 fallback
+            // Legacy v1 fallback (light executive style)
             box.innerHTML = `
-                <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                        <strong style="color:var(--accent-bronze);">P1 · Conmutador Industrial (Ideal: Opción b)</strong>
-                        <span class="badge ${sc.p1 === 20 ? 'badge-green' : 'badge-red'}">${sc.p1 || 0}/20 pts</span>
+                <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #cbd5e1;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <strong style="color:#0f294a;">P1 · Conmutador Industrial (Ideal: Opción b)</strong>
+                        <span style="font-weight:700; color:${sc.p1 === 20 ? '#059669' : '#b91c1c'};">${sc.p1 || 0}/20 pts</span>
                     </div>
-                    <div style="font-size:0.88rem; color:#e5e7eb;">Respondió: <strong>Opción ${(a.q1 || '—').toUpperCase()}</strong></div>
+                    <div style="font-size:0.85rem; color:#1e293b;">Respondió: <strong>Opción ${(a.q1 || '—').toUpperCase()}</strong></div>
                 </div>
-
-                <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                        <strong style="color:var(--accent-bronze);">P2 · Objeción Comedor &amp; Oxxo (Ideal: Opción b)</strong>
-                        <span class="badge ${sc.p2 === 20 ? 'badge-green' : 'badge-red'}">${sc.p2 || 0}/20 pts</span>
+                <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #cbd5e1;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <strong style="color:#0f294a;">P2 · Objeción Comedor &amp; Oxxo (Ideal: Opción b)</strong>
+                        <span style="font-weight:700; color:${sc.p2 === 20 ? '#059669' : '#b91c1c'};">${sc.p2 || 0}/20 pts</span>
                     </div>
-                    <div style="font-size:0.88rem; color:#e5e7eb;">Respondió: <strong>Opción ${(a.q2 || '—').toUpperCase()}</strong></div>
+                    <div style="font-size:0.85rem; color:#1e293b;">Respondió: <strong>Opción ${(a.q2 || '—').toUpperCase()}</strong></div>
                 </div>
-
-                <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <strong style="color:var(--accent-bronze);">P3 · Agilidad Numérica ($11,000) &amp; Visión Ejecutiva CFO/RH</strong>
-                        <span class="badge ${(sc.p3a + sc.p3b) >= 22 ? 'badge-green' : 'badge-amber'}">${(sc.p3a || 0) + (sc.p3b || 0)}/30 pts</span>
+                <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #cbd5e1;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                        <strong style="color:#0f294a;">P3 · Agilidad Numérica ($11,000) &amp; Visión Ejecutiva CFO/RH</strong>
+                        <span style="font-weight:700; color:#0369a1;">${(sc.p3a || 0) + (sc.p3b || 0)}/30 pts</span>
                     </div>
-                    <div style="font-size:0.86rem; color:#d1d5db; margin-bottom:8px;">
-                        <strong>Cálculo 3A:</strong> ${escapeHtml(a.q3a || 'Sin respuesta')} ${sc.p3aCorrect ? '<span style="color:#34d399;">(Correcto)</span>' : '<span style="color:#f87171;">(Incorrecto · Ideal: $11,000)</span>'}
+                    <div style="font-size:0.84rem; color:#334155; margin-bottom:6px;">
+                        <strong>Cálculo 3A:</strong> ${escapeHtml(a.q3a || 'Sin respuesta')} ${sc.p3aCorrect ? '<span style="color:#059669; font-weight:700;">(Correcto)</span>' : '<span style="color:#b91c1c; font-weight:700;">(Incorrecto · Ideal: $11,000)</span>'}
                     </div>
-                    <div style="font-size:0.86rem; color:#e5e7eb; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+                    <div style="font-size:0.84rem; color:#0f172a; background:#fff; padding:10px; border-radius:8px; border:1px solid #e2e8f0;">
                         <strong>Argumento 3B:</strong> ${escapeHtml(a.q3b || 'Sin respuesta')}
                     </div>
                 </div>
-
-                <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <strong style="color:var(--accent-bronze);">P4 · WhatsApp Cold Outreach (${sc.q4Words || 0} palabras / Máx 60)</strong>
-                        <span class="badge ${sc.p4 >= 11 ? 'badge-green' : 'badge-amber'}">${sc.p4 || 0}/15 pts</span>
+                <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #cbd5e1;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                        <strong style="color:#0f294a;">P4 · WhatsApp Cold Outreach (${sc.q4Words || 0} palabras / Máx 60)</strong>
+                        <span style="font-weight:700; color:#0369a1;">${sc.p4 || 0}/15 pts</span>
                     </div>
-                    <div style="font-size:0.88rem; color:#e5e7eb; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+                    <div style="font-size:0.85rem; color:#0f172a; background:#fff; padding:10px; border-radius:8px; border:1px solid #e2e8f0;">
                         ${escapeHtml(a.q4 || 'Sin respuesta')}
                     </div>
                 </div>
-
-                <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <strong style="color:var(--accent-bronze);">P5 · Resiliencia Comercial (Sales Grit)</strong>
-                        <span class="badge ${sc.p5 >= 11 ? 'badge-green' : 'badge-amber'}">${sc.p5 || 0}/15 pts</span>
+                <div style="background:#f8fafc; padding:14px 16px; border-radius:10px; border:1px solid #cbd5e1;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                        <strong style="color:#0f294a;">P5 · Resiliencia Comercial (Sales Grit)</strong>
+                        <span style="font-weight:700; color:#059669;">${sc.p5 || 0}/15 pts</span>
                     </div>
-                    <div style="font-size:0.88rem; color:#e5e7eb; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+                    <div style="font-size:0.85rem; color:#0f172a; background:#fff; padding:10px; border-radius:8px; border:1px solid #e2e8f0;">
                         ${escapeHtml(a.q5 || 'Sin respuesta')}
                     </div>
                 </div>
