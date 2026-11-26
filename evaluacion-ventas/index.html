@@ -2621,12 +2621,55 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                 document.getElementById('rub-coachability').value = rub.coachability || '0';
                 document.getElementById('dos-admin-notes').value = sub.admin_notes || '';
             } else {
-                document.getElementById('dos-audit-conclusions').innerHTML = '<div style="color:#64748b; font-size:0.84rem;">El candidato aún no ha enviado su evaluación.</div>';
-                document.getElementById('dos-telemetry-tbody').innerHTML = '';
-                document.getElementById('dos-timeline-list').innerHTML = '';
-                document.getElementById('dos-answers-breakdown').innerHTML = '<div style="color:#64748b; font-size:0.84rem;">Sin respuestas registradas aún.</div>';
-                document.getElementById('dos-score-legend').innerHTML = '';
-                document.getElementById('dos-time-legend').innerHTML = '';
+                // Reset all charts, centers, legends, tables, and rubric cleanly to ZERO
+                document.getElementById('dos-audit-conclusions').innerHTML = '<div style="color:#64748b; font-size:0.84rem;">El candidato aún no ha enviado su evaluación. Los indicadores se actualizarán automáticamente en cuanto concluya su prueba.</div>';
+                document.getElementById('dos-telemetry-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; color:#64748b; padding:18px;">Sin datos de telemetría — el candidato aún no ha completado el examen.</td></tr>';
+                document.getElementById('dos-timeline-list').innerHTML = '<div style="color:#64748b;">Sin eventos registrados aún.</div>';
+                document.getElementById('dos-answers-breakdown').innerHTML = '<div style="color:#64748b; font-size:0.84rem; padding:12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0;">Sin respuestas registradas aún.</div>';
+
+                document.getElementById('dos-donut-score-center').innerText = '0';
+                document.getElementById('dos-donut-time-center').innerText = '0s';
+                document.getElementById('dos-score-legend').innerHTML = '<div style="color:#64748b; font-size:0.8rem;">Pendiente de evaluación (0 / 100 pts)</div>';
+                document.getElementById('dos-time-legend').innerHTML = '<div style="color:#64748b; font-size:0.8rem;">Pendiente de evaluación (0s registrados)</div>';
+
+                if (donutScoreInst) { donutScoreInst.destroy(); donutScoreInst = null; }
+                donutScoreInst = new Chart(document.getElementById('dos-donut-score').getContext('2d'), {
+                    type: 'doughnut',
+                    data: { labels: ['Pendiente'], datasets: [{ data: [100], backgroundColor: ['#e2e8f0'], borderWidth: 0 }] },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+                });
+
+                if (donutTimeInst) { donutTimeInst.destroy(); donutTimeInst = null; }
+                donutTimeInst = new Chart(document.getElementById('dos-donut-time').getContext('2d'), {
+                    type: 'doughnut',
+                    data: { labels: ['Pendiente'], datasets: [{ data: [100], backgroundColor: ['#e2e8f0'], borderWidth: 0 }] },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+                });
+
+                if (dossierChartInst) { dossierChartInst.destroy(); dossierChartInst = null; }
+                dossierChartInst = new Chart(document.getElementById('dos-time-chart').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Juicio B2B', 'Cálculo $', 'Visión CFO', 'WhatsApp', 'Sales Grit'],
+                        datasets: [{ label: '% Logrado', data: [0, 0, 0, 0, 0], backgroundColor: '#cbd5e1', borderRadius: 6 }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: '#334155', font: { size: 11, weight: '600' } }, grid: { display: false } },
+                            y: { min: 0, max: 100, ticks: { color: '#64748b', font: { size: 10 }, callback: v => v + '%' }, grid: { color: '#e2e8f0' } }
+                        }
+                    }
+                });
+
+                document.getElementById('rub-modelo').value = '0';
+                document.getElementById('rub-objeciones').value = '0';
+                document.getElementById('rub-escucha').value = '0';
+                document.getElementById('rub-coachability').value = '0';
+                document.getElementById('dos-admin-notes').value = '';
+
                 renderCustomInterviewQuestions(null, cvInsights);
             }
 
