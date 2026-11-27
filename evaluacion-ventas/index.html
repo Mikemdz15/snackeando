@@ -1034,10 +1034,10 @@
                                 <div class="exec-section-sub" style="margin-bottom: 0;">Validación automática de experiencia B2B, perfil Hunter y consistencia numérica.</div>
                             </div>
                             <div class="no-print">
-                                <input type="file" id="cv-file-input" accept=".pdf,.docx,.txt" class="hidden" onchange="handleCvUpload(event)">
+                                <input type="file" id="cv-file-input" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.webp" class="hidden" onchange="handleCvUpload(event)">
                                 <button class="btn btn-primary btn-sm" onclick="document.getElementById('cv-file-input').click()">
                                     <i data-lucide="upload" style="width: 14px; height: 14px;"></i>
-                                    <span id="cv-upload-btn-text">Subir CV (PDF / DOCX / TXT)</span>
+                                    <span id="cv-upload-btn-text">Subir CV (PDF / DOCX / IMG)</span>
                                 </button>
                             </div>
                         </div>
@@ -2598,7 +2598,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             const hasCv = Boolean(cand.cv_text && cand.cv_text.trim().length > 20);
             document.getElementById('cv-missing-box').classList.toggle('hidden', hasCv);
             document.getElementById('cv-analysis-box').classList.toggle('hidden', !hasCv);
-            document.getElementById('cv-upload-btn-text').innerText = hasCv ? 'Reemplazar CV' : 'Subir CV (PDF / DOCX / TXT)';
+            document.getElementById('cv-upload-btn-text').innerText = hasCv ? 'Reemplazar CV' : 'Subir CV (PDF / DOCX / IMG)';
 
             let cvInsights = null;
             const cvPill = document.getElementById('dos-cv-summary-pill');
@@ -2681,6 +2681,25 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             if (window.lucide) lucide.createIcons();
         }
 
+        async function loadTesseractOcr() {
+            if (window.Tesseract) return window.Tesseract;
+            await new Promise((resolve, reject) => {
+                const s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+                s.onload = resolve;
+                s.onerror = () => reject(new Error('No se pudo cargar el motor OCR (Tesseract.js).'));
+                document.head.appendChild(s);
+            });
+            return window.Tesseract;
+        }
+
+        async function runOcrOnImage(imageSource, label) {
+            const Tesseract = await loadTesseractOcr();
+            showToast(`Ejecutando OCR en ${label}... (puede tardar unos segundos)`);
+            const res = await Tesseract.recognize(imageSource, 'spa+eng');
+            return (res?.data?.text || '').trim();
+        }
+
         async function handleCvUpload(e) {
             const file = e.target.files[0];
             if (!file || !activeDossierCandidateId) return;
@@ -2698,17 +2717,37 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                         const content = await page.getTextContent();
                         text += content.items.map(item => item.str).join(' ') + '\n';
                     }
+
+                    // Fallback OCR automático si el PDF es escaneado o fue exportado como imagen (ej. Canva)
+                    if (text.replace(/\s+/g, ' ').trim().length < 20) {
+                        showToast('PDF sin capa de texto detectado. Activando OCR automático...');
+                        let ocrText = '';
+                        const maxPages = Math.min(pdf.numPages, 4);
+                        for (let i = 1; i <= maxPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const viewport = page.getViewport({ scale: 2.0 });
+                            const canvas = document.createElement('canvas');
+                            canvas.width = viewport.width;
+                            canvas.height = viewport.height;
+                            const ctx = canvas.getContext('2d');
+                            await page.render({ canvasContext: ctx, viewport }).promise;
+                            ocrText += (await runOcrOnImage(canvas, `página ${i}/${maxPages}`)) + '\n';
+                        }
+                        text = ocrText;
+                    }
                 } else if (ext === 'docx') {
                     const arrayBuffer = await file.arrayBuffer();
                     const result = await mammoth.extractRawText({ arrayBuffer });
                     text = result.value;
+                } else if (['png', 'jpg', 'jpeg', 'webp'].includes(ext)) {
+                    text = await runOcrOnImage(file, 'imagen del CV');
                 } else {
                     text = await file.text();
                 }
 
                 text = text.replace(/\s+/g, ' ').trim();
                 if (text.length < 20) {
-                    throw new Error('No se pudo extraer texto legible del archivo (si es PDF escaneado como imagen, súbelo en PDF de texto o DOCX).');
+                    throw new Error('No se pudo extraer texto legible del archivo incluso con OCR. Verifica que la imagen tenga buena resolución.');
                 }
 
                 const { error } = await sb.from('snackeando_eval_candidates')
