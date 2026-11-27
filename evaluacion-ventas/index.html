@@ -2365,7 +2365,12 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                 else if (c.status === 'En Progreso') statusBadge = `<span class="badge badge-blue">En Progreso</span>`;
 
                 const scoreText = sub && sub.scores ? `<strong style="color:var(--accent-bronze);">${sub.scores.total}/100</strong>` : '<span style="color:var(--text-muted);">—</span>';
-                const cvBadge = c.cv_text ? `<span class="badge badge-green">CV Cargado</span>` : `<span class="badge badge-gray">Sin CV</span>`;
+                let cvBadge = `<span class="badge badge-gray">Sin CV</span>`;
+                if (c.cv_text && c.cv_text.trim().length > 20) {
+                    const cvEval = analyzeCvClinically(c.cv_text, sub);
+                    const cvCls = cvEval.cvScore >= 75 ? 'badge-green' : (cvEval.cvScore >= 50 ? 'badge-amber' : 'badge-red');
+                    cvBadge = `<span class="badge ${cvCls}">CV: ${cvEval.cvScore}/100</span>`;
+                }
 
                 return `
                     <tr>
@@ -2602,7 +2607,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                 cvInsights = analyzeCvClinically(cand.cv_text, sub);
                 renderCvClinicalBox(cvInsights);
                 const redAlerts = cvInsights.alerts.filter(a => a.level === 'red').length;
-                cvPill.innerHTML = `<strong>Resumen CV (${escapeHtml(cand.cv_filename || 'CV')}):</strong> ${cvInsights.b2bHits.length} señal(es) B2B · ${cvInsights.hunterHits.length} señal(es) Hunter · <strong>${redAlerts} alerta(s) crítica(s)</strong> en cruce vs. prueba.`;
+                cvPill.innerHTML = `<strong>Calificación CV (${escapeHtml(cand.cv_filename || 'CV')}): ${cvInsights.cvScore}/100</strong> · ${cvInsights.cvVerdict} · <strong>${redAlerts} alerta(s)</strong> en cruce.`;
             } else {
                 cvPill.innerHTML = '<strong>Estado de CV:</strong> Pendiente de cargar CV abajo para habilitar el cruce clínico automático.';
             }
@@ -2722,20 +2727,121 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
 
         function analyzeCvClinically(cvText, sub) {
             const low = cvText.toLowerCase();
+            const findHits = (arr) => arr.filter(k => low.includes(k));
 
-            // 1. B2B vs B2C orientation
-            const b2bKw = ['b2b', 'corporativo', 'empresas', 'recursos humanos', 'director', 'gerente', 'planta', 'industrial', 'parque industrial', 'cuentas clave', 'key account', 'convenios', 'alamedas', 'institucional'];
-            const hunterKw = ['prospección en frío', 'prospeccion en frio', 'prospección', 'hunter', 'cambaceo', 'apertura de mercado', 'cartera nueva', 'puerta en frío', 'linkedin', 'llamadas en frío'];
-            const metricsKw = ['%', 'cuota', 'meta', 'kpi', 'crm', 'salesforce', 'hubspot', 'pipedrive', 'cierre', 'facturación', 'millones', '$'];
+            // 1. Prospección en Frío (Gen Hunter)
+            const hunterKw = ['prospección en frío', 'prospeccion en frio', 'prospección', 'prospeccion', 'hunter', 'cambaceo', 'apertura de mercado', 'apertura de cuentas', 'cartera nueva', 'puerta en frío', 'puerta en frio', 'llamadas en frío', 'nuevo negocio', 'captación', 'captacion'];
+            const hunterHits = findHits(hunterKw);
 
-            const b2bHits = b2bKw.filter(k => low.includes(k));
-            const hunterHits = hunterKw.filter(k => low.includes(k));
-            const metricHits = metricsKw.filter(k => low.includes(k));
+            // 2. Venta Consultiva B2B a Tomadores de Decisión
+            const b2bKw = ['b2b', 'corporativo', 'corporativos', 'empresas', 'recursos humanos', 'rh', 'director', 'gerente', 'planta', 'industrial', 'parque industrial', 'cuentas clave', 'key account', 'manufactura', 'compras', 'finanzas', 'institucional'];
+            const b2bHits = findHits(b2bKw);
 
-            // 2. Years detection
-            const yearMatches = cvText.match(/\b(201\d|202\d)\b/g) || [];
+            // 3. Logros Cuantificados con Métricas Reales
+            const metricKw = ['%', 'cuota', 'meta', 'metas', 'kpi', 'facturación', 'facturacion', 'crecimiento', 'millones', 'objetivo', 'cumplimiento', 'incremento'];
+            const metricHits = findHits(metricKw);
+            const hasNumbers = /\d+\s*%|\$\s*\d+/.test(cvText);
+
+            // 4. Venta de Servicios, Convenios o Soluciones Intangibles
+            const srvKw = ['servicio', 'servicios', 'convenio', 'convenios', 'roi', 'solución', 'soluciones', 'arrendamiento', 'prestación', 'prestaciones', 'beneficio', 'intangible', 'recurrente', 'contrato', 'saas', 'consultiva'];
+            const srvHits = findHits(srvKw);
+
+            // 5. Manejo de Objeciones y Negociación de Valor
+            const negKw = ['negociación', 'negociacion', 'objeciones', 'objeción', 'margen', 'rentabilidad', 'propuesta económica', 'licitaciones', 'licitación', 'retención', 'defensa'];
+            const negHits = findHits(negKw);
+
+            // 6. Dominio de Pipeline y CRM
+            const crmKw = ['crm', 'salesforce', 'hubspot', 'pipedrive', 'zoho', 'pipeline', 'embudo', 'funnel', 'odoo', 'seguimiento', 'proyección', 'forecast'];
+            const crmHits = findHits(crmKw);
+
+            // 7. Estabilidad Laboral y Progresión
+            const yearMatches = cvText.match(/\b(200\d|201\d|202\d)\b/g) || [];
             const uniqueYears = [...new Set(yearMatches)].sort();
-            const jobCountEstimate = Math.max(1, Math.floor(uniqueYears.length / 2));
+            const yearsSpan = uniqueYears.length >= 2 ? (parseInt(uniqueYears[uniqueYears.length - 1]) - parseInt(uniqueYears[0])) : 0;
+            const progKw = ['senior', 'sr', 'gerente', 'líder', 'lider', 'coordinador', 'jefe', 'especialista', 'key account', 'nacional'];
+            const progHits = findHits(progKw);
+
+            // 8. Autonomía en Campo y Territorio
+            const fieldKw = ['campo', 'visita', 'visitas', 'territorio', 'zona', 'parque industrial', 'ruta', 'rutas', 'presencial', 'auto', 'licencia', 'viajar', 'cdmx', 'estado de méxico', 'edomex', 'monterrey', 'querétaro', 'guadalajara', 'bajío'];
+            const fieldHits = findHits(fieldKw);
+
+            // 9. Comunicación Ejecutiva Breve y Persuasiva
+            const wordsCount = cvText.trim().split(/\s+/).length;
+            const weakCvCliches = ['disponibilidad de horario', 'ganas de trabajar', 'trabajo bajo presión', 'responsable y honesto', 'aprendizaje rápido'];
+            const clicheHits = findHits(weakCvCliches);
+
+            // 10. Orientación a Cierre con Siguiente Paso Firme
+            const closeKw = ['cierre', 'cierres', 'ciclo completo', 'implementación', 'implementacion', 'firma', 'activación', 'activacion', 'onboarding', 'levantamiento'];
+            const closeHits = findHits(closeKw);
+
+            // Build the 10-Point Evaluation Rubric (10 pts each = 100 pts total)
+            const criteria = [
+                {
+                    num: 1,
+                    name: 'Prospección en Frío Comprobada (Gen Hunter)',
+                    score: hunterHits.length >= 2 ? 10 : (hunterHits.length === 1 ? 5 : 0),
+                    detail: hunterHits.length > 0 ? `Evidencia detectada: ${hunterHits.slice(0, 4).join(', ')}.` : 'Sin mención explícita de prospección en frío o apertura desde cero (riesgo de perfil pasivo/Farmer).'
+                },
+                {
+                    num: 2,
+                    name: 'Venta Consultiva B2B a Tomadores de Decisión',
+                    score: b2bHits.length >= 3 ? 10 : (b2bHits.length >= 1 ? 5 : 0),
+                    detail: b2bHits.length > 0 ? `Afinidad B2B: ${b2bHits.slice(0, 5).join(', ')}.` : 'No menciona venta corporativa/B2B ni trato con Directores, RH o Plantas (posible perfil B2C/mostrador).'
+                },
+                {
+                    num: 3,
+                    name: 'Logros Cuantificados con Métricas Reales',
+                    score: (metricHits.length >= 2 && hasNumbers) ? 10 : ((metricHits.length >= 1 || hasNumbers) ? 5 : 0),
+                    detail: (metricHits.length > 0 || hasNumbers) ? `Indicadores encontrados: ${metricHits.slice(0, 4).join(', ')}${hasNumbers ? ' (con cifras %/$)' : ''}.` : 'No cuantifica cuotas, % de cumplimiento ni facturación lograda.'
+                },
+                {
+                    num: 4,
+                    name: 'Venta de Servicios, Convenios o Soluciones Intangibles',
+                    score: srvHits.length >= 2 ? 10 : (srvHits.length === 1 ? 5 : 0),
+                    detail: srvHits.length > 0 ? `Experiencia en intangibles/convenios: ${srvHits.slice(0, 4).join(', ')}.` : 'Enfoque aparente solo en producto transaccional de mostrador.'
+                },
+                {
+                    num: 5,
+                    name: 'Manejo de Objeciones y Negociación de Valor',
+                    score: negHits.length >= 2 ? 10 : (negHits.length === 1 ? 5 : 0),
+                    detail: negHits.length > 0 ? `Términos de negociación: ${negHits.slice(0, 4).join(', ')}.` : 'No detalla negociación de margen, contratos ni defensa de valor ante Compras.'
+                },
+                {
+                    num: 6,
+                    name: 'Dominio de Pipeline y CRM',
+                    score: crmHits.length >= 2 ? 10 : (crmHits.length === 1 ? 5 : 0),
+                    detail: crmHits.length > 0 ? `Herramientas / gestión: ${crmHits.slice(0, 4).join(', ')}.` : 'No menciona uso de CRM (HubSpot, Salesforce, Pipedrive) ni gestión de embudo.'
+                },
+                {
+                    num: 7,
+                    name: 'Estabilidad Laboral y Progresión',
+                    score: (yearsSpan >= 3 && progHits.length >= 1) ? 10 : (yearsSpan >= 2 ? 5 : 0),
+                    detail: uniqueYears.length >= 2 ? `Rango detectado: ${uniqueYears[0]}–${uniqueYears[uniqueYears.length - 1]} (${yearsSpan} años)${progHits.length ? ' con roles ' + progHits.slice(0, 2).join('/') : ''}.` : 'Fechas laborales poco claras o trayectoria corta en el CV.'
+                },
+                {
+                    num: 8,
+                    name: 'Autonomía en Campo y Territorio',
+                    score: fieldHits.length >= 2 ? 10 : (fieldHits.length === 1 ? 5 : 0),
+                    detail: fieldHits.length > 0 ? `Señales de trabajo en campo: ${fieldHits.slice(0, 4).join(', ')}.` : 'Sin evidencia de visitas en planta, rutas comerciales o trabajo en territorio.'
+                },
+                {
+                    num: 9,
+                    name: 'Comunicación Ejecutiva Breve y Persuasiva',
+                    score: (wordsCount >= 160 && wordsCount <= 950 && clicheHits.length <= 1) ? 10 : (wordsCount >= 100 ? 5 : 0),
+                    detail: `Extensión: ~${wordsCount} palabras${clicheHits.length > 0 ? ` · Clichés detectados: ${clicheHits.join(', ')}` : ' · Redacción limpia y ejecutiva'}.`
+                },
+                {
+                    num: 10,
+                    name: 'Orientación a Cierre con Siguiente Paso Firme',
+                    score: closeHits.length >= 2 ? 10 : (closeHits.length === 1 ? 5 : 0),
+                    detail: closeHits.length > 0 ? `Enfoque en cierre: ${closeHits.slice(0, 4).join(', ')}.` : 'No evidencia manejo de ciclo completo hasta el cierre e implementación.'
+                }
+            ];
+
+            const cvScore = criteria.reduce((acc, c) => acc + c.score, 0);
+            const cvVerdict = cvScore >= 75
+                ? 'CV ALTAMENTE COMPATIBLE (Perfil Hunter B2B)'
+                : (cvScore >= 50 ? 'CV COMPATIBLE CON RESERVAS (Validar en Entrevista)' : 'CV DE BAJA COMPATIBILIDAD (Riesgo B2C / Operativo)');
 
             const alerts = [];
             if (b2bHits.length === 0) {
@@ -2754,7 +2860,7 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
                 alerts.push({ level: 'amber', text: 'Baja orientación numérica en CV: Pocos logros cuantificados (%, cuotas, montos). Preguntar números exactos en la entrevista.' });
             }
 
-            // 3. Cross-check CV vs Exam
+            // Cross-check CV vs Exam (when submission exists)
             if (sub && sub.scores) {
                 const outreachScore = sub.scores.p12 !== undefined ? sub.scores.p12 : (sub.scores.p4 || 0);
                 if (b2bHits.length >= 2 && outreachScore < 8) {
@@ -2769,30 +2875,52 @@ create policy "Permitir delete publica eval_submissions" on public.snackeando_ev
             }
 
             return {
+                cvScore,
+                cvVerdict,
+                criteria,
                 b2bHits,
                 hunterHits,
                 metricHits,
                 yearsRange: uniqueYears.length >= 2 ? `${uniqueYears[0]} – ${uniqueYears[uniqueYears.length - 1]}` : 'No especificado',
-                jobCountEstimate,
                 alerts
             };
         }
 
         function renderCvClinicalBox(cv) {
+            const scoreBg = cv.cvScore >= 75 ? '#059669' : (cv.cvScore >= 50 ? '#d97706' : '#b91c1c');
+            const rowsHtml = cv.criteria.map(c => {
+                const badgeBg = c.score === 10 ? '#d1fae5' : (c.score === 5 ? '#fef3c7' : '#fee2e2');
+                const badgeTx = c.score === 10 ? '#065f46' : (c.score === 5 ? '#92400e' : '#991b1b');
+                return `
+                    <tr>
+                        <td style="font-weight:700; color:#64748b; width:36px;">#${c.num}</td>
+                        <td style="font-weight:700; color:#0f294a; width:30%;">${c.name}</td>
+                        <td style="font-size:0.81rem; color:#334155;">${c.detail}</td>
+                        <td style="white-space:nowrap; text-align:right;"><span style="background:${badgeBg}; color:${badgeTx}; padding:3px 10px; border-radius:999px; font-weight:800; font-size:0.75rem;">${c.score} / 10</span></td>
+                    </tr>
+                `;
+            }).join('');
+
             document.getElementById('dos-clinical-insights').innerHTML = `
-                <div style="background: #ffffff; padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1;">
-                    <div style="font-size:0.72rem; color:#0f294a; text-transform:uppercase; font-weight:700;">ADN Comercial Detectado en CV</div>
-                    <div style="font-size:0.84rem; color:#1e293b; margin-top:6px;">
-                        • <strong>Señales B2B:</strong> ${cv.b2bHits.length > 0 ? cv.b2bHits.join(', ') : 'Ninguna clara'}<br>
-                        • <strong>Señales Hunter:</strong> ${cv.hunterHits.length > 0 ? cv.hunterHits.join(', ') : 'No explícitas'}
+                <div style="grid-column: 1 / -1; background: ${scoreBg}; color: #fff; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; opacity:0.9; font-weight:700;">Calificación Automática del CV (10 Señales Hunter B2B)</div>
+                        <div style="font-size:1.05rem; font-weight:800; margin-top:2px;">${cv.cvVerdict}</div>
                     </div>
+                    <div style="font-size:1.85rem; font-weight:900; background:rgba(0,0,0,0.22); padding:6px 18px; border-radius:10px;">${cv.cvScore} / 100</div>
                 </div>
-                <div style="background: #ffffff; padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1;">
-                    <div style="font-size:0.72rem; color:#0f294a; text-transform:uppercase; font-weight:700;">Trayectoria y Cuantificación</div>
-                    <div style="font-size:0.84rem; color:#1e293b; margin-top:6px;">
-                        • <strong>Rango de años en CV:</strong> ${cv.yearsRange}<br>
-                        • <strong>Métricas/CRM mencionados:</strong> ${cv.metricHits.length > 0 ? cv.metricHits.join(', ') : 'Sin métricas explícitas'}
-                    </div>
+                <div style="grid-column: 1 / -1; overflow-x:auto; border:1px solid #cbd5e1; border-radius:10px; background:#fff;">
+                    <table class="exec-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Característica / Habilidad Clave</th>
+                                <th>Evaluación del CV</th>
+                                <th style="text-align:right;">Puntaje</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHtml}</tbody>
+                    </table>
                 </div>
             `;
 
